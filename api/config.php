@@ -23,13 +23,37 @@ if (!function_exists('mb_substr')) {
 function db() {
     static $pdo = null;
     if ($pdo === null) {
-        $pdo = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
-            DB_USER, DB_PASS,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-             PDO::ATTR_EMULATE_PREPARES => false]
-        );
+        try {
+            $pdo = new PDO(
+                'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
+                DB_USER, DB_PASS,
+                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                 PDO::ATTR_EMULATE_PREPARES => false]
+            );
+            // Auto create tables if not exists
+            static $checked = false;
+            if (!$checked) {
+                $checked = true;
+                $res = $pdo->query("SHOW TABLES LIKE 'admins'");
+                if (!$res || $res->rowCount() === 0) {
+                    $sqlFile = __DIR__ . '/db.sql';
+                    if (file_exists($sqlFile)) {
+                        $sql = file_get_contents($sqlFile);
+                        $pdo->exec($sql);
+                    }
+                }
+            }
+        } catch (PDOException $e) {
+            if (php_sapi_name() !== 'cli' && (strpos($_SERVER['REQUEST_URI'] ?? '', '/admin') !== false || strpos($_SERVER['SCRIPT_NAME'] ?? '', '/admin') !== false)) {
+                die('<div style="font-family:sans-serif;padding:30px;background:#151234;color:#fff;border-radius:16px;margin:40px auto;max-width:600px;border:1px solid #FF4D8D;box-shadow:0 20px 50px rgba(0,0,0,0.5)">
+                    <h2 style="color:#FF4D8D;margin-top:0">Database Setup Notice</h2>
+                    <p style="color:#F4F2FF;line-height:1.6">' . htmlspecialchars($e->getMessage()) . '</p>
+                    <p style="color:#A49DD4;font-size:14px">Please check your database name and password in <code>api/config.php</code> or in Hostinger hPanel.</p>
+                </div>');
+            }
+            throw $e;
+        }
     }
     return $pdo;
 }
