@@ -5,9 +5,9 @@
    ============================================================ */
 
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'u000000000_softnexa');
-define('DB_USER', 'u000000000_softnexa');
-define('DB_PASS', 'CHANGE_ME');
+define('DB_NAME', 'u142683284_softnexadb');
+define('DB_USER', 'u142683284_softnexa');
+define('DB_PASS', '@Softnexa123');
 
 define('NOTIFY_EMAIL', 'hello@softnexa.solutions');   // where new leads are emailed
 define('SITE_NAME',    'SoftNexa');
