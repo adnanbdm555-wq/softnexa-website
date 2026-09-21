@@ -1,0 +1,3 @@
+<FilesMatch "\.(sql|log)$">
+  Require all denied
+</FilesMatch>

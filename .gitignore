@@ -1,0 +1,30 @@
+# Environment and local configs
+.env
+.env.*
+*.local
+
+# Database dumps / backups
+*.sql.gz
+*.sql.bak
+*.bak
+backup/
+backups/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+error_log
