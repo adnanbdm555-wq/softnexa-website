@@ -447,11 +447,13 @@ header.stuck{background:color-mix(in srgb,var(--void) 72%,transparent);backdrop-
 .wcard{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);text-decoration:none;color:inherit;
   background:color-mix(in srgb,var(--panel) 78%,transparent);transition:.4s var(--ease);display:block}
 .wcard:hover{border-color:var(--line-2);transform:translateY(-6px)}
-.wtop{height:170px;position:relative;overflow:hidden;display:grid;place-items:center}
-.wtop .mesh{position:absolute;inset:0;opacity:.9}
-.wtop .num{position:relative;font-family:"Bricolage Grotesque";font-size:1.5rem;font-weight:700;color:#fff;
-  letter-spacing:-.03em;text-shadow:0 8px 30px rgba(0,0,0,.4);padding:9px 20px;border-radius:999px;
-  background:rgba(255,255,255,.16);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.3)}
+.wtop{height:180px;position:relative;overflow:hidden;display:grid;place-items:center}
+.wtop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform .6s var(--ease)}
+.wcard:hover .wtop img{transform:scale(1.08)}
+.wtop .mesh{position:absolute;inset:0;opacity:.55;z-index:1;background:linear-gradient(180deg,rgba(7,6,26,.15),rgba(7,6,26,.8))}
+.wtop .num{position:relative;z-index:2;font-family:"Bricolage Grotesque";font-size:1.4rem;font-weight:700;color:#fff;
+  letter-spacing:-.03em;text-shadow:0 8px 30px rgba(0,0,0,.5);padding:8px 18px;border-radius:999px;
+  background:rgba(7,6,26,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3)}
 .wtop .num small{display:block;font-size:.8rem;font-family:"Hanken Grotesk";font-weight:500;opacity:.9;letter-spacing:0}
 .wbody{padding:22px}
 .wbody h3{font-size:1.12rem;margin-bottom:8px}
@@ -1900,8 +1902,20 @@ function tiles(exclude){
 
 function slider(key){
   var items=SHOW[key]||[]; var id='sl'+Math.random().toString(36).slice(2,7);
+  var svcMap = {
+    MKT: 'marketing-ai',
+    WEB: 'web-apps',
+    MOB: 'mobile-apps',
+    CUSTOM: 'custom-software',
+    ECOM: 'ecommerce',
+    AI: 'ai-automation',
+    DATA: 'data-dashboards',
+    DESIGN: 'product-design',
+    CLOUD: 'cloud-support'
+  };
+  var svcSlug = svcMap[key] || 'web-apps';
   var slides=items.map(function(it){
-    return '<div class="slide">'+art(it[0],it[4],'rings','assets/showcase/'+slugify(it[2])+'.jpg')+
+    return '<div class="slide">'+art(it[0],it[4],'rings','assets/services/'+svcSlug+'.jpg')+
       '<span class="chip">'+it[1]+'</span><h3>'+it[2]+'</h3><p>'+it[3]+'</p></div>';
   }).join('');
   return '<div class="slider-wrap rv"><div class="slider" id="'+id+'">'+slides+'</div>'+
@@ -1957,7 +1971,13 @@ function ctaBlock(title,sub){
 /* ============================================================
    CARD ARTWORK
    ============================================================ */
-function slugify(s){return String(s).toLowerCase().replace(/&amp;/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+function slugify(s){
+  return String(s).toLowerCase()
+    .replace(/&amp;/g,'and')
+    .replace(/&/g,'and')
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-|-$/g,'');
+}
 function art(emoji,grad,kind,src){
   var inner='';
   if(src && window.SX_IMG && SX_IMG[src]) src=SX_IMG[src];
@@ -2047,14 +2067,20 @@ function frameFlow(){
 }
 
 function frameShop(){
+  var prods = [
+    ['assets/industries/consumer-brands.jpg', 'Lawn Kurta · 2026', '₨ 4,800'],
+    ['assets/services/ecommerce.jpg', 'Smart Watch · Pro', '₨ 8,500'],
+    ['assets/industries/retail-and-distribution.jpg', 'Leather Handbag', '₨ 6,200']
+  ];
   var inner='<div class="frame" style="width:min(560px,100%)">'+
     '<div class="cbar"><span class="cdot r"></span><span class="cdot y"></span><span class="cdot g"></span>'+
     '<span class="curl">yourbrand.pk/checkout</span></div>'+
     '<div class="fpad">'+
     '<div class="shopgrid">'+
-      ['linear-gradient(140deg,#6E4BFF,#FF4D8D)','linear-gradient(140deg,#1FD3F0,#6E4BFF)','linear-gradient(140deg,#FFB020,#FF4D8D)']
-      .map(function(g){return '<div class="prod"><div class="img" style="background:'+g+'"></div>'+
-        '<div class="meta"><b></b><span></span></div></div>'}).join('')+
+      prods.map(function(p){
+        return '<div class="prod"><div class="img" style="background-image:url('+p[0]+');background-size:cover;background-position:center;border-radius:10px;height:72px"></div>'+
+          '<div class="meta" style="margin-top:6px"><b style="font-size:0.75rem;display:block">'+p[1]+'</b><span style="font-size:0.7rem;color:var(--mint)">'+p[2]+'</span></div></div>';
+      }).join('')+
     '</div>'+
     '<div class="cartbar"><span>Cart total</span><b>₨ 14,980</b>'+
       '<span class="go">Place order · COD</span></div>'+
@@ -2224,7 +2250,7 @@ function gallery(s){
   ];
   return '<div class="grid3" style="margin-top:42px">'+shots.map(function(sh,i){
     return '<figure class="shot rv d'+(i+1)+'" style="margin:0">'+
-      art(s.ico,s.g,'rings','assets/services/'+s.slug+'-'+(i+1)+'.jpg')+
+      art(s.ico,s.g,'rings','assets/services/'+s.slug+'.jpg')+
       '<figcaption><b>'+sh[0]+'</b><small>'+sh[1]+'</small></figcaption></figure>';
   }).join('')+'</div>';
 }
@@ -2330,9 +2356,20 @@ function procBlock(){
 }
 
 function workGrid(n){
+  var svcMap = {
+    'Custom software': 'assets/services/custom-software.jpg',
+    'E-commerce': 'assets/services/ecommerce.jpg',
+    'Mobile apps': 'assets/services/mobile-apps.jpg',
+    'Web apps': 'assets/services/web-apps.jpg',
+    'AI & automation': 'assets/services/ai-automation.jpg',
+    'Data & dashboards': 'assets/services/data-dashboards.jpg'
+  };
   return '<div class="grid3">'+WORK.slice(0,n||WORK.length).map(function(w,i){
+    var imgSrc = svcMap[w[4]] || ('assets/services/'+slugify(w[4])+'.jpg');
     return '<a class="wcard rv d'+(i%3+1)+'" href="#/contact" data-nav>'+
-      '<div class="wtop"><span class="mesh" style="background:'+w[5]+'"></span>'+
+      '<div class="wtop">'+
+      '<img src="'+imgSrc+'" alt="'+esc(w[2])+'" loading="lazy" decoding="async">'+
+      '<span class="mesh" style="background:'+w[5]+';opacity:.5"></span>'+
       '<span class="num">'+w[4]+'</span></div>'+
       '<div class="wbody"><h3>'+w[2]+'</h3><p>'+w[3]+'</p>'+
       '<div class="tags">'+w[6].map(function(t){return '<span class="tag">'+t+'</span>'}).join('')+'</div>'+
@@ -2836,6 +2873,7 @@ PAGES.demos=function(){
     '<section style="padding-top:26px"><div class="wrap"><div class="demogrid" style="margin-top:0">'+
     DEMOS.map(function(d){
       return '<a class="demotile rv" href="#/demo/'+d.slug+'" data-nav style="--d1:'+d.th[0]+';--d2:'+d.th[1]+'">'+
+        art(d.ico,dgrad(d),'spark','assets/industries/'+d.slug+'.jpg')+
         '<span class="top"><span class="sq" style="background:'+dgrad(d)+'">'+icon(d.ico,22)+'</span>'+
         '<span><h3>'+d.app+'</h3><small>'+d.tag+'</small></span></span>'+
         '<p>'+d.mods.slice(1,4).join(' · ')+'</p>'+
