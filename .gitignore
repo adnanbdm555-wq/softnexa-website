@@ -28,3 +28,6 @@ Desktop.ini
 # Log files
 *.log
 error_log
+
+# Local update staging
+update softnexa/

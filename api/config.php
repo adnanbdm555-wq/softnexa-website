@@ -35,7 +35,7 @@ function db() {
             static $checked = false;
             if (!$checked) {
                 $checked = true;
-                $res = $pdo->query("SHOW TABLES LIKE 'admins'");
+                $res = $pdo->query("SHOW TABLES LIKE 'briefs'");
                 if (!$res || $res->rowCount() === 0) {
                     $sqlFile = __DIR__ . '/db.sql';
                     if (file_exists($sqlFile)) {

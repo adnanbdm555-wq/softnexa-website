@@ -4,6 +4,23 @@
    ============================================================ */
 require_once __DIR__ . '/../api/config.php';
 
+/* friendly page instead of a blank "500" if the database is not reachable */
+set_exception_handler(function ($e) {
+    http_response_code(500);
+    $db = ($e instanceof PDOException);
+    echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+       . '<title>Setup needed</title></head><body style="margin:0;min-height:100vh;display:grid;place-items:center;'
+       . 'background:#07061A;color:#F4F2FF;font-family:system-ui,sans-serif;padding:20px"><div style="max-width:520px;'
+       . 'padding:28px;border:1px solid #332C63;border-radius:20px;background:#0E0C24">'
+       . '<h2 style="margin:0 0 10px">' . ($db ? 'The dashboard cannot reach its database' : 'Something went wrong') . '</h2>'
+       . '<p style="color:#A49DD4;line-height:1.6">' . ($db
+            ? 'Usually api/config.php has the wrong database name, user or password, or api/db.sql has not been imported yet.'
+            : 'The error has been logged by the server.') . '</p>'
+       . '<p><a href="check.php" style="color:#1FD3F0;font-weight:600">Run the setup check →</a></p></div></body></html>';
+    error_log('SoftNexa admin: ' . $e->getMessage());
+    exit;
+});
+
 session_start();
 
 function admin_login($user, $pass) {
@@ -32,6 +49,7 @@ function admin_head($active = '', $title = '') {
     $nav = [
         'dashboard.php' => 'Overview',
         'leads.php'     => 'Leads',
+        'briefs.php'    => 'Client briefs',
         'analytics.php' => 'Analytics',
         'settings.php'  => 'Settings'
     ];

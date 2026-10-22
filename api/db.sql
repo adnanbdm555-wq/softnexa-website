@@ -103,3 +103,45 @@ CREATE TABLE IF NOT EXISTS rate_hits (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX (bucket, ip, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS briefs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  name VARCHAR(120),
+  company VARCHAR(160),
+  email VARCHAR(160),
+  phone VARCHAR(60),
+  city VARCHAR(80),
+  project_type VARCHAR(80),
+  features TEXT,
+  integrations TEXT,
+  style VARCHAR(160),
+  assets VARCHAR(500),
+  budget VARCHAR(80),
+  timeline VARCHAR(80),
+  team VARCHAR(60),
+  current_site VARCHAR(200),
+  ref_links VARCHAR(500),
+  scope VARCHAR(200),
+  goal TEXT,
+  notes TEXT,
+  heard VARCHAR(80),
+  region VARCHAR(40),
+  brief_score INT DEFAULT 0,
+  status ENUM('new','contacted','quoted','won','lost') DEFAULT 'new',
+  session_id VARCHAR(40),
+  referrer VARCHAR(160),
+  country VARCHAR(2),
+  device VARCHAR(12),
+  ip VARCHAR(45),
+  user_agent VARCHAR(255),
+  INDEX (created_at), INDEX (status), INDEX (brief_score)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS brief_notes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  brief_id INT NOT NULL,
+  note TEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX (brief_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

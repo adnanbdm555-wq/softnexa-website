@@ -16,6 +16,11 @@ $hot        = $q('SELECT COUNT(*) c FROM leads WHERE lead_score >= 70 AND create
 $trials     = $q('SELECT COUNT(*) c FROM leads WHERE trial_days > 0 AND created_at > (NOW() - INTERVAL ? DAY)', [$days])->fetch()['c'];
 $avgScore   = $q('SELECT COALESCE(ROUND(AVG(lead_score)),0) c FROM leads WHERE created_at > (NOW() - INTERVAL ? DAY)', [$days])->fetch()['c'];
 $openNew    = $q("SELECT COUNT(*) c FROM leads WHERE status='new'")->fetch()['c'];
+try {
+    $briefs    = $q('SELECT COUNT(*) c FROM briefs WHERE created_at > (NOW() - INTERVAL ? DAY)', [$days])->fetch()['c'];
+    $briefsNew = $q("SELECT COUNT(*) c FROM briefs WHERE status='new'")->fetch()['c'];
+    $briefRows = $q('SELECT * FROM briefs ORDER BY created_at DESC LIMIT 5')->fetchAll();
+} catch (Exception $e) { $briefs = 0; $briefsNew = 0; $briefRows = []; }
 $conv       = $visitors ? round($leads / $visitors * 100, 1) : 0;
 
 function delta($now, $prev) {
@@ -75,6 +80,10 @@ admin_head('dashboard.php', 'Overview · ' . ADMIN_TITLE);
   <div class="card big"><b><?= nf($avgScore) ?></b><small>Average lead score</small></div>
   <div class="card big"><b><?= nf($openNew) ?></b><small>Waiting for a reply</small></div>
 </div>
+<div class="cards" style="grid-template-columns:repeat(2,1fr)">
+  <a class="card big" href="briefs.php" style="text-decoration:none"><b><?= nf($briefs) ?></b><small>Client briefs received</small></a>
+  <a class="card big" href="briefs.php?status=new" style="text-decoration:none"><b class="<?= $briefsNew ? 'warm' : '' ?>"><?= nf($briefsNew) ?></b><small>Briefs not answered yet</small></a>
+</div>
 
 <div class="grid2" style="margin-bottom:14px">
   <div class="card">
@@ -131,6 +140,28 @@ admin_head('dashboard.php', 'Overview · ' . ADMIN_TITLE);
     <?php if (!$refs): ?><div class="muted" style="font-size:.85rem">No sessions yet.</div><?php endif; ?>
   </div></div>
 </div>
+
+<?php if ($briefRows): ?>
+<div class="card" style="margin-bottom:14px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+    <h2>Latest client briefs</h2><a class="btn sm" style="margin-left:auto" href="briefs.php">See all</a>
+  </div>
+  <table>
+    <thead><tr><th>When</th><th>Who</th><th>Wants</th><th>Budget</th><th>Score</th></tr></thead>
+    <tbody>
+    <?php foreach ($briefRows as $b): ?>
+      <tr onclick="location.href='briefs.php?id=<?= (int)$b['id'] ?>'" style="cursor:pointer">
+        <td class="muted"><?= date('d M, H:i', strtotime($b['created_at'])) ?></td>
+        <td><b><?= e($b['name']) ?></b><?= $b['company'] ? '<br><span class="muted">' . e($b['company']) . '</span>' : '' ?></td>
+        <td><?= e($b['project_type'] ?: '—') ?></td>
+        <td><?= e($b['budget'] ?: '—') ?></td>
+        <td class="score <?= $b['brief_score'] >= 70 ? 'hot' : ($b['brief_score'] >= 45 ? 'warm' : 'cold') ?>"><?= (int)$b['brief_score'] ?></td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+<?php endif; ?>
 
 <div class="card">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
