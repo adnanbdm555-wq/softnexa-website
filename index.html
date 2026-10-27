@@ -1952,7 +1952,7 @@ table.sdt .mu{color:var(--muted)}
         <a href="#/contact" data-nav>Contact</a>
       </div>
       <div><h4>Get in touch</h4>
-        <a href="mailto:hello@softnexa.solutions">hello@softnexa.solutions</a>
+        <a href="mailto:info@softnexasolution.com">info@softnexasolution.com</a>
         <a href="tel:+922100000000">+92 21 0000 0000</a>
         <span style="display:block;padding:6px 0;color:var(--muted);font-size:.95rem">Shahrah-e-Faisal, Karachi</span>
         <span style="display:block;padding:6px 0;color:var(--muted);font-size:.95rem">Mon–Fri · 10am–7pm PKT</span>
@@ -3313,7 +3313,7 @@ PAGES.contact=function(){
           '<h3>'+t[0]+'</h3><p>'+t[1]+'</p></div>';
       }).join('')+'</div>'+
     '<div class="grid3" style="margin-top:18px">'+
-      '<div class="card"><h3 style="font-size:1.02rem">Email</h3><p><a href="mailto:hello@softnexa.solutions" style="color:var(--iris);text-decoration:none">hello@softnexa.solutions</a></p></div>'+
+      '<div class="card"><h3 style="font-size:1.02rem">Email</h3><p><a href="mailto:info@softnexasolution.com" style="color:var(--iris);text-decoration:none">info@softnexasolution.com</a></p></div>'+
       '<div class="card"><h3 style="font-size:1.02rem">Phone & WhatsApp</h3><p><a href="tel:+922100000000" style="color:var(--iris);text-decoration:none">+92 21 0000 0000</a></p></div>'+
       '<div class="card"><h3 style="font-size:1.02rem">Office</h3><p>Shahrah-e-Faisal, Karachi<br>Mon–Fri, 10am–7pm PKT</p></div>'+
     '</div></div></section>';
@@ -5961,7 +5961,7 @@ function startInit(root){
         .then(function(){ done(p) })
         .catch(function(){
           btn.disabled=false; stat.className='errmsg';
-          stat.innerHTML='Could not reach the server. Email it to <a href="mailto:hello@softnexa.solutions?subject=Trial%20request" style="color:var(--iris)">hello@softnexa.solutions</a> or download the summary and send it over.';
+          stat.innerHTML='Could not reach the server. Email it to <a href="mailto:info@softnexasolution.com?subject=Trial%20request" style="color:var(--iris)">info@softnexasolution.com</a> or download the summary and send it over.';
         });
     });
     var pdf=$('#wizpdf',form);
@@ -5997,7 +5997,7 @@ function startInit(root){
     doc.setTextColor(31,140,255); doc.text('Nexa',m+42+doc.getTextWidth('Soft'),60);
     doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(180,175,220);
     doc.text('Requirement summary  ·  '+new Date().toLocaleDateString('en-GB'),m,80);
-    doc.text('hello@softnexa.solutions  ·  Karachi, Pakistan',m,96);
+    doc.text('info@softnexasolution.com  ·  Karachi, Pakistan',m,96);
     y=160;
     doc.setTextColor(20,16,44); doc.setFont('helvetica','bold'); doc.setFontSize(15);
     doc.text((p.company||p.name||'Prepared for you'),m,y); y+=18;
@@ -6041,7 +6041,7 @@ function startInit(root){
       '\n\nRunning on today: '+p.tools+'\nTeam size: '+p.team+'\nTimeline: '+p.urgency+
       '\n\nRecommended modules:\n• '+p.modules.split('; ').join('\n• ')+
       '\n\nIndicative build: '+p.estimate+'\nTime to live: '+p.timeline+
-      '\n\n'+TRIAL_DAYS+'-DAY FREE TRIAL\n- Workspace with your own data within 48 hours\n- Up to 5 users, 500 rows migrated\n- No card, no install, NDA first\n\nhello@softnexa.solutions';
+      '\n\n'+TRIAL_DAYS+'-DAY FREE TRIAL\n- Workspace with your own data within 48 hours\n- Up to 5 users, 500 rows migrated\n- No card, no install, NDA first\n\ninfo@softnexasolution.com';
     var a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
     a.download='softnexa-requirement-summary.txt'; a.click();
@@ -6384,7 +6384,7 @@ function briefInit(root){
         .catch(function(){
           btn.disabled=false; btn.innerHTML='Send my brief<span class="sh"></span>';
           if(err){ err.style.display='block';
-            err.innerHTML='Could not reach the server. Email it to <a href="mailto:hello@softnexa.solutions?subject=Client%20brief" style="color:var(--iris)">hello@softnexa.solutions</a> or send it on WhatsApp.' }
+            err.innerHTML='Could not reach the server. Email it to <a href="mailto:info@softnexasolution.com?subject=Client%20brief" style="color:var(--iris)">info@softnexasolution.com</a> or send it on WhatsApp.' }
         });
     }
     fetch('api/brief.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
@@ -6927,7 +6927,7 @@ function boot(root){
         })
         .catch(function(){
           btn.disabled=false; stat.className='errmsg';
-          stat.innerHTML='Could not reach the server. Email it to <a href="mailto:hello@softnexa.solutions?subject=Project%20enquiry" style="color:var(--iris)">hello@softnexa.solutions</a> and we will pick it up.';
+          stat.innerHTML='Could not reach the server. Email it to <a href="mailto:info@softnexasolution.com?subject=Project%20enquiry" style="color:var(--iris)">info@softnexasolution.com</a> and we will pick it up.';
         });
     });
   }

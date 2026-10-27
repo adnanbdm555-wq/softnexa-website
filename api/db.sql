@@ -25,7 +25,7 @@ INSERT IGNORE INTO settings (k, v) VALUES
   ('founding_pct', '25'),
   ('founding_slots', '3'),
   ('founding_left', '3'),
-  ('notify_email', 'hello@softnexa.solutions'),
+  ('notify_email', 'info@softnexasolution.com'),
   ('popups_on', '1');
 
 CREATE TABLE IF NOT EXISTS leads (

@@ -9,7 +9,7 @@ define('DB_NAME', 'u142683284_softnexa');
 define('DB_USER', 'u142683284_admin');
 define('DB_PASS', '@Softnexa123');
 
-define('NOTIFY_EMAIL', 'hello@softnexa.solutions');   // where new leads are emailed
+define('NOTIFY_EMAIL', 'info@softnexasolution.com');   // where new leads are emailed
 define('SITE_NAME',    'SoftNexa');
 define('ADMIN_TITLE',  'SoftNexa Control');
 
