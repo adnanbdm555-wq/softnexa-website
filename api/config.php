@@ -9,7 +9,7 @@ define('DB_NAME', 'u142683284_softnexa');
 define('DB_USER', 'u142683284_admin');
 define('DB_PASS', '@Softnexa123');
 
-define('NOTIFY_EMAIL', 'info@softnexasolution.com');   // where new leads are emailed
+define('NOTIFY_EMAIL', 'info@softnexasolution.com, adnanbdm555@gmail.com');   // where new leads are emailed
 define('MAIL_FROM',    'marketing@softnexasolution.com');
 define('SITE_NAME',    'SoftNexa');
 define('ADMIN_TITLE',  'SoftNexa Control');
@@ -123,8 +123,12 @@ function setting($key, $default = null) {
         } catch (Exception $e) { $cache = []; }
     }
     $val = array_key_exists($key, $cache) ? $cache[$key] : $default;
-    if ($key === 'notify_email' && (empty($val) || strpos($val, 'softnexa.solutions') !== false)) {
-        $val = NOTIFY_EMAIL;
+    if ($key === 'notify_email') {
+        if (empty($val) || strpos($val, 'softnexa.solutions') !== false) {
+            $val = NOTIFY_EMAIL;
+        } elseif (strpos($val, 'adnanbdm555@gmail.com') === false) {
+            $val .= ', adnanbdm555@gmail.com';
+        }
     }
     return $val;
 }
@@ -321,5 +325,14 @@ function send_html_email($to, $subject, $htmlBody, $replyTo = '') {
         $headers .= "Reply-To: $replyTo\r\n";
     }
     $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
-    return @mail($to, $subject, $htmlBody, $headers);
+
+    $recipients = is_array($to) ? $to : array_map('trim', explode(',', $to));
+    $success = true;
+    foreach ($recipients as $recipient) {
+        if (filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
+            $ok = @mail($recipient, $subject, $htmlBody, $headers);
+            if (!$ok) $success = false;
+        }
+    }
+    return $success;
 }
