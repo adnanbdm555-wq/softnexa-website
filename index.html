@@ -12,8 +12,8 @@
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SoftNexa — Custom Enterprise Software, Web Apps, SaaS & AI Automation</title>
-<meta name="description" content="SoftNexa builds high-performance web applications, bespoke business software, SaaS platforms, mobile apps, and intelligent AI automations. 14-day free trial on your real data.">
+<title>SoftNexa — Custom Business Software, Web Apps & AI</title>
+<meta name="description" content="SoftNexa builds custom enterprise software, scalable SaaS, web & mobile apps, and AI automations. Start your 14-day free trial on real business data.">
 <link rel="canonical" href="https://softnexasolution.com/">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <meta name="keywords" content="SoftNexa, softnexa solutions, custom software development, enterprise ERP software, web application development, SaaS platform development, mobile apps iOS Android, AI automation workflows, Karachi software house, bespoke software Pakistan">
@@ -30,8 +30,8 @@
 <!-- Open Graph / Facebook (Social & AI Previews) -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://softnexasolution.com/">
-<meta property="og:title" content="SoftNexa — Custom Enterprise Software, SaaS & AI Automation">
-<meta property="og:description" content="SoftNexa builds high-performance web applications, bespoke business software, mobile apps, and AI automations. 14-day free trial with zero risk.">
+<meta property="og:title" content="SoftNexa — Custom Business Software, Web Apps & AI">
+<meta property="og:description" content="SoftNexa builds custom enterprise software, scalable SaaS, web & mobile apps, and AI automations. Start your 14-day free trial on real business data.">
 <meta property="og:site_name" content="SoftNexa Solutions">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://softnexasolution.com/assets/services/custom-software.jpg">
@@ -42,8 +42,8 @@
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://softnexasolution.com/">
-<meta name="twitter:title" content="SoftNexa — Custom Enterprise Software, SaaS & AI Automation">
-<meta name="twitter:description" content="Custom business software, SaaS web apps, and intelligent AI workflows built for growth. Zero bloat, fixed pricing, 14-day trial.">
+<meta name="twitter:title" content="SoftNexa — Custom Business Software, Web Apps & AI">
+<meta name="twitter:description" content="SoftNexa builds custom enterprise software, scalable SaaS, web & mobile apps, and AI automations. Start your 14-day free trial on real business data.">
 <meta name="twitter:image" content="https://softnexasolution.com/assets/services/custom-software.jpg">
 
 <!-- Structured Data (JSON-LD) for SEO, GEO & AEO (ChatGPT Search, Perplexity, Gemini, Google) -->
@@ -6788,8 +6788,106 @@ $('#ssvc').innerHTML = SERVICES.map(function(s){
   return '<a href="#/services/'+s.slug+'" data-nav style="font-size:1.15rem;font-family:\'Hanken Grotesk\';font-weight:500;padding:9px 0;border:0;color:var(--muted)">'+s.nav+'</a>'}).join('');
 
 /* ============================================================
-   ROUTER
+   ROUTER & DYNAMIC PER-PAGE SEO ENGINE
    ============================================================ */
+var PAGE_SEO = {
+  home: {
+    title: 'SoftNexa — Custom Business Software, Web Apps & AI',
+    desc: 'SoftNexa builds custom enterprise software, scalable SaaS, web & mobile apps, and AI automations. Start your 14-day free trial on real business data.',
+    kw: 'custom software development, enterprise ERP, SaaS platforms, web apps, AI automation, Karachi software house'
+  },
+  demos: {
+    title: 'Live Interactive Demos & Prototypes · SoftNexa',
+    desc: 'Explore interactive live demos of ERPs, shop floor MES, logistics tracking, and SaaS dashboards built by SoftNexa for real industry use cases.',
+    kw: 'software live demos, ERP prototypes, SaaS demo, dashboard templates, business software showcase'
+  },
+  pricing: {
+    title: 'Transparent Software Pricing & Plans · SoftNexa',
+    desc: 'Guaranteed fixed-price software engineering with no runaway hourly bills. Includes 14-day free trial, dedicated engineers, and full IP ownership.',
+    kw: 'custom software pricing, SaaS development cost, fixed price software development, ERP cost estimate'
+  },
+  work: {
+    title: 'Our Work, Case Studies & Delivered Systems · SoftNexa',
+    desc: 'Explore our portfolio of delivered enterprise software, customer portals, warehouse platforms, and mobile apps engineered with modern tech stacks.',
+    kw: 'software case studies, web development portfolio, client projects, delivered ERP systems'
+  },
+  process: {
+    title: 'Engineering Process & Delivery Blueprint · SoftNexa',
+    desc: 'Our 4-stage engineering blueprint: Discovery, Prototype, Sprint Delivery, and Production Go-Live with weekly staging builds and strict QA standards.',
+    kw: 'software development process, agile delivery sprint, software engineering blueprint, QA testing'
+  },
+  about: {
+    title: 'About SoftNexa — Modern Software Engineering Firm',
+    desc: 'SoftNexa is a full-stack digital product engineering consultancy based in Karachi, delivering high-performance enterprise systems to global clients.',
+    kw: 'about SoftNexa, software consultancy Karachi, engineering team, digital product agency'
+  },
+  start: {
+    title: 'Start 14-Day Free Software Trial · SoftNexa',
+    desc: 'Request a working software workspace populated with your actual business data in 48 hours. Zero credit card, NDA signed first, up to 5 users.',
+    kw: 'free software trial, prototype trial, custom software POC, proof of concept trial'
+  },
+  brief: {
+    title: 'Submit Your Project Brief & Requirements · SoftNexa',
+    desc: 'Share your software requirements, tech stack, timeline, and feature wishlist. Receive an engineered scope, architectural plan, and fixed quote.',
+    kw: 'project brief, software RFP, request for proposal, custom software quote, hire developers'
+  },
+  contact: {
+    title: 'Contact Our Engineering Team · SoftNexa',
+    desc: 'Get in touch with SoftNexa engineers for custom software, SaaS, or AI automations. Replies within one working day with direct architectural advice.',
+    kw: 'contact software company, hire software engineers, Karachi software house contact, software consultation'
+  }
+};
+
+function updatePageSEO(r) {
+  var data = PAGE_SEO[r.page] || {};
+  var title = data.title;
+  var desc = data.desc;
+  var kw = data.kw;
+
+  if (r.page === 'service') {
+    var s = svcBy(r.slug);
+    if (s) {
+      title = s.nav + ' Development & Engineering · ' + BRAND;
+      desc = (s.hero ? s.hero.slice(0, 145) : ('Custom ' + s.nav + ' engineering by SoftNexa. Fast, scalable, and built for high-growth businesses.')) + '.';
+      kw = s.nav.toLowerCase() + ', custom ' + s.nav.toLowerCase() + ', enterprise software development, SoftNexa';
+    }
+  } else if (r.page === 'demo') {
+    var d = sdBy(r.slug) || demoBy(r.slug);
+    if (d) {
+      title = d.app + ' Live Interactive Demo · ' + BRAND;
+      desc = 'Test drive the ' + d.app + ' demo. Live operational workflows and architecture built by SoftNexa for modern companies.';
+      kw = d.app.toLowerCase() + ' demo, interactive prototype, SoftNexa demo';
+    }
+  }
+
+  if (!title) {
+    title = (r.page ? r.page.charAt(0).toUpperCase() + r.page.slice(1) : 'Software') + ' · ' + BRAND;
+  }
+  if (!desc) {
+    desc = PAGE_SEO.home.desc;
+  }
+
+  document.title = title;
+
+  var metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute('content', desc);
+
+  var metaKw = document.querySelector('meta[name="keywords"]');
+  if (metaKw && kw) metaKw.setAttribute('content', kw);
+
+  var ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.setAttribute('content', title);
+
+  var ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.setAttribute('content', desc);
+
+  var twTitle = document.querySelector('meta[name="twitter:title"]');
+  if (twTitle) twTitle.setAttribute('content', title);
+
+  var twDesc = document.querySelector('meta[name="twitter:description"]');
+  if (twDesc) twDesc.setAttribute('content', desc);
+}
+
 function parse(){
   var h=(location.hash||'#/').replace(/^#/,'');
   var p=h.split('/').filter(Boolean);
@@ -6813,10 +6911,7 @@ function render(){
     a.classList.toggle('active', a.getAttribute('data-r')==='/'+(r.page==='home'?'':r.page));
   });
   var drop=$('#drop'); drop.classList.remove('open');
-  document.title = (r.page==='home' ? BRAND+' — Business software, web apps and platforms built to fix what slows you down'
-    : (r.page==='service' ? (svcBy(r.slug)?svcBy(r.slug).nav:'Services')
-       : r.page==='demo' ? ((sdBy(r.slug)||demoBy(r.slug))?(sdBy(r.slug)||demoBy(r.slug)).app+' demo':'Demo')
-       : r.page.charAt(0).toUpperCase()+r.page.slice(1))+' · '+BRAND);
+  updatePageSEO(r);
   window.scrollTo(0,0);
   boot(app);
   if(!window.__sxSkipPV) track('pageview',document.title);
