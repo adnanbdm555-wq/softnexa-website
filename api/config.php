@@ -176,3 +176,150 @@ function rate_ok($bucket, $limit, $seconds) {
         return $c < $limit;
     } catch (Exception $e) { return true; }
 }
+
+/* ---------- Premium Responsive HTML Email Template ---------- */
+function render_lead_email($data) {
+    $title      = htmlspecialchars($data['title'] ?? 'New Notification');
+    $badge      = htmlspecialchars($data['badge'] ?? 'New Lead');
+    $badgeColor = $data['badge_color'] ?? '#6E4BFF';
+    $name       = htmlspecialchars($data['name'] ?? 'Anonymous');
+    $company    = htmlspecialchars($data['company'] ?? '');
+    $email      = htmlspecialchars($data['email'] ?? '');
+    $phone      = htmlspecialchars($data['phone'] ?? '');
+    $items      = $data['items'] ?? [];
+    $message    = $data['message'] ?? '';
+    $ctaUrl     = htmlspecialchars($data['cta_url'] ?? '');
+    $ctaText    = htmlspecialchars($data['cta_text'] ?? 'Open in Admin Dashboard');
+    $meta       = $data['meta'] ?? [];
+    $date       = date('d M Y, h:i A') . ' PKT';
+
+    $itemsHtml = '';
+    foreach ($items as $label => $val) {
+        if ($val === '' || $val === null) continue;
+        $labelEsc = htmlspecialchars($label);
+        $valEsc   = nl2br(htmlspecialchars($val));
+        $itemsHtml .= '
+        <tr>
+          <td style="padding:10px 14px;font-size:12px;color:#8B8AA5;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:34%;vertical-align:top;border-bottom:1px solid #1E1D36;">' . $labelEsc . '</td>
+          <td style="padding:10px 14px;font-size:14px;color:#F0EEFF;font-weight:500;vertical-align:top;border-bottom:1px solid #1E1D36;">' . $valEsc . '</td>
+        </tr>';
+    }
+
+    $messageBlock = '';
+    if (!empty($message)) {
+        $messageBlock = '
+        <div style="margin-top:20px;padding:16px 18px;background:#15142E;border-left:4px solid #6E4BFF;border-radius:8px;">
+          <div style="font-size:11px;font-weight:700;color:#9E99D4;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Requirement / Message:</div>
+          <div style="font-size:14px;line-height:1.6;color:#FFFFFF;white-space:pre-wrap;">' . nl2br(htmlspecialchars($message)) . '</div>
+        </div>';
+    }
+
+    $ctaBlock = '';
+    if ($ctaUrl !== '') {
+        $ctaBlock = '
+        <div style="text-align:center;margin-top:26px;margin-bottom:8px;">
+          <a href="' . $ctaUrl . '" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#6E4BFF 0%,#8A6BFF 100%);color:#FFFFFF;text-decoration:none;font-weight:600;font-size:14px;padding:12px 28px;border-radius:8px;box-shadow:0 4px 14px rgba(110,75,255,0.4);">
+            ' . $ctaText . ' &rarr;
+          </a>
+        </div>';
+    }
+
+    $metaHtml = '';
+    if (!empty($meta)) {
+        $metaPieces = [];
+        foreach ($meta as $k => $v) {
+            if ($v) $metaPieces[] = htmlspecialchars($k . ': ' . $v);
+        }
+        $metaHtml = implode(' &nbsp;•&nbsp; ', $metaPieces);
+    }
+
+    return '<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>' . $title . '</title>
+</head>
+<body style="margin:0;padding:0;background-color:#070617;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;color:#F0EEFF;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#070617;padding:32px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#100F26;border:1px solid #23223D;border-radius:14px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.5);">
+          
+          <!-- Top Accent Bar -->
+          <tr>
+            <td height="4" style="background:linear-gradient(90deg,#6E4BFF 0%,#1FD3F0 50%,#6E4BFF 100%);"></td>
+          </tr>
+
+          <!-- Header -->
+          <tr>
+            <td style="padding:24px 28px 18px 28px;border-bottom:1px solid #1C1B33;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <span style="font-size:22px;font-weight:800;color:#FFFFFF;letter-spacing:-0.5px;">Soft<span style="color:#1FD3F0;">Nexa</span></span>
+                    <span style="display:inline-block;margin-left:8px;font-size:11px;color:#8B8AA5;font-weight:500;">Lead Notification</span>
+                  </td>
+                  <td align="right">
+                    <span style="display:inline-block;padding:5px 12px;background:' . $badgeColor . ';color:#FFFFFF;font-size:11px;font-weight:700;border-radius:20px;text-transform:uppercase;letter-spacing:0.6px;">
+                      ' . $badge . '
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Hero Name Block -->
+          <tr>
+            <td style="padding:22px 28px 12px 28px;">
+              <h1 style="margin:0;font-size:22px;font-weight:700;color:#FFFFFF;line-height:1.3;">' . $name . ($company ? ' <span style="font-size:16px;font-weight:400;color:#9E99D4;">(' . $company . ')</span>' : '') . '</h1>
+              <div style="margin-top:8px;font-size:13px;color:#8B8AA5;">
+                ' . ($email ? '<a href="mailto:' . $email . '" style="color:#1FD3F0;text-decoration:none;margin-right:14px;font-weight:500;">✉ ' . $email . '</a>' : '') . '
+                ' . ($phone ? '<a href="tel:' . $phone . '" style="color:#A799FF;text-decoration:none;font-weight:500;">📞 ' . $phone . '</a>' : '') . '
+              </div>
+            </td>
+          </tr>
+
+          <!-- Details Table -->
+          <tr>
+            <td style="padding:8px 28px 22px 28px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:8px;background:#0C0B1E;border-radius:8px;overflow:hidden;border:1px solid #232238;">
+                ' . $itemsHtml . '
+              </table>
+              ' . $messageBlock . '
+              ' . $ctaBlock . '
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:18px 28px;background:#090818;border-top:1px solid #1C1B33;text-align:center;">
+              <div style="font-size:12px;color:#787694;margin-bottom:6px;">
+                ' . $metaHtml . '
+              </div>
+              <div style="font-size:11px;color:#5A5872;">
+                Sent automatically by <strong>SoftNexa Lead Engine</strong> • ' . $date . '
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>';
+}
+
+function send_html_email($to, $subject, $htmlBody, $replyTo = '') {
+    $from = defined('MAIL_FROM') ? MAIL_FROM : 'marketing@softnexasolution.com';
+    $headers  = "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $headers .= "From: SoftNexa <$from>\r\n";
+    if ($replyTo) {
+        $headers .= "Reply-To: $replyTo\r\n";
+    }
+    $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+    return @mail($to, $subject, $htmlBody, $headers);
+}

@@ -62,15 +62,45 @@ try {
     json_out(['ok' => false, 'error' => 'db'], 500);
 }
 
-/* email notification — hot leads get flagged in the subject */
+/* email notification — formatted as premium responsive HTML */
 $to   = setting('notify_email', NOTIFY_EMAIL);
-$flag = $score >= 70 ? '[HOT ' . $score . '] ' : '[' . $score . '] ';
-$subj = $flag . 'New lead: ' . $name . ($row['company'] ? ' · ' . $row['company'] : '');
-$body = "New lead on " . SITE_NAME . "\n\n";
-foreach ($row as $k => $v) { if ($v !== '' && !in_array($k, ['user_agent','ip'])) $body .= str_pad($k, 12) . ": $v\n"; }
-$body .= "\nOpen the dashboard: https://" . ($_SERVER['HTTP_HOST'] ?? 'softnexasolution.com') . "/admin/leads.php?id=$id\n";
-$from = defined('MAIL_FROM') ? MAIL_FROM : 'marketing@softnexasolution.com';
-$headers = "From: SoftNexa <$from>\r\nReply-To: $email\r\nX-Mailer: PHP/" . phpversion();
-@mail($to, $subj, $body, $headers);
+$isHot = $score >= 70;
+$flag = $isHot ? '[HOT ' . $score . '] ' : '[' . $score . '] ';
+$subj = $flag . 'New Lead: ' . $name . ($row['company'] ? ' · ' . $row['company'] : '');
+
+$items = [
+    'Service / Interest' => $row['service'],
+    'Industry'           => $row['industry'],
+    'Team Size'          => $row['team'],
+    'Urgency'            => $row['urgency'],
+    'Current Tools'      => $row['tools'],
+    'Modules'            => $row['modules'],
+    'Estimated Scope'    => $row['estimate'],
+    'Timeline'           => $row['timeline'],
+    'Lead Score'         => $score . ' / 100 ' . ($isHot ? '🔥 (High Intent)' : '⚡'),
+    'Source'             => $row['source'],
+];
+
+$host = $_SERVER['HTTP_HOST'] ?? 'softnexasolution.com';
+$html = render_lead_email([
+    'title'       => $subj,
+    'badge'       => $isHot ? ('🔥 HOT LEAD (' . $score . ')') : ('NEW LEAD (' . $score . ')'),
+    'badge_color' => $isHot ? '#EF4444' : '#6E4BFF',
+    'name'        => $name,
+    'company'     => $row['company'],
+    'email'       => $email,
+    'phone'       => $row['phone'],
+    'items'       => $items,
+    'message'     => $row['message'],
+    'cta_url'     => 'https://' . $host . '/admin/leads.php?id=' . $id,
+    'cta_text'    => 'View Lead #' . $id . ' in Dashboard',
+    'meta'        => [
+        'Country' => $row['country'],
+        'Device'  => $row['device'],
+        'Ref'     => $row['referrer']
+    ]
+]);
+
+send_html_email($to, $subj, $html, $email);
 
 json_out(['ok' => true, 'id' => (int)$id, 'score' => $score]);

@@ -81,15 +81,45 @@ try {
 }
 
 $to   = setting('notify_email', NOTIFY_EMAIL);
-$flag = $score >= 70 ? '[HOT ' . $score . '] ' : '[' . $score . '] ';
-$subj = $flag . 'Client brief: ' . ($row['project_type'] ?: 'project') . ' — ' . $name;
-$body = "New client brief on " . SITE_NAME . "\n\n";
-foreach ($row as $k => $v) {
-    if ($v !== '' && !in_array($k, ['user_agent', 'ip'])) $body .= str_pad($k, 14) . ": $v\n";
-}
-$body .= "\nOpen it: https://" . ($_SERVER['HTTP_HOST'] ?? 'softnexasolution.com') . "/admin/briefs.php?id=$id\n";
-$from = defined('MAIL_FROM') ? MAIL_FROM : 'marketing@softnexasolution.com';
-$headers = "From: SoftNexa <$from>\r\n" . ($email ? "Reply-To: $email\r\n" : "") . "X-Mailer: PHP/" . phpversion();
-@mail($to, $subj, $body, $headers);
+$isHot = $score >= 70;
+$flag = $isHot ? '[HOT ' . $score . '] ' : '[' . $score . '] ';
+$subj = $flag . 'Client Brief: ' . ($row['project_type'] ?: 'Project') . ' — ' . $name;
+
+$items = [
+    'Project Type' => $row['project_type'],
+    'Budget'       => $row['budget'],
+    'Timeline'     => $row['timeline'],
+    'City/Region'  => $row['city'] . ($row['region'] ? ' (' . $row['region'] . ')' : ''),
+    'Team Size'    => $row['team'],
+    'Current Site' => $row['current_site'],
+    'Key Features' => $row['features'],
+    'Integrations' => $row['integrations'],
+    'Style/Design' => $row['style'],
+    'Brief Score'  => $score . ' / 100 ' . ($isHot ? '🔥' : '⚡'),
+];
+
+$host = $_SERVER['HTTP_HOST'] ?? 'softnexasolution.com';
+$combinedMsg = trim(($row['goal'] ? "Primary Goal:\n" . $row['goal'] : '') . ($row['notes'] ? "\n\nAdditional Notes:\n" . $row['notes'] : ''));
+
+$html = render_lead_email([
+    'title'       => $subj,
+    'badge'       => $isHot ? ('🔥 HOT BRIEF (' . $score . ')') : '⚡ CLIENT BRIEF',
+    'badge_color' => '#10B981', // green emerald badge for detailed briefs
+    'name'        => $name,
+    'company'     => $row['company'],
+    'email'       => $email,
+    'phone'       => $row['phone'],
+    'items'       => $items,
+    'message'     => $combinedMsg,
+    'cta_url'     => 'https://' . $host . '/admin/briefs.php?id=' . $id,
+    'cta_text'    => 'Review Brief #' . $id . ' in Dashboard',
+    'meta'        => [
+        'Country' => $row['country'],
+        'Device'  => $row['device'],
+        'Ref'     => $row['referrer']
+    ]
+]);
+
+send_html_email($to, $subj, $html, $email);
 
 json_out(['ok' => true, 'id' => (int)$id, 'score' => $score]);
