@@ -35,12 +35,21 @@ function db() {
             static $checked = false;
             if (!$checked) {
                 $checked = true;
-                $res = $pdo->query("SHOW TABLES LIKE 'briefs'");
-                if (!$res || $res->rowCount() === 0) {
+                $res = $pdo->query("SHOW TABLES LIKE 'admins'");
+                $hasAdmins = $res && $res->rowCount() > 0;
+                $resBriefs = $pdo->query("SHOW TABLES LIKE 'briefs'");
+                $hasBriefs = $resBriefs && $resBriefs->rowCount() > 0;
+                if (!$hasAdmins || !$hasBriefs) {
                     $sqlFile = __DIR__ . '/db.sql';
                     if (file_exists($sqlFile)) {
-                        $sql = file_get_contents($sqlFile);
-                        $pdo->exec($sql);
+                        $rawSql = file_get_contents($sqlFile);
+                        $queries = preg_split('/;\s*[\r\n]+/', $rawSql);
+                        foreach ($queries as $q) {
+                            $q = trim($q);
+                            if ($q !== '') {
+                                try { $pdo->exec($q); } catch (Exception $ex) {}
+                            }
+                        }
                     }
                 }
             }
