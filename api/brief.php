@@ -87,7 +87,9 @@ $body = "New client brief on " . SITE_NAME . "\n\n";
 foreach ($row as $k => $v) {
     if ($v !== '' && !in_array($k, ['user_agent', 'ip'])) $body .= str_pad($k, 14) . ": $v\n";
 }
-$body .= "\nOpen it: https://" . ($_SERVER['HTTP_HOST'] ?? '') . "/admin/briefs.php?id=$id\n";
-@mail($to, $subj, $body, 'From: no-reply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ($email ? "\r\nReply-To: $email" : ''));
+$body .= "\nOpen it: https://" . ($_SERVER['HTTP_HOST'] ?? 'softnexasolution.com') . "/admin/briefs.php?id=$id\n";
+$from = defined('MAIL_FROM') ? MAIL_FROM : 'marketing@softnexasolution.com';
+$headers = "From: SoftNexa <$from>\r\n" . ($email ? "Reply-To: $email\r\n" : "") . "X-Mailer: PHP/" . phpversion();
+@mail($to, $subj, $body, $headers);
 
 json_out(['ok' => true, 'id' => (int)$id, 'score' => $score]);

@@ -68,7 +68,9 @@ $flag = $score >= 70 ? '[HOT ' . $score . '] ' : '[' . $score . '] ';
 $subj = $flag . 'New lead: ' . $name . ($row['company'] ? ' · ' . $row['company'] : '');
 $body = "New lead on " . SITE_NAME . "\n\n";
 foreach ($row as $k => $v) { if ($v !== '' && !in_array($k, ['user_agent','ip'])) $body .= str_pad($k, 12) . ": $v\n"; }
-$body .= "\nOpen the dashboard: https://" . ($_SERVER['HTTP_HOST'] ?? '') . "/admin/leads.php?id=$id\n";
-@mail($to, $subj, $body, 'From: no-reply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . "\r\nReply-To: $email");
+$body .= "\nOpen the dashboard: https://" . ($_SERVER['HTTP_HOST'] ?? 'softnexasolution.com') . "/admin/leads.php?id=$id\n";
+$from = defined('MAIL_FROM') ? MAIL_FROM : 'marketing@softnexasolution.com';
+$headers = "From: SoftNexa <$from>\r\nReply-To: $email\r\nX-Mailer: PHP/" . phpversion();
+@mail($to, $subj, $body, $headers);
 
 json_out(['ok' => true, 'id' => (int)$id, 'score' => $score]);

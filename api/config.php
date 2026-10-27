@@ -10,6 +10,7 @@ define('DB_USER', 'u142683284_admin');
 define('DB_PASS', '@Softnexa123');
 
 define('NOTIFY_EMAIL', 'info@softnexasolution.com');   // where new leads are emailed
+define('MAIL_FROM',    'marketing@softnexasolution.com');
 define('SITE_NAME',    'SoftNexa');
 define('ADMIN_TITLE',  'SoftNexa Control');
 
@@ -121,7 +122,11 @@ function setting($key, $default = null) {
             foreach (db()->query('SELECT k, v FROM settings') as $r) $cache[$r['k']] = $r['v'];
         } catch (Exception $e) { $cache = []; }
     }
-    return array_key_exists($key, $cache) ? $cache[$key] : $default;
+    $val = array_key_exists($key, $cache) ? $cache[$key] : $default;
+    if ($key === 'notify_email' && (empty($val) || strpos($val, 'softnexa.solutions') !== false)) {
+        $val = NOTIFY_EMAIL;
+    }
+    return $val;
 }
 function set_setting($key, $val) {
     $st = db()->prepare('INSERT INTO settings (k, v) VALUES (?, ?) ON DUPLICATE KEY UPDATE v = VALUES(v)');
