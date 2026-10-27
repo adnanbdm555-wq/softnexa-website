@@ -6838,6 +6838,117 @@ var PAGE_SEO = {
   }
 };
 
+var SERVICES_SEO = {
+  'web-apps': {
+    title: 'Web Apps & SaaS Development Services · SoftNexa',
+    desc: 'Custom web applications, cloud SaaS platforms, and internal tools built for scale. Fast loading, role-based access, and 14-day free trial on your data.',
+    kw: 'web app development, custom SaaS development, cloud software engineering, client portal development, business web applications'
+  },
+  'mobile-apps': {
+    title: 'Custom Mobile App Development (iOS & Android) · SoftNexa',
+    desc: 'Cross-platform iOS and Android mobile app development with Flutter & React Native. Offline-first sync, push notifications, and hardware integrations.',
+    kw: 'mobile app development company, Flutter app development, iOS Android apps, business mobile applications, cross-platform app developers'
+  },
+  'custom-software': {
+    title: 'Custom Business Software & ERP Development · SoftNexa',
+    desc: 'End-to-end bespoke ERP, inventory management, MES, and operational workflows built to replace rigid spreadsheets with scalable multi-branch systems.',
+    kw: 'custom business software, bespoke ERP development, enterprise software engineering, inventory ERP, workflow automation software'
+  },
+  'ecommerce': {
+    title: 'Enterprise E-Commerce Platforms & Portals · SoftNexa',
+    desc: 'High-conversion B2B and B2C e-commerce stores, custom checkout flows, payment gateways, and real-time inventory sync built for high transaction volume.',
+    kw: 'ecommerce platform development, custom B2B ecommerce, online store development, marketplace development, payment gateway integration'
+  },
+  'ai-automation': {
+    title: 'AI & Workflow Automation Engineering · SoftNexa',
+    desc: 'Autonomous AI agents, document parsing, automated lead qualification, and intelligent pipelines that cut repetitive administrative overhead by 80%.',
+    kw: 'AI automation agency, enterprise AI workflows, LLM agents development, business process automation, document OCR automation'
+  },
+  'data-dashboards': {
+    title: 'Executive Data Dashboards & Real-Time KPIs · SoftNexa',
+    desc: 'Live operational KPI dashboards, business intelligence reporting, and executive metrics connecting multiple branch databases into one unified screen.',
+    kw: 'executive dashboard development, business intelligence dashboards, real time KPI reporting, data visualization platforms'
+  },
+  'product-design': {
+    title: 'UI/UX Product Design & Figma Prototyping · SoftNexa',
+    desc: 'Design systems, interactive Figma prototypes, and conversion-focused user interfaces engineered for complex workflows and high-retention software.',
+    kw: 'UI UX design agency, product design company, Figma prototype design, enterprise UX design, software interface design'
+  },
+  'marketing-ai': {
+    title: 'AI Marketing Systems & Content Automation · SoftNexa',
+    desc: 'Automated campaign engines, dynamic customer segmentation, and AI-driven personalized outreach systems built for lead generation at scale.',
+    kw: 'marketing automation systems, AI content engines, automated lead outreach, customer segmentation software'
+  },
+  'cloud-support': {
+    title: 'Cloud Infrastructure, DevOps & 24/7 Support · SoftNexa',
+    desc: 'AWS and Google Cloud architectures, Docker containerization, automated CI/CD pipelines, zero-downtime deployments, and 24/7 server monitoring.',
+    kw: 'cloud infrastructure DevOps, AWS cloud consulting, Docker deployment, CI CD pipeline engineering, server support maintenance'
+  }
+};
+
+var INDUSTRIES_SEO = {
+  'manufacturing': {
+    title: 'Manufacturing & Factory MES ERP Demo · SoftNexa',
+    desc: 'Test drive ShopFloor MES: real-time production tracking, machine health monitoring, work order costing, and automated shop floor dispatching.',
+    kw: 'manufacturing ERP software, MES system, factory production tracking, shop floor software, machine maintenance ERP'
+  },
+  'retail-and-distribution': {
+    title: 'Retail, Distribution & Multi-Branch POS Demo · SoftNexa',
+    desc: 'Test drive StockPulse: multi-warehouse stock replenishment, dealer order portals, live branch POS sync, and batch expiration tracking.',
+    kw: 'retail distribution software, multi branch POS, wholesale inventory ERP, dealer ordering portal, stock management'
+  },
+  'logistics-and-transport': {
+    title: 'Logistics, Fleet Dispatch & e-POD System · SoftNexa',
+    desc: 'Test drive RouteDesk: real-time fleet dispatch, driver trip tracking, electronic proof of delivery (e-POD), and fuel expense accounting.',
+    kw: 'logistics management software, fleet tracking system, transport ERP, electronic proof of delivery, dispatch board software'
+  },
+  'healthcare': {
+    title: 'Hospital, Clinic & OPD Management System · SoftNexa',
+    desc: 'Test drive CarePoint: OPD patient queues, electronic medical records (EMR), doctor scheduling, pharmacy inventory, and diagnostic billing.',
+    kw: 'hospital management software, clinic EMR system, OPD queue management, healthcare ERP, medical billing software'
+  },
+  'education': {
+    title: 'School, College & University Campus ERP · SoftNexa',
+    desc: 'Test drive CampusOne: student admissions, fee voucher automation, examination grading, attendance tracking, and parent mobile portals.',
+    kw: 'school management software, university campus ERP, student fee automation, college portal, education management system'
+  },
+  'construction-and-real-estate': {
+    title: 'Construction & Real Estate Project ERP · SoftNexa',
+    desc: 'Test drive SiteLedger: project milestone billing, subcontractor payment certificates, material procurement, and site budget variance tracking.',
+    kw: 'construction ERP software, real estate project management, contractor billing software, site milestone tracking'
+  },
+  'financial-services': {
+    title: 'Fintech, Loan Management & KYC Platform · SoftNexa',
+    desc: 'Test drive LoanTrack: digital loan origination, automated KYC compliance, EMI amortization schedules, and multi-currency ledger reconciliation.',
+    kw: 'loan management software, fintech platform, digital KYC verification, microfinance ERP, lending software'
+  },
+  'consumer-brands': {
+    title: 'D2C Consumer Brands & Multi-Channel Portal · SoftNexa',
+    desc: 'Test drive BrandDesk: unified marketplace orders, return and exchange automation, influencer tracking, and customer loyalty retention engines.',
+    kw: 'D2C brand software, multichannel order management, return exchange portal, brand retail ERP'
+  },
+  'restaurants-and-f-and-b': {
+    title: 'Restaurant, Cloud Kitchen & KDS Software · SoftNexa',
+    desc: 'Test drive KitchenFlow: live kitchen display system (KDS), table ordering, recipe costing, raw ingredient inventory, and food aggregator sync.',
+    kw: 'restaurant management software, kitchen display system, cloud kitchen POS, recipe costing inventory, food delivery sync'
+  },
+  'hospitality': {
+    title: 'Hotel, Resort & Property Management System · SoftNexa',
+    desc: 'Test drive StayDesk: visual room reservation calendar, front-desk check-in, guest folios, housekeeping schedules, and OTA booking engine sync.',
+    kw: 'hotel management software, property management system PMS, resort booking engine, front desk software'
+  },
+  'agriculture': {
+    title: 'Agri-Tech, Crop Procurement & Traceability · SoftNexa',
+    desc: 'Test drive FieldTrace: grower crop procurement, quality grading, batch farm-to-shelf traceability, and farmer payment disbursements.',
+    kw: 'agritech software, crop procurement ERP, farm traceability, agriculture commodity trading software'
+  },
+  'agencies-and-media': {
+    title: 'Digital Agency & Media Production Workflow · SoftNexa',
+    desc: 'Test drive CampaignHub: creative asset approval boards, client sign-off portals, freelance team time tracking, and project profitability reporting.',
+    kw: 'creative agency software, client approval portal, media production workflow, agency project management'
+  }
+};
+
 function updatePageSEO(r) {
   var data = PAGE_SEO[r.page] || {};
   var title = data.title;
@@ -6845,18 +6956,32 @@ function updatePageSEO(r) {
   var kw = data.kw;
 
   if (r.page === 'service') {
-    var s = svcBy(r.slug);
-    if (s) {
-      title = s.nav + ' Development & Engineering · ' + BRAND;
-      desc = (s.hero ? s.hero.slice(0, 145) : ('Custom ' + s.nav + ' engineering by SoftNexa. Fast, scalable, and built for high-growth businesses.')) + '.';
-      kw = s.nav.toLowerCase() + ', custom ' + s.nav.toLowerCase() + ', enterprise software development, SoftNexa';
+    var sData = SERVICES_SEO[r.slug];
+    if (sData) {
+      title = sData.title;
+      desc = sData.desc;
+      kw = sData.kw;
+    } else {
+      var s = svcBy(r.slug);
+      if (s) {
+        title = s.nav + ' Development & Engineering · ' + BRAND;
+        desc = (s.hero ? s.hero.slice(0, 145) : ('Custom ' + s.nav + ' engineering by SoftNexa. Fast, scalable, and built for high-growth businesses.')) + '.';
+        kw = s.nav.toLowerCase() + ', custom ' + s.nav.toLowerCase() + ', enterprise software development, SoftNexa';
+      }
     }
   } else if (r.page === 'demo') {
-    var d = sdBy(r.slug) || demoBy(r.slug);
-    if (d) {
-      title = d.app + ' Live Interactive Demo · ' + BRAND;
-      desc = 'Test drive the ' + d.app + ' demo. Live operational workflows and architecture built by SoftNexa for modern companies.';
-      kw = d.app.toLowerCase() + ' demo, interactive prototype, SoftNexa demo';
+    var iData = INDUSTRIES_SEO[r.slug];
+    if (iData) {
+      title = iData.title;
+      desc = iData.desc;
+      kw = iData.kw;
+    } else {
+      var d = sdBy(r.slug) || demoBy(r.slug);
+      if (d) {
+        title = d.app + ' Live Interactive Demo · ' + BRAND;
+        desc = 'Test drive the ' + d.app + ' demo. Live operational workflows and architecture built by SoftNexa for modern companies.';
+        kw = d.app.toLowerCase() + ' demo, interactive prototype, SoftNexa demo';
+      }
     }
   }
 
