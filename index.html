@@ -2345,7 +2345,7 @@ table.sdt .mu{color:var(--muted)}
         </div>
         <div class="sx-head-info">
           <div class="sx-head-title">
-            <strong>Sofia</strong>
+            <strong>SoftNexa Assistant</strong>
             <span class="sx-verified-badge" title="Verified AI Architect">✓</span>
           </div>
           <span class="sx-head-sub">Senior AI Solutions Architect · SoftNexa</span>
@@ -2373,14 +2373,14 @@ table.sdt .mu{color:var(--muted)}
 
     <!-- Message Stream -->
     <div class="sx-chat-body" id="sx-chat-stream">
-      <!-- Sofia Greeting -->
+      <!-- Assistant Greeting -->
       <div class="sx-msg sx-msg-bot">
         <div class="sx-msg-av">⚡</div>
         <div class="sx-msg-bubble">
-          <p><strong>Hello and welcome to SoftNexa!</strong> I'm Sofia, Senior AI Solutions Consultant.</p>
+          <p><strong>Hello and welcome to SoftNexa!</strong> I am your AI Solutions Consultant.</p>
           <p>We build custom business software, enterprise ERPs, high-scale web/mobile apps, and AI automations—all with a <strong>100% Fixed-Price Guarantee</strong>.</p>
           <p>Tell me about your business workflow or project idea. You can talk to me in <strong>English, Roman Urdu, or اردو</strong>!</p>
-          <span class="sx-msg-time">Just now · Sofia</span>
+          <span class="sx-msg-time">Just now · Assistant</span>
         </div>
       </div>
     </div>
@@ -2413,7 +2413,7 @@ table.sdt .mu{color:var(--muted)}
     <!-- Input Footer -->
     <div class="sx-chat-foot">
       <form id="sx-chat-form" class="sx-chat-form">
-        <textarea id="sx-chat-input" class="sx-chat-input" rows="1" placeholder="Ask Sofia anything in any language..."></textarea>
+        <textarea id="sx-chat-input" class="sx-chat-input" rows="1" placeholder="Ask anything in English or Roman Urdu..."></textarea>
         <button type="button" id="sx-req-blueprint-btn" class="sx-blueprint-btn" title="Request Scope Blueprint">📋 Quote</button>
         <button type="submit" id="sx-chat-send" class="sx-send-btn" aria-label="Send message">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -7838,7 +7838,7 @@ if(matchMedia('(pointer:fine)').matches && !reduce){
       '<div class="sx-msg-av">' + (isBot ? '⚡' : '👤') + '</div>' +
       '<div class="sx-msg-bubble">' +
         formatText(text) +
-        '<span class="sx-msg-time">' + timeStr + ' · ' + (isBot ? 'Sofia' : 'You') + '</span>' +
+        '<span class="sx-msg-time">' + timeStr + ' · ' + (isBot ? 'Assistant' : 'You') + '</span>' +
       '</div>';
     stream.appendChild(wrap);
     scrollToBottom();
@@ -7851,9 +7851,9 @@ if(matchMedia('(pointer:fine)').matches && !reduce){
     if(l === 'ur'){
       input.placeholder = 'صوفیہ سے کچھ بھی پوچھیں (اردو میں)...';
     } else if(l === 'ro'){
-      input.placeholder = 'Sofia se Roman Urdu mai rabta karein...';
+      input.placeholder = 'Roman Urdu ya English me sawal poochein...';
     } else {
-      input.placeholder = 'Ask Sofia anything in any language...';
+      input.placeholder = 'Ask anything in English or Roman Urdu...';
     }
   }
 
@@ -7968,7 +7968,7 @@ if(matchMedia('(pointer:fine)').matches && !reduce){
     leadSubmit.disabled = true;
     leadSubmit.textContent = 'Submitting...';
 
-    var chatLog = history.map(function(m){ return (m.role==='user'?'Client: ':'Sofia: ')+m.content; }).join("\n");
+    var chatLog = history.map(function(m){ return (m.role==='user'?'Client: ':'Assistant: ')+m.content; }).join("\n");
     fetch('api/contact.php', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},

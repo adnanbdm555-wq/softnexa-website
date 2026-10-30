@@ -1,9 +1,9 @@
 <?php
 /* ============================================================
-   SoftNexa — Multilingual AI Sales & Solutions Agent Backend
-   Handles natural customer discussions in English, Roman Urdu,
-   Urdu, Arabic, etc. Qualifies leads, provides pricing/timelines,
-   and captures client contact info for instant email alerts.
+   SoftNexa — Multilingual AI Sales & Solutions Consultant Backend
+   Handles natural, human-like customer discussions in English,
+   Roman Urdu, Urdu, Arabic, etc. Qualifies leads, provides
+   transparent pricing/timelines, and captures client contact info.
    ============================================================ */
 
 require __DIR__ . '/config.php';
@@ -15,7 +15,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') { http_response_code(204);
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') json_out(['ok' => false, 'error' => 'method'], 405);
 
 if (!rate_ok('chat', 60, 3600)) {
-    json_out(['ok' => false, 'reply' => "You've sent quite a few messages! Please take a quick moment, or feel free to WhatsApp us directly at +92 300 0000000 / email info@softnexasolution.com."]);
+    json_out(['ok' => false, 'reply' => "You've sent quite a few messages! Please take a quick moment, or feel free to WhatsApp us directly or email info@softnexasolution.com."]);
 }
 
 $input = json_input();
@@ -51,7 +51,7 @@ function detect_language($text, $pref = '') {
     if ($pref === 'ur' || preg_match('/[\x{0600}-\x{06FF}]/u', $text)) {
         return 'ur';
     }
-    if ($pref === 'ro' || preg_match('/\b(kya|hai|hain|karo|karein|mujhe|chahiye|ap|aap|ka|ki|ke|kitna|kharcha|banwana|rabta|shukriya|bhai|salaam|assalam|walaikum|keise|kaisi|ho|acha|theek|batao|bataen)\b/i', $text)) {
+    if ($pref === 'ro' || preg_match('/\b(kya|hai|hain|karo|karein|mujhe|chahiye|ap|aap|ka|ki|ke|kitna|kharcha|banwana|rabta|shukriya|bhai|salaam|assalam|walaikum|keise|kaisi|kese|kaise|ho|acha|theek|batao|bataen|krte|karna|bhi|nahi|nhe)\b/i', $text)) {
         return 'ro';
     }
     if ($pref === 'ar' || preg_match('/\b(مرحبا|اريد|تكلفة|نظام|تطبيق|شركة|شكرا)\b/u', $text)) {
@@ -70,10 +70,12 @@ $aiReply = '';
 $llmSucceeded = false;
 
 // SoftNexa System Persona
-$systemPrompt = "You are Sofia, the Senior AI Solutions Architect & Lead Consultant at SoftNexa (softnexasolution.com).
+$systemPrompt = "You are SoftNexa Assistant, the Senior Solutions Consultant at SoftNexa (softnexasolution.com).
+IMPORTANT: Do NOT refer to yourself as Sofia or any personal human female/male name. You are simply 'SoftNexa Assistant' or 'Solutions Consultant'.
 SoftNexa is an engineering-first software house based in Karachi, Pakistan, serving global enterprises across USA, UK, UAE, and Pakistan.
+
 Our core offerings:
-1. Bespoke Enterprise ERP & CRM systems (Inventory, POS, Accounting, Multi-warehouse, HR).
+1. Bespoke Enterprise ERP & CRM systems (Inventory, POS, Accounting, Multi-warehouse, HR, Manufacturing, Healthcare).
 2. Scalable Web Apps & SaaS Platforms (React, Next.js, Node.js, Python, PostgreSQL, AWS).
 3. Native & Cross-Platform Mobile Apps (Flutter, iOS, Android).
 4. Autonomous AI Automations & WhatsApp AI Agents (document processing, OCR, customer support bots).
@@ -85,10 +87,12 @@ Pricing & Delivery Model:
 - We offer a free 48-hour tailored scope blueprint and prototype demo.
 
 Tone & Behavior:
-- Talk like an empathetic, highly skilled technical consultant.
-- Speak naturally in the SAME language the user addresses you in (Urdu script, Roman Urdu, English, Arabic, etc.).
-- If Roman Urdu is used, reply in warm, professional Roman Urdu.
-- Empathize with their problem first, explain how SoftNexa solves it, suggest the ideal architecture, and actively steer towards closing the deal by asking for their Name, WhatsApp number, or Email so the engineering team can deliver a free 48-hour blueprint.
+- Talk like an empathetic, highly skilled technical consultant dealing directly with a customer.
+- Always match the EXACT language and dialect the customer speaks in:
+  - If Roman Urdu: Reply in warm, natural, fluent Roman Urdu.
+  - If Urdu script: Reply in courteous, formal Urdu.
+  - If English: Reply in clear, professional, engineering-led English.
+- Empathize with their problem first, explain how SoftNexa solves it with custom code, suggest the ideal architecture, and actively steer towards closing the deal by asking for their Name, WhatsApp number, or Email so our engineering leads can deliver a free 48-hour blueprint.
 - Keep responses concise (under 120 words), well-spaced, and easy to read.";
 
 if ($geminiKey) {
@@ -96,7 +100,7 @@ if ($geminiKey) {
         $ch = curl_init('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . urlencode($geminiKey));
         $contents = [];
         $contents[] = ['role' => 'user', 'parts' => [['text' => $systemPrompt]]];
-        $contents[] = ['role' => 'model', 'parts' => [['text' => "Understood. I am Sofia from SoftNexa, ready to consult clients and qualify leads in any language with technical excellence and high conversion."]]];
+        $contents[] = ['role' => 'model', 'parts' => [['text' => "Understood. I am the SoftNexa Assistant, ready to consult clients and qualify leads in any language with technical excellence and high conversion."]]];
         foreach (array_slice($history, -6) as $h) {
             $r = ($h['role'] === 'user') ? 'user' : 'model';
             $contents[] = ['role' => $r, 'parts' => [['text' => (string)$h['content']]]];
@@ -148,37 +152,37 @@ if (!$llmSucceeded || empty($aiReply)) {
     $msgLower = mb_strtolower($message);
     
     // Quick intent checks
-    $isGreeting = preg_match('/\b(hi|hello|hey|assalam|salam|aoa|kese ho|kaise ho|keise|kaisa|good morning|good evening)\b/i', $msgLower);
+    $isGreeting = preg_match('/\b(hi|hello|hey|assalam|salam|aoa|kese ho|kaise ho|keise|kaisa|kese hain|kaise hain|hal hai|haal hai|good morning|good evening)\b/i', $msgLower);
     $isPrice = preg_match('/\b(price|cost|charges|rate|kharcha|kitna|pese|paise|fees|budget|quote|estimate)\b/i', $msgLower);
-    $isTimeline = preg_match('/\b(time|timeline|duration|kab tak|kitne din|weeks|months|deliver|fast)\b/i', $msgLower);
-    $isERP = preg_match('/\b(erp|pos|inventory|crm|warehouse|stock|accounting|billing|invoicing|hms|hospital|school)\b/i', $msgLower);
-    $isApp = preg_match('/\b(app|mobile|android|ios|flutter|playstore|play store|app store)\b/i', $msgLower);
-    $isWeb = preg_match('/\b(web|website|saas|portal|software|dashboard|react|nextjs)\b/i', $msgLower);
-    $isAI = preg_match('/\b(ai|agent|chatbot|bot|whatsapp bot|automation|automate|llm|ocr)\b/i', $msgLower);
-    $isLocation = preg_match('/\b(office|location|address|karachi|where|kahan|lahore|islamabad)\b/i', $msgLower);
+    $isTimeline = preg_match('/\b(time|timeline|duration|kab tak|kitne din|weeks|months|deliver|fast|kitna time)\b/i', $msgLower);
+    $isERP = preg_match('/\b(erp|pos|inventory|crm|warehouse|stock|accounting|billing|invoicing|hms|hospital|school|pharmacy|distribution|supermarket)\b/i', $msgLower);
+    $isApp = preg_match('/\b(app|mobile|android|ios|flutter|playstore|play store|app store|react native)\b/i', $msgLower);
+    $isWeb = preg_match('/\b(web|website|saas|portal|software|dashboard|react|nextjs|ecommerce|e-commerce|store)\b/i', $msgLower);
+    $isAI = preg_match('/\b(ai|agent|chatbot|bot|whatsapp bot|automation|automate|llm|ocr|rag)\b/i', $msgLower);
+    $isLocation = preg_match('/\b(office|location|address|karachi|where|kahan|lahore|islamabad|contact|phone|call)\b/i', $msgLower);
     $isContactSubmission = ($detectedEmail !== '' || $detectedPhone !== '');
 
     if ($isContactSubmission) {
         if ($lang === 'ur') {
-            $aiReply = "بہت بہت شکریہ! آپ کی تفصیلات (" . ($detectedEmail ?: $detectedPhone) . ") ہماری سینئر انجینئرنگ ٹیم کو موصول ہو چکی ہیں۔ ہماری ٹیم 2 سے 4 گھنٹوں کے اندر آپ سے واٹس ایپ یا ای میل پر رابطہ کر کے مکمل اسکوپ اور کوٹیشن شیئر کرے گی۔";
+            $aiReply = "بہت بہت شکریہ! آپ کی رابطہ تفصیلات (" . ($detectedEmail ?: $detectedPhone) . ") ہماری سینئر انجینئرنگ ٹیم کو موصول ہو چکی ہیں۔ ہماری ٹیم 2 سے 4 گھنٹوں کے اندر آپ سے واٹس ایپ یا ای میل پر رابطہ کر کے مکمل اسکوپ اور فکسڈ کوٹیشن شیئر کرے گی۔";
         } elseif ($lang === 'ro') {
-            $aiReply = "Boht shukriya! Aap ki details (" . ($detectedEmail ?: $detectedPhone) . ") hamare senior solutions architect tak deliver ho chuki hain. Hum boht jald aap se direct WhatsApp/Email par rabta karein gay aur project ka tailored scope blueprint share karein gay! Kiya koi specific features hain jo aap pehle dekhna chahte hain?";
+            $aiReply = "Boht shukriya! Aap ki contact details (" . ($detectedEmail ?: $detectedPhone) . ") hamare senior software architect ko handover ho chuki hain. Hum boht jald aap se direct WhatsApp/Email par rabta karein gay aur project ka tailored scope blueprint share karein gay! Kya koi specific feature ya timeline hai jo aap discuss karna chahein?";
         } else {
-            $aiReply = "Thank you so much! We have received your contact details (" . ($detectedEmail ?: $detectedPhone) . "). Our lead engineering architect will reach out to you within a few hours on WhatsApp/Email with a tailored project scope and fixed-price quote.";
+            $aiReply = "Thank you so much! We have received your contact details (" . ($detectedEmail ?: $detectedPhone) . "). Our lead engineering architect will reach out to you within a few hours on WhatsApp/Email with a tailored project scope blueprint and fixed-price quote.";
         }
     } elseif ($isGreeting && count($history) <= 2) {
         if ($lang === 'ur') {
-            $aiReply = "وعلیکم السلام! میں صوفیہ ہوں، سافٹ نیکسا کی سینئر سلوشنز کنسلٹنٹ۔ ہم آپ کے کاروبار کے لیے کسٹم ای آر پی، ویب پورٹلز، موبائل ایپس اور اے آئی آٹومیشن تیار کرتے ہیں۔ آپ کس طرح کا سسٹم بنوانا چاہتے ہیں؟";
+            $aiReply = "وعلیکم السلام! میں بالکل ٹھیک ہوں، شکریہ۔ میں سافٹ نیکسا کا اے آئی سلوشنز کنسلٹنٹ ہوں۔ ہم آپ کے کاروبار کے لیے کسٹم ای آر پی، موبائل ایپس، ویب پورٹلز اور اے آئی آٹومیشن تیار کرتے ہیں۔ آپ کس طرح کا سسٹم بنوانا چاہتے ہیں؟";
         } elseif ($lang === 'ro') {
-            $aiReply = "Walaikum Assalam! Main Sofia hoon, SoftNexa ki Senior AI Solutions Consultant. Hum businesses ke liye custom enterprise ERPs, scalable web apps, mobile apps aur AI automations design aur develop karte hain. Aap apne business ke liye kis tarah ka software build karna chahte hain?";
+            $aiReply = "Walaikum Assalam! Main theek hoon, shukriya. Main SoftNexa ka Solutions Consultant hoon. Hum businesses ke liye custom enterprise ERPs, scalable web apps, mobile apps aur AI automations design aur develop karte hain. Aap apne business ke liye kis tarah ka software build karna chahte hain?";
         } else {
-            $aiReply = "Hello! I am Sofia, Senior AI Solutions Consultant at SoftNexa. We architect custom business software, enterprise ERPs, high-performance web/mobile apps, and AI automations. Tell me about the workflow or problem you'd like to solve!";
+            $aiReply = "Hello and welcome to SoftNexa! I am your AI Solutions Consultant. We architect custom business software, enterprise ERPs, high-performance web/mobile apps, and AI automations. Tell me about the workflow or problem you'd like to solve!";
         }
     } elseif ($isERP) {
         if ($lang === 'ur') {
             $aiReply = "ہم مکمل طور پر کسٹم ای آر پی اور سی آر ایم سسٹمز بناتے ہیں جن میں انوینٹری، ملٹی برانچ پی او ایس، انوائسنگ، رولز پرمیشنز اور ریئل ٹائم رپورٹس شامل ہوتی ہیں۔ یہ بالکل آپ کے کام کرنے کے طریقے کے مطابق بنایا جاتا ہے۔ آپ کی ٹیم میں کتنے لوگ اس سسٹم کو استعمال کریں گے؟";
         } elseif ($lang === 'ro') {
-            $aiReply = "SoftNexa ka custom ERP system aapki inventory, accounts, POS, warehouse aur multi-branch reporting ko ek single dashboard par le aata hai. Hamare sabhi systems 100% bespoke hotay hain. Aapke paas abhi kitne branches ya team members hain, aur kya koi purana data migrate karna hai?";
+            $aiReply = "SoftNexa ka custom ERP system aapki inventory, accounts, POS, warehouse aur multi-branch reporting ko ek single cloud dashboard par le aata hai. Hamare sabhi systems 100% bespoke hotay hain. Aapke paas abhi kitne branches ya team members hain, aur kya koi purana Excel/legacy data migrate karna hai?";
         } else {
             $aiReply = "We specialize in custom, modular ERP and CRM platforms—covering inventory, multi-branch POS, automated invoicing, role-based workflows, and live audit logs. Everything is built to match your exact operations. How many branches or active team members will be using this system?";
         }
@@ -200,9 +204,9 @@ if (!$llmSucceeded || empty($aiReply)) {
         }
     } elseif ($isPrice) {
         if ($lang === 'ur') {
-            $aiReply = "ہم فکسڈ پرائس گارنٹی پر کام کرتے ہیں، یعنی درمیان میں کوئی پوشیدہ اخراجات نہیں ہوتے۔ بنیادی ایم وی پی سسٹمز تقریباً 3,000 ڈالرز (یا مساوی پی کے آر) سے شروع ہوتے ہیں، جبکہ مکمل کسٹم انٹرپرائز ای آر پی 6,000 سے 15,000 ڈالرز کے درمیان ہوتا ہے۔ کیا میں آپ کے لیے 48 گھنٹوں کا کسٹم اسکوپ بلیو پرنٹ تیار کروں؟ اپنا واٹس ایپ نمبر یا ای میل شیئر کیجیے!";
+            $aiReply = "ہم فکسڈ پرائس گارنٹی پر کام کرتے ہیں، یعنی درمیان میں کوئی پوشیدہ اخراجات نہیں ہوتے۔ بنیادی ایم وی پی سسٹمز تقریباً 3,000 ڈالرز (یا مساوی پی کے آر) سے شروع ہوتے ہیں، جبکہ مکمل کسٹم انٹرپرائز ای آر پی 6,000 سے 15,000 ڈالرز کے درمیان ہوتا ہے۔ کیا میں آپ کے لیے 48 گھنٹوں کا کسٹم اسکوپ بلیو پرنٹ تیار کروں؟ اپنا نام اور واٹس ایپ نمبر شیئر کیجیے!";
         } elseif ($lang === 'ro') {
-            $aiReply = "Hamare sabhi projects 100% Fixed-Price Guarantee ke sath aate hain (no hidden hourly charges). Fast MVPs $3,000 / PKR equivalent se start hote hain, aur comprehensive Enterprise ERPs scope ke mutabiq $6,000 se $15,000+ ke range mein hote hain. Main aapke requirements ke mutabiq 48-hour scope blueprint draft kar sakti hoon—aapka WhatsApp number ya Email kya hai?";
+            $aiReply = "Hamare sabhi projects 100% Fixed-Price Guarantee ke sath aate hain (no hidden hourly charges). Fast MVPs $3,000 / PKR equivalent se start hote hain, aur comprehensive Enterprise ERPs scope ke mutabiq $6,000 se $15,000+ ke range mein hote hain. Main aapke requirements ke mutabiq 48-hour scope blueprint draft kar sakta hoon—aapka Name aur WhatsApp number ya Email kya hai?";
         } else {
             $aiReply = "All our engineering is delivered under a 100% Fixed-Price Guarantee with milestone-based delivery. Focused MVPs typically start at $3,000, while end-to-end Enterprise ERPs range from $6,000 to $15,000+ depending on features. May I have your WhatsApp number or Email so our team can send you a tailored 48-hour scope blueprint?";
         }
@@ -216,11 +220,11 @@ if (!$llmSucceeded || empty($aiReply)) {
         }
     } elseif ($isLocation) {
         if ($lang === 'ur') {
-            $aiReply = "سافٹ نیکسا کا مین انجینئرنگ ہاؤس کراچی، پاکستان میں واقع ہے، اور ہم امریکہ، برطانیہ، مشرق وسطیٰ اور پاکستان بھر کے کلائنٹس کو انٹرپرائز سافٹ ویئر سلوشنز فراہم کرتے ہیں۔ آپ کراچی آفس میں میٹنگ بھی شیڈول کر سکتے ہیں!";
+            $aiReply = "سافٹ نیکسا کا مین انجینئرنگ ہاؤس شاہراہِ فیصل، کراچی میں واقع ہے، اور ہم امریکہ، برطانیہ، مشرق وسطیٰ اور پاکستان بھر کے کلائنٹس کو انٹرپرائز سافٹ ویئر سلوشنز فراہم کرتے ہیں۔ آپ کراچی آفس میں میٹنگ بھی شیڈول کر سکتے ہیں!";
         } elseif ($lang === 'ro') {
-            $aiReply = "SoftNexa ka main engineering office Karachi, Pakistan mein hai. Hum locally Pakistan aur globally US, UK, UAE ke enterprise clients ko serve karte hain. Aap direct call ya Karachi office mein in-person meeting bhi schedule kar sakte hain! Aap kis city/country se baat kar rahe hain?";
+            $aiReply = "SoftNexa ka main engineering office Shahrah-e-Faisal, Karachi mein hai. Hum locally Pakistan aur globally US, UK, UAE ke enterprise clients ko serve karte hain. Aap direct call ya Karachi office mein in-person meeting bhi schedule kar sakte hain! Aap kis city/country se baat kar rahe hain?";
         } else {
-            $aiReply = "SoftNexa's primary engineering office is located in Karachi, Pakistan, serving enterprise clients globally across the US, UK, Middle East, and Pakistan. We'd be delighted to schedule a virtual discovery call or an in-person meeting at our office!";
+            $aiReply = "SoftNexa's primary engineering office is located on Shahrah-e-Faisal, Karachi, Pakistan, serving enterprise clients globally across the US, UK, Middle East, and Pakistan. We'd be delighted to schedule a virtual discovery call or an in-person meeting at our office!";
         }
     } else {
         if ($lang === 'ur') {
@@ -239,10 +243,10 @@ if ($detectedEmail !== '' || $detectedPhone !== '') {
     $leadName = $detectedName !== '' ? $detectedName : 'Chat Client (' . ($detectedEmail ?: $detectedPhone) . ')';
     $fullChatLog = "AI Chat Log:\n";
     foreach ($history as $h) {
-        $fullChatLog .= ($h['role'] === 'user' ? 'Client: ' : 'Sofia: ') . $h['content'] . "\n";
+        $fullChatLog .= ($h['role'] === 'user' ? 'Client: ' : 'Assistant: ') . $h['content'] . "\n";
     }
     $fullChatLog .= "Client: " . $message . "\n";
-    $fullChatLog .= "Sofia: " . $aiReply . "\n";
+    $fullChatLog .= "Assistant: " . $aiReply . "\n";
 
     $leadRow = [
         'name'       => $leadName,
