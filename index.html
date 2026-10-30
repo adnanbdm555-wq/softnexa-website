@@ -7772,7 +7772,6 @@ if(matchMedia('(pointer:fine)').matches && !reduce){
   var leadName = $('#sx-lead-name');
   var leadPhone = $('#sx-lead-phone');
   var leadEmail = $('#sx-lead-email');
-  var langBtns = $$('.sx-lang-btn'); // using $$ which returns an array
 
   var isOpen = false;
   var currentLang = 'en';
@@ -7988,20 +7987,7 @@ if(matchMedia('(pointer:fine)').matches && !reduce){
     });
   }
 
-  // Language buttons
-  if(Array.isArray(langBtns)){
-    langBtns.forEach(function(b){
-      b.addEventListener('click', function(){
-        var l = b.getAttribute('data-lang');
-        setLanguage(l);
-        if(l === 'ur'){
-          handleSend('السلام علیکم، میں اردو میں بات کرنا چاہتا ہوں۔');
-        } else if(l === 'ro'){
-          handleSend('Assalam o alaikum, Roman Urdu mai baat karein.');
-        }
-      });
-    });
-  }
+
 
   // Blueprint Card
   if(leadBtn){
