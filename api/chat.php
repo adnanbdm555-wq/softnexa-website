@@ -151,34 +151,82 @@ if (!$llmSucceeded && $openaiKey) {
 if (!$llmSucceeded || empty($aiReply)) {
     $msgLower = mb_strtolower($message);
     
-    // Quick intent checks
-    $isGreeting = preg_match('/\b(hi|hello|hey|assalam|salam|aoa|kese ho|kaise ho|keise|kaisa|kese hain|kaise hain|hal hai|haal hai|good morning|good evening)\b/i', $msgLower);
-    $isPrice = preg_match('/\b(price|cost|charges|rate|kharcha|kitna|pese|paise|fees|budget|quote|estimate)\b/i', $msgLower);
-    $isTimeline = preg_match('/\b(time|timeline|duration|kab tak|kitne din|weeks|months|deliver|fast|kitna time)\b/i', $msgLower);
-    $isERP = preg_match('/\b(erp|pos|inventory|crm|warehouse|stock|accounting|billing|invoicing|hms|hospital|school|pharmacy|distribution|supermarket)\b/i', $msgLower);
-    $isApp = preg_match('/\b(app|mobile|android|ios|flutter|playstore|play store|app store|react native)\b/i', $msgLower);
-    $isWeb = preg_match('/\b(web|website|saas|portal|software|dashboard|react|nextjs|ecommerce|e-commerce|store)\b/i', $msgLower);
-    $isAI = preg_match('/\b(ai|agent|chatbot|bot|whatsapp bot|automation|automate|llm|ocr|rag)\b/i', $msgLower);
-    $isLocation = preg_match('/\b(office|location|address|karachi|where|kahan|lahore|islamabad|contact|phone|call)\b/i', $msgLower);
+    // Detailed intent flags
     $isContactSubmission = ($detectedEmail !== '' || $detectedPhone !== '');
+    $isGreeting = preg_match('/\b(hi|hello|hey|assalam|salam|aoa|kese ho|kaise ho|keise|kaisa|kese hain|kaise hain|hal hai|haal hai|good morning|good evening)\b/i', $msgLower);
+    $isPrice = preg_match('/\b(price|cost|charges|rate|kharcha|kitna|pese|paise|fees|budget|quote|estimate|payment terms)\b/i', $msgLower);
+    $isTimeline = preg_match('/\b(time|timeline|duration|kab tak|kitne din|weeks|months|deliver|fast|kitna time|launch)\b/i', $msgLower);
+    $isHealthcare = preg_match('/\b(pharmacy|clinic|hospital|doctor|medicine|dawa|medical|patient|prescription)\b/i', $msgLower);
+    $isEcommerce = preg_match('/\b(ecommerce|e-commerce|store|shop|dukan|clothing|brand|orders|cart)\b/i', $msgLower);
+    $isLogistics = preg_match('/\b(logistics|fleet|tracking|driver|delivery|dispatch|courier|cargo|transport)\b/i', $msgLower);
+    $isERP = preg_match('/\b(erp|pos|inventory|crm|warehouse|stock|accounting|billing|invoicing|hms|school|distribution|supermarket)\b/i', $msgLower);
+    $isApp = preg_match('/\b(app|mobile|android|ios|flutter|playstore|play store|app store|react native)\b/i', $msgLower);
+    $isWeb = preg_match('/\b(web|website|saas|portal|software|dashboard|react|nextjs)\b/i', $msgLower);
+    $isAI = preg_match('/\b(ai|agent|chatbot|bot|whatsapp bot|automation|automate|llm|ocr|rag)\b/i', $msgLower);
+    $isLocation = preg_match('/\b(office|location|address|karachi|where|kahan|lahore|islamabad|contact|phone|call|meeting)\b/i', $msgLower);
 
+    // 1. Lead Contact Submission
     if ($isContactSubmission) {
         if ($lang === 'ur') {
-            $aiReply = "بہت بہت شکریہ! آپ کی رابطہ تفصیلات (" . ($detectedEmail ?: $detectedPhone) . ") ہماری سینئر انجینئرنگ ٹیم کو موصول ہو چکی ہیں۔ ہماری ٹیم 2 سے 4 گھنٹوں کے اندر آپ سے واٹس ایپ یا ای میل پر رابطہ کر کے مکمل اسکوپ اور فکسڈ کوٹیشن شیئر کرے گی۔";
+            $aiReply = "بہت بہت شکریہ! آپ کی رابطہ تفصیلات (" . ($detectedEmail ?: $detectedPhone) . ") ہماری سینئر انجینئرنگ ٹیم کو موصول ہو چکی ہیں۔ ہماری ٹیم 2 سے 4 گھنٹوں کے اندر آپ سے واٹس ایپ یا ای میل پر رابطہ کر کے مکمل اسکوپ بلیو پرنٹ اور فکسڈ کوٹیشن شیئر کرے گی۔";
         } elseif ($lang === 'ro') {
             $aiReply = "Boht shukriya! Aap ki contact details (" . ($detectedEmail ?: $detectedPhone) . ") hamare senior software architect ko handover ho chuki hain. Hum boht jald aap se direct WhatsApp/Email par rabta karein gay aur project ka tailored scope blueprint share karein gay! Kya koi specific feature ya timeline hai jo aap discuss karna chahein?";
         } else {
             $aiReply = "Thank you so much! We have received your contact details (" . ($detectedEmail ?: $detectedPhone) . "). Our lead engineering architect will reach out to you within a few hours on WhatsApp/Email with a tailored project scope blueprint and fixed-price quote.";
         }
-    } elseif ($isGreeting && count($history) <= 2) {
+    }
+    // 2. Pricing and Budget Inquiry
+    elseif ($isPrice) {
         if ($lang === 'ur') {
-            $aiReply = "وعلیکم السلام! میں بالکل ٹھیک ہوں، شکریہ۔ میں سافٹ نیکسا کا اے آئی سلوشنز کنسلٹنٹ ہوں۔ ہم آپ کے کاروبار کے لیے کسٹم ای آر پی، موبائل ایپس، ویب پورٹلز اور اے آئی آٹومیشن تیار کرتے ہیں۔ آپ کس طرح کا سسٹم بنوانا چاہتے ہیں؟";
+            $aiReply = "ہم 100% فکسڈ پرائس گارنٹی پر کام کرتے ہیں، یعنی درمیان میں کوئی پوشیدہ اخراجات نہیں ہوتے۔\n- بنیادی ایم وی پی (MVP): تقریباً $3,000 سے شروع ہوتا ہے۔\n- مکمل انٹرپرائز ای آر پی / پورٹل: ماڈیولز کے مطابق $6,000 سے $15,000+ تک ہوتا ہے۔\nادائیگی مائل اسٹون کی بنیاد پر ہوتی ہے۔ کیا میں آپ کے لیے 48 گھنٹوں کا مفت اسکوپ تیار کروں؟ اپنا نام اور واٹس ایپ نمبر شیئر کیجیے!";
         } elseif ($lang === 'ro') {
-            $aiReply = "Walaikum Assalam! Main theek hoon, shukriya. Main SoftNexa ka Solutions Consultant hoon. Hum businesses ke liye custom enterprise ERPs, scalable web apps, mobile apps aur AI automations design aur develop karte hain. Aap apne business ke liye kis tarah ka software build karna chahte hain?";
+            $aiReply = "SoftNexa 100% Fixed-Price Guarantee par kaam karta hai (no hidden hourly charges):\n- Core MVP / Focused System: $3,000 / PKR equivalent se start hota hai.\n- Full Enterprise ERP / Multi-Branch System: Scope ke mutabiq $6,000 se $15,000+ tak hota hai.\nPayment milestone-based hoti hai (25% advance, 25% prototype, 25% testing, 25% live launch). Aapke project ka exact 48-Hour Scope Blueprint banane ke liye apna Name aur WhatsApp number ya Email share kar dein!";
         } else {
-            $aiReply = "Hello and welcome to SoftNexa! I am your AI Solutions Consultant. We architect custom business software, enterprise ERPs, high-performance web/mobile apps, and AI automations. Tell me about the workflow or problem you'd like to solve!";
+            $aiReply = "All SoftNexa engineering is delivered under a 100% Fixed-Price Guarantee with milestone-based delivery:\n- Focused MVPs start at $3,000.\n- Full Enterprise ERPs & Multi-Branch Systems range from $6,000 to $15,000+ depending on modules.\nPayments are tied to tangible sprint milestones. May I have your Name and WhatsApp number or Email so we can draft your free 48-hour scope blueprint?";
         }
-    } elseif ($isERP) {
+    }
+    // 3. Timeline & Delivery Duration
+    elseif ($isTimeline) {
+        if ($lang === 'ur') {
+            $aiReply = "ہم 2 سے 4 ہفتوں کے تیز رفتار سپرنٹس میں کام کرتے ہیں۔ پہلے 2 ہفتوں میں ہی انٹرایکٹو ورکنگ پروٹوٹائپ لائیو اسٹیجنگ پر فراہم کیا جاتا ہے، اور مکمل پروجیکٹ 4 سے 8 ہفتوں میں لائیو لانچ ہو جاتا ہے۔ آپ کا متوقع لانچ ٹائم فریم کیا ہے؟";
+        } elseif ($lang === 'ro') {
+            $aiReply = "Hum rapid 2 to 4-week delivery sprints follow karte hain. First functional prototype aapko pehle 2 se 3 hafton mein live staging server par mil jata hai taake aap test kar sakein, aur full enterprise build 4 to 8 weeks mein live ho jata hai. Aap kab tak launch karna chahte hain?";
+        } else {
+            $aiReply = "We operate on rapid 2-to-4 week engineering sprints. You receive a live interactive staging prototype within the first 14 days, followed by full production deployment in 4 to 8 weeks. What is your ideal launch timeline?";
+        }
+    }
+    // 4. Pharmacy & Healthcare Specific
+    elseif ($isHealthcare) {
+        if ($lang === 'ur') {
+            $aiReply = "فارمیسی اور ہیلتھ کیئر کے لیے ہم اسپیشلائزڈ ای آر پی بناتے ہیں جس میں بیچ اور ایکسپائری الرٹس، ملٹی کاؤنٹر پی او ایس اور سینٹرل انوینٹری سنک شامل ہے۔ آپ کی کتنی برانچز ہیں اور روزانہ کتنے بل بنتے ہیں؟";
+        } elseif ($lang === 'ro') {
+            $aiReply = "Pharmacy aur Healthcare businesses ke liye hum specialized ERP architect karte hain jisme automated Batch & Expiry alerts, barcode scanning, fast POS billing aur multi-branch central stock sync shamil hota hai. Aapki total kitni branches hain aur kitne staff members use karenge?";
+        } else {
+            $aiReply = "For healthcare and pharmacy networks, we build specialized ERPs featuring automated batch/expiry tracking, multi-counter POS, barcode validation, and multi-branch inventory sync. How many branches and active operators do you plan to support?";
+        }
+    }
+    // 5. Logistics & Fleet Specific
+    elseif ($isLogistics) {
+        if ($lang === 'ur') {
+            $aiReply = "ٹرانسپورٹ اور لاجسٹکس کے لیے ہم لائیو جی پی ایس ٹریکنگ، ڈرائیور موبائل ایپس اور ڈسپیچ مینجمنٹ سسٹمز بناتے ہیں۔ آپ کے پاس کل کتنی گاڑیاں یا فلیٹ یونٹس ہیں؟";
+        } elseif ($lang === 'ro') {
+            $aiReply = "Logistics aur transport operations ke liye hum real-time dispatch dashboards aur driver mobile apps build karte hain (live GPS tracking, automated route assignment aur digital proof-of-delivery). Aapke paas kitni vehicles ya fleet units hain?";
+        } else {
+            $aiReply = "For logistics and transport providers, we build central dispatch management portals paired with iOS & Android driver apps—complete with real-time GPS tracking, automated routing, and digital proof-of-delivery. How large is your fleet?";
+        }
+    }
+    // 6. E-Commerce & Retail
+    elseif ($isEcommerce) {
+        if ($lang === 'ur') {
+            $aiReply = "ہم تیز رفتار ای کامرس ویب سائٹس اور شاپنگ ایپس بناتے ہیں جن میں کورئیر انٹیگریشن (TCS، Trax، Leopards) اور آن لائن پیمنٹ گیٹ ویز شامل ہوتے ہیں۔ آپ کے پاس ماہانہ کتنے آرڈرز متوقع ہیں؟";
+        } elseif ($lang === 'ro') {
+            $aiReply = "E-commerce brands ke liye hum custom high-conversion web stores aur Flutter shopping apps build karte hain jin me automated courier integration (Trax, TCS, Leopards), inventory sync aur online payments shamil hotay hain. Aapka monthly order volume kitna hai?";
+        } else {
+            $aiReply = "We build high-converting, scalable e-commerce platforms and companion mobile apps with automated courier dispatch (Trax, TCS, Leopards, DHL), live inventory sync, and multi-currency payments. What is your expected monthly order volume?";
+        }
+    }
+    // 7. General ERP & CRM
+    elseif ($isERP) {
         if ($lang === 'ur') {
             $aiReply = "ہم مکمل طور پر کسٹم ای آر پی اور سی آر ایم سسٹمز بناتے ہیں جن میں انوینٹری، ملٹی برانچ پی او ایس، انوائسنگ، رولز پرمیشنز اور ریئل ٹائم رپورٹس شامل ہوتی ہیں۔ یہ بالکل آپ کے کام کرنے کے طریقے کے مطابق بنایا جاتا ہے۔ آپ کی ٹیم میں کتنے لوگ اس سسٹم کو استعمال کریں گے؟";
         } elseif ($lang === 'ro') {
@@ -186,7 +234,9 @@ if (!$llmSucceeded || empty($aiReply)) {
         } else {
             $aiReply = "We specialize in custom, modular ERP and CRM platforms—covering inventory, multi-branch POS, automated invoicing, role-based workflows, and live audit logs. Everything is built to match your exact operations. How many branches or active team members will be using this system?";
         }
-    } elseif ($isApp) {
+    }
+    // 8. Mobile Apps
+    elseif ($isApp) {
         if ($lang === 'ur') {
             $aiReply = "ہم آئی او ایس اور اینڈرائیڈ دونوں کے لیے فاسٹ اور خوبصورت موبائل ایپس (Flutter / React Native) بناتے ہیں، جن میں ریئل ٹائم ٹریکنگ، پش نوٹیفیکیشنز اور پیمنٹ گیٹ ویز شامل ہوتے ہیں۔ آپ کی ایپ کے اہم فیچرز کیا ہوں گے؟";
         } elseif ($lang === 'ro') {
@@ -194,7 +244,9 @@ if (!$llmSucceeded || empty($aiReply)) {
         } else {
             $aiReply = "We build high-performance mobile apps for iOS and Android using Flutter and native modules. Features include real-time push notifications, payment gateway integrations, and offline caching. Do you already have UI/wireframes, or should we design the prototype from scratch?";
         }
-    } elseif ($isAI) {
+    }
+    // 9. AI Agents & WhatsApp Bots
+    elseif ($isAI) {
         if ($lang === 'ur') {
             $aiReply = "ہم کسٹم اے آئی ایجنٹس، واٹس ایپ کسٹمر چیٹ بوٹس اور دستاویزات پڑھنے والے او سی آر سسٹمز بناتے ہیں جو آپ کا 80 فیصد روٹین کام خودکار کر دیتے ہیں۔ آپ کس پروسیس کو اے آئی کے ذریعے آٹومیٹ کرنا چاہتے ہیں؟";
         } elseif ($lang === 'ro') {
@@ -202,23 +254,9 @@ if (!$llmSucceeded || empty($aiReply)) {
         } else {
             $aiReply = "We engineer autonomous AI agents, WhatsApp business chatbots, and smart document extractors (OCR/PDF) that handle customer inquiries and data workflows 24/7. Are you looking for a customer-facing sales agent or internal document automation?";
         }
-    } elseif ($isPrice) {
-        if ($lang === 'ur') {
-            $aiReply = "ہم فکسڈ پرائس گارنٹی پر کام کرتے ہیں، یعنی درمیان میں کوئی پوشیدہ اخراجات نہیں ہوتے۔ بنیادی ایم وی پی سسٹمز تقریباً 3,000 ڈالرز (یا مساوی پی کے آر) سے شروع ہوتے ہیں، جبکہ مکمل کسٹم انٹرپرائز ای آر پی 6,000 سے 15,000 ڈالرز کے درمیان ہوتا ہے۔ کیا میں آپ کے لیے 48 گھنٹوں کا کسٹم اسکوپ بلیو پرنٹ تیار کروں؟ اپنا نام اور واٹس ایپ نمبر شیئر کیجیے!";
-        } elseif ($lang === 'ro') {
-            $aiReply = "Hamare sabhi projects 100% Fixed-Price Guarantee ke sath aate hain (no hidden hourly charges). Fast MVPs $3,000 / PKR equivalent se start hote hain, aur comprehensive Enterprise ERPs scope ke mutabiq $6,000 se $15,000+ ke range mein hote hain. Main aapke requirements ke mutabiq 48-hour scope blueprint draft kar sakta hoon—aapka Name aur WhatsApp number ya Email kya hai?";
-        } else {
-            $aiReply = "All our engineering is delivered under a 100% Fixed-Price Guarantee with milestone-based delivery. Focused MVPs typically start at $3,000, while end-to-end Enterprise ERPs range from $6,000 to $15,000+ depending on features. May I have your WhatsApp number or Email so our team can send you a tailored 48-hour scope blueprint?";
-        }
-    } elseif ($isTimeline) {
-        if ($lang === 'ur') {
-            $aiReply = "ہم 2 سے 4 ہفتوں کے تیز رفتار سپرنٹس میں ڈیلیور کرتے ہیں، اور ہر مرحلے پر آپ لائیو اسٹیجنگ ڈیمو دیکھ سکتے ہیں۔ مکمل انٹرپرائز پروجیکٹ 4 سے 8 ہفتوں میں مکمل ہو جاتا ہے۔ آپ کا مطلوبہ لانچ ٹائم فریم کیا ہے؟";
-        } elseif ($lang === 'ro') {
-            $aiReply = "Hum rapid 2 to 4-week delivery cycles follow karte hain. First MVP working version aapko 2 se 3 hafton mein live staging server par mil jata hai. Full enterprise build 4 to 8 weeks mein ready hota hai. Aap kab tak launch karna chahte hain?";
-        } else {
-            $aiReply = "We operate on rapid 2-to-4 week engineering sprints. You get access to a live interactive staging demo within the first 14 days, with full production deployment in 4 to 8 weeks. What is your ideal launch timeline?";
-        }
-    } elseif ($isLocation) {
+    }
+    // 10. Office Location & Meetings
+    elseif ($isLocation) {
         if ($lang === 'ur') {
             $aiReply = "سافٹ نیکسا کا مین انجینئرنگ ہاؤس شاہراہِ فیصل، کراچی میں واقع ہے، اور ہم امریکہ، برطانیہ، مشرق وسطیٰ اور پاکستان بھر کے کلائنٹس کو انٹرپرائز سافٹ ویئر سلوشنز فراہم کرتے ہیں۔ آپ کراچی آفس میں میٹنگ بھی شیڈول کر سکتے ہیں!";
         } elseif ($lang === 'ro') {
@@ -226,7 +264,19 @@ if (!$llmSucceeded || empty($aiReply)) {
         } else {
             $aiReply = "SoftNexa's primary engineering office is located on Shahrah-e-Faisal, Karachi, Pakistan, serving enterprise clients globally across the US, UK, Middle East, and Pakistan. We'd be delighted to schedule a virtual discovery call or an in-person meeting at our office!";
         }
-    } else {
+    }
+    // 11. Polite Greetings
+    elseif ($isGreeting) {
+        if ($lang === 'ur') {
+            $aiReply = "وعلیکم السلام! میں بالکل ٹھیک ہوں، شکریہ۔ میں سافٹ نیکسا کا اے آئی سلوشنز کنسلٹنٹ ہوں۔ ہم آپ کے کاروبار کے لیے کسٹم ای آر پی، موبائل ایپس، ویب پورٹلز اور اے آئی آٹومیشن تیار کرتے ہیں۔ آپ کس طرح کا سسٹم بنوانا چاہتے ہیں؟";
+        } elseif ($lang === 'ro') {
+            $aiReply = "Walaikum Assalam! Main theek hoon, shukriya. Main SoftNexa ka Solutions Consultant hoon. Hum businesses ke liye custom enterprise ERPs, scalable web apps, mobile apps aur AI automations design aur develop karte hain. Aap apne business ke liye kis tarah ka software build karna chahte hain?";
+        } else {
+            $aiReply = "Hello and welcome to SoftNexa! I am your AI Solutions Consultant. We architect custom business software, enterprise ERPs, high-performance web/mobile apps, and AI automations. Tell me about the workflow or problem you'd like to solve!";
+        }
+    }
+    // 12. General Fallback
+    else {
         if ($lang === 'ur') {
             $aiReply = "یہ ایک بہترین پروجیکٹ لگ رہا ہے۔ سافٹ نیکسا آپ کے اس سسٹم کو کسٹم کوڈنگ اور ماڈرن ٹیکنالوجی کے ساتھ بنا سکتا ہے۔ مکمل اسکوپ اور درست قیمت جاننے کے لیے برائے مہربانی اپنا نام اور واٹس ایپ یا ای میل فراہم کیجیے تاکہ ہمارے چیف آرکیٹیکٹ آپ سے رابطہ کر سکیں۔";
         } elseif ($lang === 'ro') {
