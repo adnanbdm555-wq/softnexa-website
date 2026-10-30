@@ -11,8 +11,8 @@
 - **Product Design & Prototyping**: Interactive Figma prototypes, high-conversion UI/UX design systems, user journey mapping, and conversion rate optimization (CRO).
 
 ## Key Differentiators & Guarantees
-- **14-Day Free Trial**: Production-ready workspace configured with your actual business data ready in 48 hours. No credit card required, up to 5 users, and an NDA signed before any data moves.
 - **Fixed-Price Guarantee**: Guaranteed fixed delivery cost and verified schedule. No runaway hourly billing.
+- **Architectural Discovery & Scope**: Comprehensive technical blueprint, wireframes, and delivery roadmap provided within 48 hours.
 - **Engineering-First Communication**: Direct access to senior architects and engineers with replies within one business day.
 
 ## Technology Stack
