@@ -316,6 +316,160 @@ function render_lead_email($data) {
 </html>';
 }
 
+/* ---------- Customer Confirmation / Receipt Email Template ---------- */
+function render_customer_confirmation_email($data) {
+    $name     = htmlspecialchars($data['name'] ?? 'there');
+    $service  = htmlspecialchars($data['service'] ?? 'Custom Software Engineering');
+    $estimate = htmlspecialchars($data['estimate'] ?? '');
+    $timeline = htmlspecialchars($data['timeline'] ?? '');
+    $modules  = htmlspecialchars($data['modules'] ?? '');
+    $message  = $data['message'] ?? '';
+    $source   = htmlspecialchars($data['source'] ?? '');
+    $date     = date('d M Y, h:i A') . ' PKT';
+
+    $summaryRows = '';
+    if ($service) {
+        $summaryRows .= '<tr><td style="padding:10px 14px;font-size:12px;color:#8B8AA5;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:34%;border-bottom:1px solid #1E1D36;">Service / Project</td><td style="padding:10px 14px;font-size:14px;color:#F0EEFF;font-weight:500;border-bottom:1px solid #1E1D36;">' . $service . '</td></tr>';
+    }
+    if ($estimate) {
+        $summaryRows .= '<tr><td style="padding:10px 14px;font-size:12px;color:#8B8AA5;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:34%;border-bottom:1px solid #1E1D36;">Estimated Scope</td><td style="padding:10px 14px;font-size:14px;color:#F0EEFF;font-weight:500;border-bottom:1px solid #1E1D36;">' . $estimate . '</td></tr>';
+    }
+    if ($timeline) {
+        $summaryRows .= '<tr><td style="padding:10px 14px;font-size:12px;color:#8B8AA5;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:34%;border-bottom:1px solid #1E1D36;">Target Timeline</td><td style="padding:10px 14px;font-size:14px;color:#F0EEFF;font-weight:500;border-bottom:1px solid #1E1D36;">' . $timeline . '</td></tr>';
+    }
+    if ($modules) {
+        $summaryRows .= '<tr><td style="padding:10px 14px;font-size:12px;color:#8B8AA5;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:34%;border-bottom:1px solid #1E1D36;">Key Features</td><td style="padding:10px 14px;font-size:14px;color:#F0EEFF;font-weight:500;border-bottom:1px solid #1E1D36;">' . nl2br($modules) . '</td></tr>';
+    }
+
+    $msgHtml = '';
+    if (!empty($message)) {
+        $msgHtml = '
+        <div style="margin-top:16px;padding:14px 16px;background:#15142E;border-left:4px solid #1FD3F0;border-radius:8px;">
+          <div style="font-size:11px;font-weight:700;color:#9E99D4;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Submitted Requirement:</div>
+          <div style="font-size:13px;line-height:1.6;color:#E0DEFA;white-space:pre-wrap;">' . nl2br(htmlspecialchars($message)) . '</div>
+        </div>';
+    }
+
+    return '<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>We Received Your Project Inquiry — SoftNexa</title>
+</head>
+<body style="margin:0;padding:0;background-color:#070617;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;color:#F0EEFF;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#070617;padding:32px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#100F26;border:1px solid #23223D;border-radius:14px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.5);">
+          
+          <!-- Top Gradient Accent -->
+          <tr>
+            <td height="4" style="background:linear-gradient(90deg,#6E4BFF 0%,#1FD3F0 50%,#6E4BFF 100%);"></td>
+          </tr>
+
+          <!-- Header -->
+          <tr>
+            <td style="padding:24px 28px 18px 28px;border-bottom:1px solid #1C1B33;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <span style="font-size:24px;font-weight:800;color:#FFFFFF;letter-spacing:-0.5px;">Soft<span style="color:#1FD3F0;">Nexa</span></span>
+                    <span style="display:inline-block;margin-left:8px;font-size:11px;color:#8B8AA5;font-weight:500;">Solutions Engineering</span>
+                  </td>
+                  <td align="right">
+                    <span style="display:inline-block;padding:5px 12px;background:#10B981;color:#FFFFFF;font-size:11px;font-weight:700;border-radius:20px;text-transform:uppercase;letter-spacing:0.6px;">
+                      ✓ Received
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Greeting & Main Message -->
+          <tr>
+            <td style="padding:26px 28px 16px 28px;">
+              <h1 style="margin:0 0 12px 0;font-size:22px;font-weight:700;color:#FFFFFF;line-height:1.3;">
+                Hi ' . $name . ', we\'ve received your project requirements!
+              </h1>
+              <p style="margin:0 0 14px 0;font-size:14px;line-height:1.65;color:#D4D1F0;">
+                Thank you for reaching out to <strong>SoftNexa</strong>. Our lead software engineering architects are currently reviewing your project details.
+              </p>
+              <p style="margin:0;font-size:14px;line-height:1.65;color:#A9A6CA;">
+                We build bespoke enterprise software, high-scale web/mobile applications, and autonomous AI systems with a <strong>100% Fixed-Price Guarantee</strong> (no hidden hourly billing). You can expect a tailored scope blueprint and quotation within <strong>24 to 48 hours</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Submitted Summary Block -->
+          <tr>
+            <td style="padding:8px 28px 22px 28px;">
+              <div style="font-size:12px;font-weight:700;color:#1FD3F0;text-transform:uppercase;letter-spacing:0.7px;margin-bottom:8px;">
+                Summary of Your Submission:
+              </div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#0C0B1E;border-radius:8px;overflow:hidden;border:1px solid #232238;">
+                ' . $summaryRows . '
+              </table>
+              ' . $msgHtml . '
+            </td>
+          </tr>
+
+          <!-- What Happens Next 3 Steps -->
+          <tr>
+            <td style="padding:0 28px 24px 28px;">
+              <div style="background:#13122E;border:1px solid #252345;border-radius:10px;padding:18px 20px;">
+                <div style="font-size:13px;font-weight:700;color:#FFFFFF;margin-bottom:12px;">What Happens Next:</div>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="padding:6px 0;vertical-align:top;width:24px;color:#1FD3F0;font-weight:800;">1.</td>
+                    <td style="padding:6px 0;font-size:13px;line-height:1.5;color:#E0DEFA;"><strong>Architecture Review:</strong> Our engineering leads analyze your features, required tech stack, and workflows.</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 0;vertical-align:top;width:24px;color:#1FD3F0;font-weight:800;">2.</td>
+                    <td style="padding:6px 0;font-size:13px;line-height:1.5;color:#E0DEFA;"><strong>48-Hour Scope Blueprint:</strong> You receive an exact architectural roadmap with sprint milestones.</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 0;vertical-align:top;width:24px;color:#1FD3F0;font-weight:800;">3.</td>
+                    <td style="padding:6px 0;font-size:13px;line-height:1.5;color:#E0DEFA;"><strong>Fixed-Price Execution:</strong> Delivery begins with milestone staging links and zero hourly surprises.</td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Urgent Contact / Direct Support CTA -->
+          <tr>
+            <td style="padding:0 28px 28px 28px;text-align:center;">
+              <div style="font-size:13px;color:#8B8AA5;margin-bottom:10px;">
+                Need an immediate consultation or have additional questions?
+              </div>
+              <a href="mailto:info@softnexasolution.com" style="display:inline-block;background:linear-gradient(135deg,#6E4BFF 0%,#8A6BFF 100%);color:#FFFFFF;text-decoration:none;font-weight:600;font-size:13px;padding:10px 24px;border-radius:7px;box-shadow:0 3px 12px rgba(110,75,255,0.35);">
+                Reply to this Email &rarr;
+              </a>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 28px;background:#090818;border-top:1px solid #1C1B33;text-align:center;">
+              <div style="font-size:12px;color:#8B8AA5;margin-bottom:6px;">
+                SoftNexa Solutions • Shahrah-e-Faisal, Karachi, Pakistan
+              </div>
+              <div style="font-size:11px;color:#5A5872;">
+                Official Website: <a href="https://softnexasolution.com" style="color:#1FD3F0;text-decoration:none;">softnexasolution.com</a> • <a href="mailto:info@softnexasolution.com" style="color:#1FD3F0;text-decoration:none;">info@softnexasolution.com</a>
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>';
+}
+
 function send_html_email($to, $subject, $htmlBody, $replyTo = '') {
     $from = defined('MAIL_FROM') ? MAIL_FROM : 'marketing@softnexasolution.com';
     $headers  = "MIME-Version: 1.0\r\n";

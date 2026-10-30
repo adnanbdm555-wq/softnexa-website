@@ -376,6 +376,25 @@ try {
                 'meta'        => ['Country' => country_code(), 'IP' => client_ip()]
             ]);
             send_html_email($to, $subj, $emailHtml, $detectedEmail ?: '');
+
+            // Send customer receipt confirmation email if client provided a valid email
+            if ($detectedEmail && filter_var($detectedEmail, FILTER_VALIDATE_EMAIL)) {
+                try {
+                    $custSubj = 'We Received Your Project Inquiry - SoftNexa Solutions';
+                    $custHtml = render_customer_confirmation_email([
+                        'name'     => $leadName,
+                        'service'  => 'AI Solutions & Custom Software Architecture',
+                        'timeline' => '24-48 Hours Scope Review',
+                        'estimate' => '100% Fixed-Price Scope Blueprint',
+                        'message'  => "Thank you for connecting with our AI Assistant! Our engineering architecture team has logged your inquiry and is reviewing your project requirements.",
+                        'phone'    => $detectedPhone ?: '',
+                        'source'   => 'AI Assistant Chat Consultation'
+                    ]);
+                    send_html_email($detectedEmail, $custSubj, $custHtml, 'info@softnexasolution.com');
+                } catch (Exception $e) {
+                    // Ignore customer email dispatch error to avoid breaking chat flow
+                }
+            }
         }
     } else {
         $leadName = $detectedName !== '' ? $detectedName : ('Chat Visitor ' . ($sessionId ? '#' . substr($sessionId, 0, 6) : ''));
@@ -440,6 +459,25 @@ try {
                 'meta'        => ['Country' => country_code(), 'IP' => client_ip()]
             ]);
             send_html_email($to, $subj, $emailHtml, $detectedEmail ?: '');
+
+            // Send customer receipt confirmation email if client provided a valid email
+            if ($detectedEmail && filter_var($detectedEmail, FILTER_VALIDATE_EMAIL)) {
+                try {
+                    $custSubj = 'We Received Your Project Inquiry - SoftNexa Solutions';
+                    $custHtml = render_customer_confirmation_email([
+                        'name'     => $leadName,
+                        'service'  => 'AI Solutions & Custom Software Architecture',
+                        'timeline' => '24-48 Hours Scope Review',
+                        'estimate' => '100% Fixed-Price Scope Blueprint',
+                        'message'  => "Thank you for connecting with our AI Assistant! Our engineering architecture team has logged your inquiry and is reviewing your project requirements.",
+                        'phone'    => $detectedPhone ?: '',
+                        'source'   => 'AI Assistant Chat Consultation'
+                    ]);
+                    send_html_email($detectedEmail, $custSubj, $custHtml, 'info@softnexasolution.com');
+                } catch (Exception $e) {
+                    // Ignore customer email dispatch error to avoid breaking chat flow
+                }
+            }
         }
     }
 } catch (Exception $e) {

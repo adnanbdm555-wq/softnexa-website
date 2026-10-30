@@ -122,4 +122,19 @@ $html = render_lead_email([
 
 send_html_email($to, $subj, $html, $email);
 
+/* Send automated confirmation receipt email to the customer */
+if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $custSubj = 'Project Brief Received: ' . ($row['project_type'] ?: 'Custom Project') . ' — SoftNexa';
+    $custHtml = render_customer_confirmation_email([
+        'name'     => $name,
+        'service'  => $row['project_type'] ?: 'Custom Project Brief',
+        'estimate' => $row['budget'],
+        'timeline' => $row['timeline'],
+        'modules'  => $row['features'],
+        'message'  => $combinedMsg,
+        'source'   => 'client-brief'
+    ]);
+    send_html_email($email, $custSubj, $custHtml, 'info@softnexasolution.com');
+}
+
 json_out(['ok' => true, 'id' => (int)$id, 'score' => $score]);

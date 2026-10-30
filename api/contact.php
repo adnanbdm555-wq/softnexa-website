@@ -103,4 +103,19 @@ $html = render_lead_email([
 
 send_html_email($to, $subj, $html, $email);
 
+/* Send automated confirmation receipt email to the customer */
+if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $custSubj = 'Inquiry Received: 48-Hour Scope Blueprint — SoftNexa';
+    $custHtml = render_customer_confirmation_email([
+        'name'     => $name,
+        'service'  => $row['service'] ?: 'Custom Software Consultation',
+        'estimate' => $row['estimate'],
+        'timeline' => $row['timeline'],
+        'modules'  => $row['modules'],
+        'message'  => $row['message'],
+        'source'   => $row['source']
+    ]);
+    send_html_email($email, $custSubj, $custHtml, 'info@softnexasolution.com');
+}
+
 json_out(['ok' => true, 'id' => (int)$id, 'score' => $score]);
