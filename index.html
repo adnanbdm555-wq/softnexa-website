@@ -7928,7 +7928,22 @@ if(matchMedia('(pointer:fine)').matches && !reduce){
   if(launcher) launcher.addEventListener('click', function(e){ e.stopPropagation(); toggleChat(); });
   if(closeBtn) closeBtn.addEventListener('click', function(e){ e.stopPropagation(); toggleChat(false); });
   if(teaserClose) teaserClose.addEventListener('click', function(e){ e.stopPropagation(); teaser.style.display = 'none'; });
-  if(teaser) teaser.addEventListener('click', function(){ toggleChat(true); });
+  if(teaser) teaser.addEventListener('click', function(e){ e.stopPropagation(); toggleChat(true); });
+
+  // Close chatbot when clicking anywhere outside the chat window
+  document.addEventListener('click', function(e){
+    if(!isOpen) return;
+    if(win && !win.contains(e.target) && launcher && !launcher.contains(e.target)){
+      toggleChat(false);
+    }
+  });
+
+  // Close chatbot on Escape key
+  document.addEventListener('keydown', function(e){
+    if(isOpen && (e.key === 'Escape' || e.keyCode === 27)){
+      toggleChat(false);
+    }
+  });
 
   // Direct send button click
   if(sendBtn){
