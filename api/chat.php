@@ -92,7 +92,11 @@ Tone & Behavior:
   - If Roman Urdu: Reply in warm, natural, fluent Roman Urdu.
   - If Urdu script: Reply in courteous, formal Urdu.
   - If English: Reply in clear, professional, engineering-led English.
-- Empathize with their problem first, explain how SoftNexa solves it with custom code, suggest the ideal architecture, and actively steer towards closing the deal by asking for their Name, WhatsApp number, or Email so our engineering leads can deliver a free 48-hour blueprint.
+- Always address the client's questions or technical requirements thoroughly first.
+- Lead Qualification & Contact Intake (Polite, Helpful & Strictly Optional):
+  - Politely and casually offer to draft a free 48-Hour Scope Blueprint or detailed architecture proposal.
+  - Gently ask: 'If you would like our engineering leads to prepare a free 48-Hour Scope Blueprint & fixed estimate, feel free to share your Name & WhatsApp number (optional). Or we can continue discussing your project right here!'
+  - CRITICAL RULE: Contact details must NEVER be compulsory or blocking. Never refuse to answer or force the visitor to give contact info. If they ask further technical, price, or architecture questions without sharing contact info, enthusiastically answer their questions without repeating the request.
 - Keep responses concise (under 120 words), well-spaced, and easy to read.";
 
 if ($geminiKey) {
@@ -178,21 +182,21 @@ if (!$llmSucceeded || empty($aiReply)) {
     // 2. Pricing and Budget Inquiry
     elseif ($isPrice) {
         if ($lang === 'ur') {
-            $aiReply = "ہم 100% فکسڈ پرائس گارنٹی پر کام کرتے ہیں، یعنی درمیان میں کوئی پوشیدہ اخراجات نہیں ہوتے۔\n- بنیادی ایم وی پی (MVP): تقریباً $3,000 سے شروع ہوتا ہے۔\n- مکمل انٹرپرائز ای آر پی / پورٹل: ماڈیولز کے مطابق $6,000 سے $15,000+ تک ہوتا ہے۔\nادائیگی مائل اسٹون کی بنیاد پر ہوتی ہے۔ کیا میں آپ کے لیے 48 گھنٹوں کا مفت اسکوپ تیار کروں؟ اپنا نام اور واٹس ایپ نمبر شیئر کیجیے!";
+            $aiReply = "ہم 100% فکسڈ پرائس گارنٹی پر کام کرتے ہیں، یعنی درمیان میں کوئی پوشیدہ اخراجات نہیں ہوتے۔\n- بنیادی ایم وی پی (MVP): تقریباً $3,000 سے شروع ہوتا ہے۔\n- مکمل انٹرپرائز ای آر پی / پورٹل: ماڈیولز کے مطابق $6,000 سے $15,000+ تک ہوتا ہے۔\nادائیگی مائل اسٹون کی بنیاد پر ہوتی ہے۔ اگر آپ چاہیں تو 48 گھنٹوں کے مفت اسکوپ کے لیے اپنا نام اور واٹس ایپ نمبر شیئر کر سکتے ہیں (اختیاری)، یا آپ مجھ سے بلا جھجھک مزید سوالات پوچھ سکتے ہیں!";
         } elseif ($lang === 'ro') {
-            $aiReply = "SoftNexa 100% Fixed-Price Guarantee par kaam karta hai (no hidden hourly charges):\n- Core MVP / Focused System: $3,000 / PKR equivalent se start hota hai.\n- Full Enterprise ERP / Multi-Branch System: Scope ke mutabiq $6,000 se $15,000+ tak hota hai.\nPayment milestone-based hoti hai (25% advance, 25% prototype, 25% testing, 25% live launch). Aapke project ka exact 48-Hour Scope Blueprint banane ke liye apna Name aur WhatsApp number ya Email share kar dein!";
+            $aiReply = "SoftNexa 100% Fixed-Price Guarantee par kaam karta hai (no hidden hourly charges):\n- Core MVP / Focused System: $3,000 / PKR equivalent se start hota hai.\n- Full Enterprise ERP / Multi-Branch System: Scope ke mutabiq $6,000 se $15,000+ tak hota hai.\nPayment milestone-based hoti hai (25% advance, 25% prototype, 25% testing, 25% live launch). Aapke project ka tailored 48-Hour Scope Blueprint tayyar karne ke liye agar aap chahein toh apna Name aur WhatsApp number ya Email share kar dein (optional), ya aap mujhse mazeed technical sawalat bhi yahan pooch sakte hain!";
         } else {
-            $aiReply = "All SoftNexa engineering is delivered under a 100% Fixed-Price Guarantee with milestone-based delivery:\n- Focused MVPs start at $3,000.\n- Full Enterprise ERPs & Multi-Branch Systems range from $6,000 to $15,000+ depending on modules.\nPayments are tied to tangible sprint milestones. May I have your Name and WhatsApp number or Email so we can draft your free 48-hour scope blueprint?";
+            $aiReply = "All SoftNexa engineering is delivered under a 100% Fixed-Price Guarantee with milestone-based delivery:\n- Focused MVPs start at $3,000.\n- Full Enterprise ERPs & Multi-Branch Systems range from $6,000 to $15,000+ depending on modules.\nPayments are tied to tangible sprint milestones. If you'd like, feel free to share your Name and WhatsApp number or Email (optional) so we can draft your free 48-hour scope blueprint, or let me know what questions you have!";
         }
     }
     // 3. Timeline & Delivery Duration
     elseif ($isTimeline) {
         if ($lang === 'ur') {
-            $aiReply = "ہم 2 سے 4 ہفتوں کے تیز رفتار سپرنٹس میں کام کرتے ہیں۔ پہلے 2 ہفتوں میں ہی انٹرایکٹو ورکنگ پروٹوٹائپ لائیو اسٹیجنگ پر فراہم کیا جاتا ہے، اور مکمل پروجیکٹ 4 سے 8 ہفتوں میں لائیو لانچ ہو جاتا ہے۔ آپ کا متوقع لانچ ٹائم فریم کیا ہے؟";
+            $aiReply = "ہم 2 سے 4 ہفتوں کے تیز رفتار سپرنٹس میں کام کرتے ہیں۔ پہلے 2 ہفتوں میں ہی انٹرایکٹو ورکنگ پروٹوٹائپ لائیو اسٹیجنگ پر فراہم کیا جاتا ہے، اور مکمل پروجیکٹ 4 سے 8 ہفتوں میں لائیو لانچ ہو جاتا ہے۔ آپ کا متوقع لانچ ٹائم فریم کیا ہے؟ (اختیاری: آپ چاہیں تو نام/واٹس ایپ بھی شیئر کر سکتے ہیں تاکہ اسپرنٹ روڈ میپ بھیجا جا سکے)۔";
         } elseif ($lang === 'ro') {
-            $aiReply = "Hum rapid 2 to 4-week delivery sprints follow karte hain. First functional prototype aapko pehle 2 se 3 hafton mein live staging server par mil jata hai taake aap test kar sakein, aur full enterprise build 4 to 8 weeks mein live ho jata hai. Aap kab tak launch karna chahte hain?";
+            $aiReply = "Hum rapid 2 to 4-week delivery sprints follow karte hain. First functional prototype aapko pehle 2 se 3 hafton mein live staging server par mil jata hai taake aap test kar sakein, aur full enterprise build 4 to 8 weeks mein live ho jata hai. Aap kab tak launch karna chahte hain? (Chahein toh apna Name ya WhatsApp bhi share kar sakte hain taake hum roadmap bhej sakein).";
         } else {
-            $aiReply = "We operate on rapid 2-to-4 week engineering sprints. You receive a live interactive staging prototype within the first 14 days, followed by full production deployment in 4 to 8 weeks. What is your ideal launch timeline?";
+            $aiReply = "We operate on rapid 2-to-4 week engineering sprints. You receive a live interactive staging prototype within the first 14 days, followed by full production deployment in 4 to 8 weeks. What is your ideal launch timeline? (Feel free to also share your Name/WhatsApp if you'd like us to map out a sprint plan).";
         }
     }
     // 4. Pharmacy & Healthcare Specific
@@ -278,91 +282,168 @@ if (!$llmSucceeded || empty($aiReply)) {
     // 12. General Fallback
     else {
         if ($lang === 'ur') {
-            $aiReply = "یہ ایک بہترین پروجیکٹ لگ رہا ہے۔ سافٹ نیکسا آپ کے اس سسٹم کو کسٹم کوڈنگ اور ماڈرن ٹیکنالوجی کے ساتھ بنا سکتا ہے۔ مکمل اسکوپ اور درست قیمت جاننے کے لیے برائے مہربانی اپنا نام اور واٹس ایپ یا ای میل فراہم کیجیے تاکہ ہمارے چیف آرکیٹیکٹ آپ سے رابطہ کر سکیں۔";
+            $aiReply = "یہ ایک بہترین پروجیکٹ لگ رہا ہے۔ سافٹ نیکسا آپ کے اس سسٹم کو کسٹم کوڈنگ اور ماڈرن ٹیکنالوجی کے ساتھ بنا سکتا ہے۔ اگر آپ چاہیں تو مفت اسکوپ کے لیے اپنا نام اور واٹس ایپ نمبر شیئر کر سکتے ہیں (اختیاری)، یا آپ مجھ سے مزید تفصیلات پوچھ سکتے ہیں۔";
         } elseif ($lang === 'ro') {
-            $aiReply = "Yeh requirement boht promising hai! SoftNexa ki team isko modern cloud architecture aur sleek UI ke sath perfect tarike se build kar sakti hai. Exact pricing aur architecture roadmap ke liye kya aap apna Name aur WhatsApp number ya Email share kar sakte hain?";
+            $aiReply = "Yeh requirement boht promising hai! SoftNexa ki team isko modern cloud architecture aur sleek UI ke sath perfect tarike se build kar sakti hai. Agar aap chahein toh apna Name aur WhatsApp number ya Email share kar dein (optional) taake hum free 48-hour scope blueprint share karein, ya aap mujhse mazeed sawalat pooch sakte hain!";
         } else {
-            $aiReply = "This sounds like a high-impact initiative! SoftNexa can architect this with a modern, scalable cloud stack and tailored workflows. To give you an exact engineering roadmap and fixed quote, could you share your Name and WhatsApp number or Email?";
+            $aiReply = "This sounds like a high-impact initiative! SoftNexa can architect this with a modern, scalable cloud stack. If you would like an exact architectural roadmap, feel free to share your Name and WhatsApp or Email (totally optional), or feel free to ask me anything right here!";
         }
     }
 }
 
-// Automatically save lead if contact details are detected
+// Format full chat conversation log
+$fullChatLog = "=== AI Chatbot Conversation ===\n";
+foreach ($history as $h) {
+    $r = ($h['role'] === 'user' ? 'Client' : 'Assistant');
+    $fullChatLog .= "[$r]: " . $h['content'] . "\n\n";
+}
+$fullChatLog .= "[Client]: " . $message . "\n\n";
+$fullChatLog .= "[Assistant]: " . $aiReply . "\n";
+
+// Automatically save / update every chat session into the database (leads table)
 $leadCaptured = false;
-if ($detectedEmail !== '' || $detectedPhone !== '') {
-    $leadName = $detectedName !== '' ? $detectedName : 'Chat Client (' . ($detectedEmail ?: $detectedPhone) . ')';
-    $fullChatLog = "AI Chat Log:\n";
-    foreach ($history as $h) {
-        $fullChatLog .= ($h['role'] === 'user' ? 'Client: ' : 'Assistant: ') . $h['content'] . "\n";
+$hasContact = ($detectedEmail !== '' || $detectedPhone !== '');
+
+try {
+    $db = db();
+    $existingLead = null;
+
+    if ($sessionId !== '') {
+        $st = $db->prepare("SELECT id, name, email, phone, lead_score FROM leads WHERE session_id = ? AND source = 'ai-chatbot' ORDER BY id DESC LIMIT 1");
+        $st->execute([$sessionId]);
+        $existingLead = $st->fetch();
     }
-    $fullChatLog .= "Client: " . $message . "\n";
-    $fullChatLog .= "Assistant: " . $aiReply . "\n";
 
-    $leadRow = [
-        'name'       => $leadName,
-        'company'    => '',
-        'email'      => $detectedEmail ?: 'chat-lead@softnexasolution.com',
-        'phone'      => $detectedPhone,
-        'service'    => 'AI Chatbot Consultation',
-        'industry'   => 'Inquired via Chat',
-        'problems'   => mb_substr($fullChatLog, 0, 2000),
-        'tools'      => 'Chatbot conversation',
-        'team'       => 'Pending review',
-        'urgency'    => 'Immediate / Hot',
-        'modules'    => '',
-        'estimate'   => 'Chat Inquired',
-        'timeline'   => '48-hr scope requested',
-        'trial_days' => 0,
-        'founding'   => '',
-        'region'     => country_code() === 'PK' ? 'pk' : 'intl',
-        'message'    => mb_substr($fullChatLog, 0, 4000),
-        'lead_score' => 85,
-        'source'     => 'ai-chatbot',
-        'session_id' => $sessionId,
-        'referrer'   => ref_host($_SERVER['HTTP_REFERER'] ?? ''),
-        'country'    => country_code(),
-        'device'     => device_type($_SERVER['HTTP_USER_AGENT'] ?? ''),
-        'ip'         => client_ip(),
-        'user_agent' => mb_substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255)
-    ];
+    if ($existingLead) {
+        $leadId = (int)$existingLead['id'];
+        $updFields = [
+            'problems' => mb_substr($fullChatLog, 0, 3500),
+            'message'  => mb_substr($fullChatLog, 0, 4000)
+        ];
 
-    try {
+        $shouldNotify = false;
+        if ($detectedPhone !== '' && empty($existingLead['phone'])) {
+            $updFields['phone'] = $detectedPhone;
+            $shouldNotify = true;
+        }
+        if ($detectedEmail !== '' && (empty($existingLead['email']) || $existingLead['email'] === 'chat-visitor@softnexasolution.com')) {
+            $updFields['email'] = $detectedEmail;
+            $shouldNotify = true;
+        }
+        if ($detectedName !== '' && (strpos($existingLead['name'], 'Chat Visitor') !== false || empty($existingLead['name']))) {
+            $updFields['name'] = $detectedName;
+        }
+        if ($hasContact) {
+            $updFields['lead_score'] = max((int)$existingLead['lead_score'], 85);
+            $updFields['urgency'] = 'Immediate / Hot';
+            $leadCaptured = true;
+        }
+
+        $sets = [];
+        $vals = [];
+        foreach ($updFields as $col => $val) {
+            $sets[] = "$col = ?";
+            $vals[] = $val;
+        }
+        $vals[] = $leadId;
+        $db->prepare("UPDATE leads SET " . implode(', ', $sets) . " WHERE id = ?")->execute($vals);
+
+        if ($shouldNotify) {
+            $notifyName = $updFields['name'] ?? $existingLead['name'];
+            $to = setting('notify_email', NOTIFY_EMAIL);
+            $subj = '[HOT 85] New AI Chatbot Lead: ' . $notifyName . ' (' . ($detectedPhone ?: $detectedEmail) . ')';
+            $items = [
+                'Source'           => 'Interactive AI Sales Chatbot',
+                'Phone / WhatsApp' => ($detectedPhone ?: $existingLead['phone'] ?: 'Not provided'),
+                'Email'            => ($detectedEmail ?: $existingLead['email'] ?: 'Not provided'),
+                'Language'         => strtoupper($lang),
+                'Status'           => '🔥 Hot Lead (Direct Chat Engagement)',
+                'Session ID'       => $sessionId,
+            ];
+            $host = $_SERVER['HTTP_HOST'] ?? 'softnexasolution.com';
+            $emailHtml = render_lead_email([
+                'title'       => $subj,
+                'badge'       => '🔥 HOT CHATBOT LEAD (85)',
+                'badge_color' => '#EF4444',
+                'name'        => $notifyName,
+                'company'     => 'Direct Website Visitor',
+                'email'       => $detectedEmail ?: $existingLead['email'] ?: 'chat@softnexasolution.com',
+                'phone'       => $detectedPhone ?: $existingLead['phone'] ?: '',
+                'items'       => $items,
+                'message'     => nl2br(htmlspecialchars($fullChatLog)),
+                'cta_url'     => 'https://' . $host . '/admin/leads.php?id=' . $leadId,
+                'cta_text'    => 'View Chat Lead #' . $leadId,
+                'meta'        => ['Country' => country_code(), 'IP' => client_ip()]
+            ]);
+            send_html_email($to, $subj, $emailHtml, $detectedEmail ?: '');
+        }
+    } else {
+        $leadName = $detectedName !== '' ? $detectedName : ('Chat Visitor ' . ($sessionId ? '#' . substr($sessionId, 0, 6) : ''));
+        $leadRow = [
+            'name'       => $leadName,
+            'company'    => '',
+            'email'      => $detectedEmail ?: 'chat-visitor@softnexasolution.com',
+            'phone'      => $detectedPhone ?: '',
+            'service'    => 'AI Chatbot Consultation',
+            'industry'   => 'Inquired via Chat',
+            'problems'   => mb_substr($fullChatLog, 0, 3500),
+            'tools'      => 'Chatbot conversation',
+            'team'       => 'Pending review',
+            'urgency'    => $hasContact ? 'Immediate / Hot' : 'In Discussion',
+            'modules'    => '',
+            'estimate'   => 'Chat Consultation',
+            'timeline'   => 'In progress',
+            'trial_days' => 0,
+            'founding'   => '',
+            'region'     => country_code() === 'PK' ? 'pk' : 'intl',
+            'message'    => mb_substr($fullChatLog, 0, 4000),
+            'lead_score' => $hasContact ? 85 : 45,
+            'source'     => 'ai-chatbot',
+            'session_id' => $sessionId,
+            'referrer'   => ref_host($_SERVER['HTTP_REFERER'] ?? ''),
+            'country'    => country_code(),
+            'device'     => device_type($_SERVER['HTTP_USER_AGENT'] ?? ''),
+            'ip'         => client_ip(),
+            'user_agent' => mb_substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255)
+        ];
+
         $cols = implode(',', array_keys($leadRow));
         $marks= implode(',', array_fill(0, count($leadRow), '?'));
-        db()->prepare("INSERT INTO leads ($cols) VALUES ($marks)")->execute(array_values($leadRow));
-        $leadId = db()->lastInsertId();
-        $leadCaptured = true;
+        $db->prepare("INSERT INTO leads ($cols) VALUES ($marks)")->execute(array_values($leadRow));
+        $leadId = $db->lastInsertId();
 
-        // Send instant email alerts to both adnanbdm555@gmail.com and info@softnexasolution.com
-        $to = setting('notify_email', NOTIFY_EMAIL);
-        $subj = '[HOT 85] New AI Chatbot Lead: ' . $leadName . ' (' . ($detectedPhone ?: $detectedEmail) . ')';
-        $items = [
-            'Source'         => 'Interactive AI Sales Chatbot',
-            'Phone / WhatsApp' => $detectedPhone ?: 'Not provided',
-            'Email'          => $detectedEmail ?: 'Not provided',
-            'Language'       => strtoupper($lang),
-            'Status'         => '🔥 Hot Lead (Direct Chat Engagement)',
-            'Session ID'     => $sessionId,
-        ];
-        $host = $_SERVER['HTTP_HOST'] ?? 'softnexasolution.com';
-        $emailHtml = render_lead_email([
-            'title'       => $subj,
-            'badge'       => '🔥 HOT CHATBOT LEAD (85)',
-            'badge_color' => '#EF4444',
-            'name'        => $leadName,
-            'company'     => 'Direct Website Visitor',
-            'email'       => $detectedEmail ?: 'chat@softnexasolution.com',
-            'phone'       => $detectedPhone,
-            'items'       => $items,
-            'message'     => nl2br(htmlspecialchars($fullChatLog)),
-            'cta_url'     => 'https://' . $host . '/admin/leads.php?id=' . $leadId,
-            'cta_text'    => 'View Chat Lead #' . $leadId,
-            'meta'        => ['Country' => country_code(), 'IP' => client_ip()]
-        ]);
-        send_html_email($to, $subj, $emailHtml, $detectedEmail ?: '');
-    } catch (Exception $e) {
-        // Continue even if DB write fails
+        if ($hasContact) {
+            $leadCaptured = true;
+            $to = setting('notify_email', NOTIFY_EMAIL);
+            $subj = '[HOT 85] New AI Chatbot Lead: ' . $leadName . ' (' . ($detectedPhone ?: $detectedEmail) . ')';
+            $items = [
+                'Source'           => 'Interactive AI Sales Chatbot',
+                'Phone / WhatsApp' => $detectedPhone ?: 'Not provided',
+                'Email'            => $detectedEmail ?: 'Not provided',
+                'Language'         => strtoupper($lang),
+                'Status'           => '🔥 Hot Lead (Direct Chat Engagement)',
+                'Session ID'       => $sessionId,
+            ];
+            $host = $_SERVER['HTTP_HOST'] ?? 'softnexasolution.com';
+            $emailHtml = render_lead_email([
+                'title'       => $subj,
+                'badge'       => '🔥 HOT CHATBOT LEAD (85)',
+                'badge_color' => '#EF4444',
+                'name'        => $leadName,
+                'company'     => 'Direct Website Visitor',
+                'email'       => $detectedEmail ?: 'chat@softnexasolution.com',
+                'phone'       => $detectedPhone,
+                'items'       => $items,
+                'message'     => nl2br(htmlspecialchars($fullChatLog)),
+                'cta_url'     => 'https://' . $host . '/admin/leads.php?id=' . $leadId,
+                'cta_text'    => 'View Chat Lead #' . $leadId,
+                'meta'        => ['Country' => country_code(), 'IP' => client_ip()]
+            ]);
+            send_html_email($to, $subj, $emailHtml, $detectedEmail ?: '');
+        }
     }
+} catch (Exception $e) {
+    // Continue even if DB write fails
 }
 
 // Recommended quick replies based on context

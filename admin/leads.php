@@ -34,7 +34,7 @@ $freg = $_GET['region'] ?? '';
 if (in_array($fs, $STATUSES, true)) { $where[] = 'status = ?'; $args[] = $fs; }
 if ($fq !== '') { $where[] = '(name LIKE ? OR company LIKE ? OR email LIKE ? OR phone LIKE ?)'; for ($i = 0; $i < 4; $i++) $args[] = "%$fq%"; }
 if ($fmin > 0) { $where[] = 'lead_score >= ?'; $args[] = $fmin; }
-if (in_array($fsrc, ['scope-builder', 'contact-form'], true)) { $where[] = 'source = ?'; $args[] = $fsrc; }
+if (in_array($fsrc, ['scope-builder', 'contact-form', 'ai-chatbot', 'ai-chatbot-card'], true)) { $where[] = 'source = ?'; $args[] = $fsrc; }
 if ($freg === 'pk') { $where[] = "region LIKE 'Pakistan%'"; }
 if ($freg === 'intl') { $where[] = "region LIKE 'International%'"; }
 $W = $where ? 'WHERE ' . implode(' AND ', $where) : '';
@@ -100,9 +100,9 @@ if ($lead):
       <table>
         <?php
         $fields = ['email' => 'Email', 'phone' => 'Phone / WhatsApp', 'service' => 'Came in through', 'industry' => 'Sector',
-                   'problems' => 'Problems', 'tools' => 'Current tools', 'team' => 'Team size', 'urgency' => 'Urgency',
+                   'problems' => ($lead['source'] === 'ai-chatbot' ? 'Chat Log' : 'Problems'), 'tools' => 'Current tools', 'team' => 'Team size', 'urgency' => 'Urgency',
                    'modules' => 'Modules', 'region' => 'Pricing region', 'founding' => 'Founding offer', 'trial_days' => 'Trial requested',
-                   'message' => 'Message', 'source' => 'Source', 'referrer' => 'Referrer', 'device' => 'Device', 'country' => 'Country'];
+                   'message' => ($lead['source'] === 'ai-chatbot' ? 'Full Chat Conversation' : 'Message'), 'source' => 'Source', 'referrer' => 'Referrer', 'device' => 'Device', 'country' => 'Country'];
         foreach ($fields as $k => $label):
             $v = $lead[$k];
             if ($v === '' || $v === null || ($k === 'trial_days' && !$v)) continue;
@@ -168,7 +168,7 @@ if ($lead):
     $qs = $_GET; unset($qs['export']);
 ?>
 <div class="top">
-  <div><h1>Leads</h1><span class="muted"><?= count($rows) ?> shown · every enquiry from the contact form and the scope builder</span></div>
+  <div><h1>Leads</h1><span class="muted"><?= count($rows) ?> shown · every enquiry from contact form, scope builder & AI chatbot</span></div>
   <div class="sp"><a class="btn" href="?<?= e(http_build_query($qs + ['export' => 1])) ?>">Export CSV</a></div>
 </div>
 
@@ -188,7 +188,8 @@ if ($lead):
     <?php foreach ([0 => 'Any', 45 => '45+ warm', 70 => '70+ hot'] as $v => $l): ?><option value="<?= $v ?>" <?= $fmin === $v ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?></select></div>
   <div><label>Source</label><select name="source"><option value="">Any</option>
     <option value="scope-builder" <?= $fsrc === 'scope-builder' ? 'selected' : '' ?>>Scope builder</option>
-    <option value="contact-form" <?= $fsrc === 'contact-form' ? 'selected' : '' ?>>Contact form</option></select></div>
+    <option value="contact-form" <?= $fsrc === 'contact-form' ? 'selected' : '' ?>>Contact form</option>
+    <option value="ai-chatbot" <?= $fsrc === 'ai-chatbot' ? 'selected' : '' ?>>AI Chatbot</option></select></div>
   <div><label>Region</label><select name="region"><option value="">Any</option>
     <option value="pk" <?= $freg === 'pk' ? 'selected' : '' ?>>Pakistan</option>
     <option value="intl" <?= $freg === 'intl' ? 'selected' : '' ?>>International</option></select></div>

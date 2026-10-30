@@ -2091,73 +2091,76 @@ table.sdt .mu{color:var(--muted)}
   color:var(--muted);cursor:pointer;font-size:.85rem;line-height:1;display:grid;place-items:center;transition:background .2s}
 .sx-teaser-x:hover{background:rgba(255,255,255,.2);color:#fff}
 
-/* Chat Window - Compact & Clean */
-.sx-chat-window{position:fixed;bottom:80px;right:20px;width:345px;max-width:calc(100vw - 28px);height:485px;
-  max-height:calc(100vh - 100px);background:color-mix(in srgb,var(--void) 90%,#120D36);
+/* Chat Window - Compact & Clean (Multi-Device Friendly) */
+.sx-chat-window{position:fixed;bottom:75px;right:18px;width:320px;max-width:calc(100vw - 24px);height:435px;
+  max-height:calc(100vh - 90px);background:color-mix(in srgb,var(--void) 92%,#120D36);
   backdrop-filter:blur(25px) saturate(150%);border:1px solid rgba(110,75,255,.4);
-  box-shadow:0 22px 55px rgba(7,6,26,.65),0 0 1px 1px rgba(255,255,255,.08);border-radius:18px;
+  box-shadow:0 18px 45px rgba(7,6,26,.65),0 0 1px 1px rgba(255,255,255,.08);border-radius:16px;
   display:flex;flex-direction:column;overflow:hidden;z-index:10000;animation:sxWindowOpen .28s cubic-bezier(.16,1,.3,1)}
 @keyframes sxWindowOpen{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 /* Chat Header */
-.sx-chat-head{padding:10px 13px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.03);
-  display:flex;align-items:center;justify-content:space-between;gap:8px;flex:none}
-.sx-head-profile{display:flex;align-items:center;gap:9px;min-width:0}
-.sx-head-av{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#6E4BFF,#12C8F0);
-  display:grid;place-items:center;font-size:1rem;color:#fff;position:relative;box-shadow:0 3px 10px rgba(110,75,255,.35);flex:none}
-.sx-head-dot{position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:#10B981;
+.sx-chat-head{padding:8px 11px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.03);
+  display:flex;align-items:center;justify-content:space-between;gap:6px;flex:none}
+.sx-head-profile{display:flex;align-items:center;gap:7px;min-width:0}
+.sx-head-av{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#6E4BFF,#12C8F0);
+  display:grid;place-items:center;font-size:.9rem;color:#fff;position:relative;box-shadow:0 2px 8px rgba(110,75,255,.35);flex:none}
+.sx-head-dot{position:absolute;bottom:-1px;right:-1px;width:8px;height:8px;border-radius:50%;background:#10B981;
   border:1.5px solid #100C2C;box-shadow:0 0 5px #10B981}
 .sx-head-info{min-width:0}
-.sx-head-title{display:flex;align-items:center;gap:5px}
-.sx-head-title strong{font-size:.86rem;font-weight:700;color:var(--ink);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sx-verified-badge{display:inline-grid;place-items:center;width:13px;height:13px;border-radius:50%;
-  background:#12C8F0;color:#0B0826;font-size:.58rem;font-weight:900;flex:none}
-.sx-head-sub{display:block;font-size:.68rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sx-head-actions{display:flex;align-items:center;gap:6px;flex:none}
+.sx-head-title{display:flex;align-items:center;gap:4px}
+.sx-head-title strong{font-size:.82rem;font-weight:700;color:var(--ink);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sx-verified-badge{display:inline-grid;place-items:center;width:12px;height:12px;border-radius:50%;
+  background:#12C8F0;color:#0B0826;font-size:.54rem;font-weight:900;flex:none}
+.sx-head-sub{display:block;font-size:.65rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sx-head-actions{display:flex;align-items:center;gap:5px;flex:none}
 
 /* Language Switcher */
-.sx-lang-switch{display:flex;background:rgba(255,255,255,.06);padding:2px;border-radius:7px;border:1px solid var(--line)}
-.sx-lang-btn{background:none;border:0;color:var(--muted);font-size:.66rem;font-weight:600;padding:3px 6px;
-  border-radius:5px;cursor:pointer;transition:.18s}
+.sx-lang-switch{display:flex;background:rgba(255,255,255,.06);padding:2px;border-radius:6px;border:1px solid var(--line)}
+.sx-lang-btn{background:none;border:0;color:var(--muted);font-size:.63rem;font-weight:600;padding:2px 5px;
+  border-radius:4px;cursor:pointer;transition:.18s}
 .sx-lang-btn.active{background:var(--iris);color:#fff;box-shadow:0 1px 4px rgba(110,75,255,.4)}
-.sx-head-x{width:26px;height:26px;border-radius:8px;border:0;background:rgba(255,255,255,.07);color:var(--muted);
-  font-size:1rem;display:grid;place-items:center;cursor:pointer;transition:.18s}
+.sx-head-x{width:24px;height:24px;border-radius:7px;border:0;background:rgba(255,255,255,.07);color:var(--muted);
+  font-size:.9rem;display:grid;place-items:center;cursor:pointer;transition:.18s}
 .sx-head-x:hover{background:rgba(255,255,255,.18);color:#fff}
 
-/* Quick Chips Bar */
-.sx-quick-bar{padding:7px 11px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;gap:5px;
-  overflow-x:auto;scrollbar-width:none;flex:none;background:rgba(0,0,0,.15)}
-.sx-quick-bar::-webkit-scrollbar{display:none}
-.sx-chip{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink);padding:4px 9px;
-  border-radius:999px;font-size:.71rem;font-weight:500;white-space:nowrap;cursor:pointer;transition:.18s;
-  display:inline-flex;align-items:center;gap:4px}
-.sx-chip:hover{background:var(--iris);border-color:var(--iris);color:#fff}
+/* Quick Inquiry Chips Bar - Continuous Auto-Scrolling Ticker */
+.sx-quick-bar{padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);overflow:hidden;flex:none;background:rgba(0,0,0,.22);
+  position:relative;mask-image:linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent);
+  -webkit-mask-image:linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)}
+.sx-quick-track{display:inline-flex;gap:6px;white-space:nowrap;will-change:transform;animation:sxMarquee 26s linear infinite;padding:0 6px}
+.sx-quick-bar:hover .sx-quick-track,.sx-quick-bar:active .sx-quick-track,.sx-quick-track:hover{animation-play-state:paused}
+@keyframes sxMarquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.sx-chip{background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--ink);padding:3px 8px;
+  border-radius:999px;font-size:.69rem;font-weight:500;white-space:nowrap;cursor:pointer;transition:.18s;
+  display:inline-flex;align-items:center;gap:4px;flex:none}
+.sx-chip:hover{background:var(--iris);border-color:var(--iris);color:#fff;transform:translateY(-1px)}
 
 /* Message Stream */
-.sx-chat-body{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:11px;
+.sx-chat-body{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:9px;
   scroll-behavior:smooth}
-.sx-msg{display:flex;gap:8px;align-items:flex-end;max-width:94%}
+.sx-msg{display:flex;gap:7px;align-items:flex-end;max-width:96%}
 .sx-msg-bot{align-self:flex-start}
 .sx-msg-user{align-self:flex-end;flex-direction:row-reverse}
-.sx-msg-av{width:26px;height:26px;border-radius:9px;background:linear-gradient(135deg,#6E4BFF,#12C8F0);
-  display:grid;place-items:center;font-size:.75rem;color:#fff;flex:none;box-shadow:0 2px 6px rgba(110,75,255,.3)}
+.sx-msg-av{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#6E4BFF,#12C8F0);
+  display:grid;place-items:center;font-size:.7rem;color:#fff;flex:none;box-shadow:0 2px 5px rgba(110,75,255,.3)}
 .sx-msg-user .sx-msg-av{background:linear-gradient(135deg,#FF4D8D,#9B5CFF)}
-.sx-msg-bubble{padding:8px 12px;border-radius:14px;font-size:.81rem;line-height:1.48;color:var(--ink);
+.sx-msg-bubble{padding:7px 10px;border-radius:12px;font-size:.78rem;line-height:1.44;color:var(--ink);
   word-break:break-word;position:relative}
 .sx-msg-bot .sx-msg-bubble{background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);
-  border-bottom-left-radius:3px;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+  border-bottom-left-radius:3px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .sx-msg-user .sx-msg-bubble{background:linear-gradient(120deg,var(--iris),#8644FF);color:#fff;
-  border-bottom-right-radius:3px;box-shadow:0 3px 12px rgba(110,75,255,.35)}
-.sx-msg-bubble p{margin:0 0 6px}
+  border-bottom-right-radius:3px;box-shadow:0 2px 10px rgba(110,75,255,.35)}
+.sx-msg-bubble p{margin:0 0 5px}
 .sx-msg-bubble p:last-child{margin-bottom:0}
 .sx-msg-bubble strong{font-weight:700;color:#fff}
-.sx-msg-bubble ul{margin:4px 0 4px 16px;padding:0}
-.sx-msg-bubble li{margin-bottom:3px}
-.sx-msg-time{font-size:.64rem;color:var(--muted);margin-top:3px;display:block;opacity:.8}
+.sx-msg-bubble ul{margin:3px 0 3px 14px;padding:0}
+.sx-msg-bubble li{margin-bottom:2px}
+.sx-msg-time{font-size:.62rem;color:var(--muted);margin-top:2px;display:block;opacity:.8}
 
 /* Typing Indicator */
-.sx-typing{display:flex;gap:8px;align-items:flex-end;align-self:flex-start;padding:0 12px 6px}
-.sx-typing-bubble{padding:8px 13px;border-radius:14px;border-bottom-left-radius:3px;
+.sx-typing{display:flex;gap:7px;align-items:flex-end;align-self:flex-start;padding:0 10px 5px}
+.sx-typing-bubble{padding:7px 11px;border-radius:12px;border-bottom-left-radius:3px;
   background:var(--panel);border:1px solid var(--line);display:flex;gap:4px;align-items:center}
 .sx-typing-bubble span{width:5px;height:5px;border-radius:50%;background:#12C8F0;animation:sxBounce 1.4s infinite ease-in-out both}
 .sx-typing-bubble span:nth-child(1){animation-delay:-0.32s}
@@ -2165,45 +2168,45 @@ table.sdt .mu{color:var(--muted)}
 @keyframes sxBounce{0%,80%,100%{transform:scale(0);opacity:.4}40%{transform:scale(1);opacity:1}}
 
 /* Interactive Lead Intake Card inside Chat */
-.sx-lead-card{margin:6px 12px;background:linear-gradient(135deg,rgba(110,75,255,.18),rgba(18,200,240,.12));
-  border:1.5px solid rgba(110,75,255,.5);border-radius:14px;padding:11px;backdrop-filter:blur(10px);
+.sx-lead-card{margin:5px 10px;background:linear-gradient(135deg,rgba(110,75,255,.18),rgba(18,200,240,.12));
+  border:1.5px solid rgba(110,75,255,.5);border-radius:12px;padding:10px;backdrop-filter:blur(10px);
   animation:sxSlideUp .25s var(--ease);flex:none}
-.sx-lead-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
-.sx-lead-head strong{font-size:.8rem;color:#fff}
-.sx-lead-x{background:none;border:0;color:var(--muted);font-size:1rem;cursor:pointer}
-.sx-lead-desc{font-size:.72rem;color:var(--muted);line-height:1.35;margin:0 0 8px}
-.sx-lead-fields{display:flex;flex-direction:column;gap:6px}
-.sx-input{width:100%;background:rgba(7,6,26,.65);border:1px solid var(--line);border-radius:8px;
-  padding:7px 10px;font-size:.78rem;color:var(--ink);outline:none;transition:border-color .18s}
+.sx-lead-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.sx-lead-head strong{font-size:.78rem;color:#fff}
+.sx-lead-x{background:none;border:0;color:var(--muted);font-size:.95rem;cursor:pointer}
+.sx-lead-desc{font-size:.7rem;color:var(--muted);line-height:1.3;margin:0 0 7px}
+.sx-lead-fields{display:flex;flex-direction:column;gap:5px}
+.sx-input{width:100%;background:rgba(7,6,26,.65);border:1px solid var(--line);border-radius:7px;
+  padding:6px 9px;font-size:.75rem;color:var(--ink);outline:none;transition:border-color .18s}
 .sx-input:focus{border-color:var(--iris);box-shadow:0 0 0 2px rgba(110,75,255,.25)}
 .sx-lead-btn{background:linear-gradient(110deg,var(--iris),var(--violet) 50%,var(--pink));color:#fff;
-  border:0;border-radius:8px;padding:8px 12px;font-size:.78rem;font-weight:700;cursor:pointer;
-  transition:transform .18s,box-shadow .18s;box-shadow:0 4px 14px rgba(110,75,255,.4);margin-top:3px}
-.sx-lead-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(110,75,255,.6)}
+  border:0;border-radius:7px;padding:7px 11px;font-size:.75rem;font-weight:700;cursor:pointer;
+  transition:transform .18s,box-shadow .18s;box-shadow:0 3px 12px rgba(110,75,255,.4);margin-top:2px}
+.sx-lead-btn:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(110,75,255,.6)}
 
 /* Footer Input */
-.sx-chat-foot{padding:9px 11px 8px;border-top:1px solid var(--line);background:rgba(255,255,255,.02);flex:none}
-.sx-chat-form{display:flex;align-items:center;gap:6px;position:relative}
-.sx-chat-input{flex:1;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:10px;
-  padding:8px 10px;font-family:inherit;font-size:.81rem;color:var(--ink);outline:none;
-  transition:border-color .18s,background .18s;line-height:1.35;height:34px;box-sizing:border-box}
+.sx-chat-foot{padding:7px 9px 6px;border-top:1px solid var(--line);background:rgba(255,255,255,.02);flex:none}
+.sx-chat-form{display:flex;align-items:center;gap:5px;position:relative}
+.sx-chat-input{flex:1;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:9px;
+  padding:6px 9px;font-family:inherit;font-size:.78rem;color:var(--ink);outline:none;
+  transition:border-color .18s,background .18s;line-height:1.3;height:32px;box-sizing:border-box}
 .sx-chat-input:focus{border-color:var(--iris);background:rgba(255,255,255,.09);box-shadow:0 0 0 2px rgba(110,75,255,.25)}
 .sx-blueprint-btn{background:rgba(18,200,240,.12);border:1px solid rgba(18,200,240,.35);color:#12C8F0;
-  border-radius:8px;padding:6px 9px;font-size:.71rem;font-weight:700;cursor:pointer;transition:.18s;white-space:nowrap;height:34px;box-sizing:border-box}
+  border-radius:7px;padding:5px 8px;font-size:.68rem;font-weight:700;cursor:pointer;transition:.18s;white-space:nowrap;height:32px;box-sizing:border-box}
 .sx-blueprint-btn:hover{background:rgba(18,200,240,.25);color:#fff}
-.sx-send-btn{width:34px;height:34px;border-radius:10px;background:linear-gradient(120deg,var(--iris),var(--cyan));
+.sx-send-btn{width:32px;height:32px;border-radius:9px;background:linear-gradient(120deg,var(--iris),var(--cyan));
   border:0;color:#fff;display:grid;place-items:center;cursor:pointer;flex:none;transition:transform .18s,box-shadow .18s;
-  box-shadow:0 3px 10px rgba(110,75,255,.4)}
-.sx-send-btn:hover{transform:scale(1.05);box-shadow:0 5px 14px rgba(110,75,255,.6)}
+  box-shadow:0 2px 8px rgba(110,75,255,.4)}
+.sx-send-btn:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(110,75,255,.6)}
 .sx-send-btn:active{transform:scale(.94)}
-.sx-foot-note{margin-top:5px;text-align:center;font-size:.64rem;color:var(--muted);opacity:.75}
+.sx-foot-note{margin-top:4px;text-align:center;font-size:.62rem;color:var(--muted);opacity:.75}
 
 /* Multi-device responsiveness */
 @media (max-width:480px){
-  .sx-chat-root{bottom:14px;right:14px}
-  .sx-chat-launcher{width:48px;height:48px}
-  .sx-chat-window{bottom:68px;right:8px;width:calc(100vw - 16px);height:calc(100vh - 90px);max-height:510px;border-radius:16px}
-  .sx-chat-teaser{width:calc(100vw - 28px);right:0;bottom:60px}
+  .sx-chat-root{bottom:12px;right:12px}
+  .sx-chat-launcher{width:46px;height:46px}
+  .sx-chat-window{bottom:64px;right:8px;left:8px;width:auto;max-width:340px;margin-left:auto;height:415px;max-height:calc(100dvh - 80px);border-radius:15px}
+  .sx-chat-teaser{width:calc(100vw - 24px);max-width:300px;right:0;bottom:58px}
 }
 </style>
 </head>
@@ -2363,13 +2366,23 @@ table.sdt .mu{color:var(--muted)}
       </div>
     </div>
 
-    <!-- Quick Inquiry Chips Bar -->
-    <div class="sx-quick-bar" id="sx-quick-chips">
-      <button class="sx-chip" data-send="I need a Custom Enterprise ERP / CRM for my business.">💼 Custom ERP & CRM</button>
-      <button class="sx-chip" data-send="We want to build a Mobile App for iOS and Android.">📱 Mobile App</button>
-      <button class="sx-chip" data-send="What are your fixed prices and project timelines?">💰 Pricing & Timeline</button>
-      <button class="sx-chip" data-send="Mujhe apne business ke liye software banwana hai, pricing batayein.">🇵🇰 Roman Urdu</button>
-      <button class="sx-chip" data-send="Can you build an autonomous AI WhatsApp agent for us?">🤖 AI Agents</button>
+    <!-- Quick Inquiry Chips Bar (Continuous Scrolling Marquee Ticker) -->
+    <div class="sx-quick-bar" id="sx-quick-bar">
+      <div class="sx-quick-track" id="sx-quick-chips">
+        <button class="sx-chip" data-send="I need a Custom Enterprise ERP / CRM for my business.">💼 Custom ERP & CRM</button>
+        <button class="sx-chip" data-send="We want to build a Mobile App for iOS and Android.">📱 Mobile App</button>
+        <button class="sx-chip" data-send="What are your fixed prices and project timelines?">💰 Pricing & Timeline</button>
+        <button class="sx-chip" data-send="Mujhe apne business ke liye software banwana hai, pricing batayein.">🇵🇰 Roman Urdu</button>
+        <button class="sx-chip" data-send="Can you build an autonomous AI WhatsApp agent for us?">🤖 AI Agents</button>
+        <button class="sx-chip" data-send="We need a High-Converting Web App & SaaS Platform.">⚡ Web Apps & SaaS</button>
+        <!-- Seamless loop duplicate set for smooth continuous ticker -->
+        <button class="sx-chip" data-send="I need a Custom Enterprise ERP / CRM for my business.">💼 Custom ERP & CRM</button>
+        <button class="sx-chip" data-send="We want to build a Mobile App for iOS and Android.">📱 Mobile App</button>
+        <button class="sx-chip" data-send="What are your fixed prices and project timelines?">💰 Pricing & Timeline</button>
+        <button class="sx-chip" data-send="Mujhe apne business ke liye software banwana hai, pricing batayein.">🇵🇰 Roman Urdu</button>
+        <button class="sx-chip" data-send="Can you build an autonomous AI WhatsApp agent for us?">🤖 AI Agents</button>
+        <button class="sx-chip" data-send="We need a High-Converting Web App & SaaS Platform.">⚡ Web Apps & SaaS</button>
+      </div>
     </div>
 
     <!-- Message Stream -->
@@ -7881,7 +7894,7 @@ if(matchMedia('(pointer:fine)').matches && !reduce){
       body: JSON.stringify({
         message: msg,
         history: history.slice(-8),
-        session_id: window.SID || '',
+        session_id: (typeof SID !== 'undefined' ? SID : (window.SID || '')),
         lang: currentLang
       })
     })
@@ -7896,9 +7909,10 @@ if(matchMedia('(pointer:fine)').matches && !reduce){
           setLanguage(data.lang);
         }
         if(chips && Array.isArray(data.quick_replies) && data.quick_replies.length){
-          chips.innerHTML = data.quick_replies.map(function(q){
+          var chipHtml = data.quick_replies.map(function(q){
             return '<button class="sx-chip" data-send="' + q.replace(/"/g,'&quot;') + '">' + q + '</button>';
           }).join('');
+          chips.innerHTML = chipHtml + chipHtml;
         }
       } else {
         renderBubble('assistant', "I'm having a brief connection pause. Please feel free to WhatsApp us directly or send a message via our Contact form!", true);
