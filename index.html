@@ -62,7 +62,7 @@
       "url": "https://softnexasolution.com",
       "logo": "https://softnexasolution.com/assets/apple-touch-icon.png",
       "email": "info@softnexasolution.com",
-      "telephone": "+92-21-00000000",
+      "telephone": "+92-315-2989922",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Shahrah-e-Faisal",
@@ -2444,12 +2444,25 @@ table.sdt .mu{color:var(--muted)}
 /* Launcher transitions when open */
 .sx-chat-launcher.open{opacity:0;pointer-events:none;transform:scale(.85);transition:.22s}
 
+/* Floating WhatsApp Business Button */
+.sx-wa-float-btn{position:fixed;bottom:20px;left:20px;z-index:9990;width:52px;height:52px;border-radius:50%;background:#25D366;box-shadow:0 10px 26px rgba(37,211,102,.45),0 4px 10px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s ease;isolation:isolate}
+.sx-wa-float-btn:hover{transform:scale(1.1);box-shadow:0 14px 34px rgba(37,211,102,.7);color:#fff}
+.sx-wa-float-btn:active{transform:scale(.94)}
+.sx-wa-pulse{position:absolute;inset:-3px;border-radius:50%;background:radial-gradient(circle,rgba(37,211,102,.5),transparent 70%);z-index:-1;animation:sxWaPulse 2.8s ease-in-out infinite}
+@keyframes sxWaPulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.28);opacity:.85}}
+.sx-wa-tooltip{position:absolute;left:64px;top:50%;transform:translateY(-50%);background:#0D0A24;color:#fff;padding:6px 12px;border-radius:8px;font-size:.76rem;font-weight:600;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;box-shadow:0 6px 18px rgba(0,0,0,.5);border:1px solid rgba(37,211,102,.35)}
+.sx-wa-float-btn:hover .sx-wa-tooltip{opacity:1;transform:translateY(-50%) translateX(4px)}
+.sx-head-wa-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:rgba(37,211,102,.14);border:1px solid rgba(37,211,102,.3);transition:transform .2s,background .2s;text-decoration:none;margin-right:6px}
+.sx-head-wa-btn:hover{background:rgba(37,211,102,.25);transform:scale(1.08)}
+
 /* Mobile full drawer */
 @media (max-width:480px){
   .sx-chat-root{bottom:14px;right:14px}
   .sx-chat-launcher{width:48px;height:48px}
   .sx-chat-window{width:100vw;border-radius:0;border-left:none}
   .sx-chat-teaser{width:calc(100vw - 28px);max-width:300px;right:0;bottom:60px}
+  .sx-wa-float-btn{width:46px;height:46px;bottom:14px;left:14px}
+  .sx-wa-tooltip{display:none}
 }
 </style>
 </head>
@@ -2541,9 +2554,10 @@ table.sdt .mu{color:var(--muted)}
       </div>
       <div><h4>Get in touch</h4>
         <a href="mailto:info@softnexasolution.com">info@softnexasolution.com</a>
-        <a href="tel:+922100000000">+92 21 0000 0000</a>
-        <span style="display:block;padding:6px 0;color:var(--muted);font-size:.95rem">Shahrah-e-Faisal, Karachi</span>
-        <span style="display:block;padding:6px 0;color:var(--muted);font-size:.95rem">Mon–Fri · 10am–7pm PKT</span>
+        <a href="https://wa.me/923152989922?text=Hello%20SoftNexa,%20I%20would%20like%20to%20discuss%20a%20project" target="_blank" rel="noopener" style="color:#25D366;font-weight:600;display:inline-flex;align-items:center;gap:6px"><span>💬</span> WhatsApp: +92 315 2989922</a>
+        <a href="tel:+923152989922" style="font-size:.88rem;color:var(--muted)">📞 Call: +92 315 2989922</a>
+        <span style="display:block;padding:4px 0;color:var(--muted);font-size:.9rem">Shahrah-e-Faisal, Karachi</span>
+        <span style="display:block;padding:2px 0;color:var(--muted);font-size:.9rem">Mon–Fri · 10am–7pm PKT</span>
       </div>
     </div>
     <div class="fword">SoftNexa</div>
@@ -2553,6 +2567,17 @@ table.sdt .mu{color:var(--muted)}
     </div>
   </div>
 </footer>
+
+<!-- ============================================================
+     FLOATING WHATSAPP BUSINESS QUICK BUTTON
+     ============================================================ -->
+<a href="https://wa.me/923152989922?text=Hello%20SoftNexa,%20I%20would%20like%20to%20discuss%20a%20project" target="_blank" rel="noopener" class="sx-wa-float-btn" aria-label="Chat with SoftNexa on WhatsApp" title="Chat on WhatsApp (+92 315 2989922)">
+  <div class="sx-wa-pulse"></div>
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#ffffff">
+    <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84-1.56 1.56-3.64 2.4-5.83 2.4-1.46 0-2.88-.39-4.13-1.12l-.3-.18-3.07.81.82-2.99-.19-.31a8.17 8.17 0 0 1-1.25-4.45c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.7 4.29 3.78.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/>
+  </svg>
+  <span class="sx-wa-tooltip">💬 Chat on WhatsApp</span>
+</a>
 
 <!-- ============================================================
      SOFTNEXA MULTILINGUAL AI ARCHITECT CHATBOT WIDGET
@@ -2602,6 +2627,9 @@ table.sdt .mu{color:var(--muted)}
         </div>
       </div>
       <div class="sx-head-actions">
+        <a href="https://wa.me/923152989922?text=Hello%20SoftNexa,%20I%20would%20like%20to%20discuss%20a%20project" target="_blank" rel="noopener" class="sx-head-wa-btn" aria-label="WhatsApp Us" title="Open direct WhatsApp (+92 315 2989922)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="#25D366"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84-1.56 1.56-3.64 2.4-5.83 2.4-1.46 0-2.88-.39-4.13-1.12l-.3-.18-3.07.81.82-2.99-.19-.31a8.17 8.17 0 0 1-1.25-4.45c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.7 4.29 3.78.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
+        </a>
         <button id="sx-chat-close" class="sx-head-x" aria-label="Close Chat">×</button>
       </div>
     </div>
@@ -4162,7 +4190,7 @@ PAGES.contact=function(){
       }).join('')+'</div>'+
     '<div class="grid3" style="margin-top:18px">'+
       '<div class="card"><h3 style="font-size:1.02rem">Email</h3><p><a href="mailto:info@softnexasolution.com" style="color:var(--iris);text-decoration:none">info@softnexasolution.com</a></p></div>'+
-      '<div class="card"><h3 style="font-size:1.02rem">Phone & WhatsApp</h3><p><a href="tel:+922100000000" style="color:var(--iris);text-decoration:none">+92 21 0000 0000</a></p></div>'+
+      '<div class="card"><h3 style="font-size:1.02rem">Phone & WhatsApp</h3><p><a href="https://wa.me/923152989922?text=Hello%20SoftNexa,%20I%20would%20like%20to%20discuss%20a%20project" target="_blank" rel="noopener" style="color:#25D366;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px"><span>💬</span> +92 315 2989922</a></p><span style="font-size:.82rem;color:var(--muted)">Instant WhatsApp & Call Support</span></div>'+
       '<div class="card"><h3 style="font-size:1.02rem">Office</h3><p>Shahrah-e-Faisal, Karachi<br>Mon–Fri, 10am–7pm PKT</p></div>'+
     '</div></div></section>';
 };

@@ -15,7 +15,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') { http_response_code(204);
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') json_out(['ok' => false, 'error' => 'method'], 405);
 
 if (!rate_ok('chat', 60, 3600)) {
-    json_out(['ok' => false, 'reply' => "You've sent quite a few messages! Please take a quick moment, or feel free to WhatsApp us directly or email info@softnexasolution.com."]);
+    json_out(['ok' => false, 'reply' => "You've sent quite a few messages! Please take a quick moment, or feel free to WhatsApp us directly at +92 315 2989922 (https://wa.me/923152989922) or email info@softnexasolution.com."]);
 }
 
 $input = json_input();
@@ -85,6 +85,12 @@ Pricing & Delivery Model:
 - Fast MVP launches in 2 to 4 weeks. Full enterprise systems in 4 to 8 weeks.
 - MVPs typically start around $3,000 / PKR equivalent; enterprise systems range $6,000 - $15,000+ depending on scope.
 - We offer a free 48-hour tailored scope blueprint and prototype demo.
+
+Official Contact & WhatsApp:
+- Official WhatsApp / Direct Call: +92 315 2989922 (https://wa.me/923152989922)
+- Official Email: info@softnexasolution.com
+- Office: Shahrah-e-Faisal, Karachi, Pakistan
+- When the user asks for contact info, phone, or how to WhatsApp us, provide +92 315 2989922 and invite them to connect.
 
 Tone & Behavior:
 - Talk like an empathetic, highly skilled technical consultant dealing directly with a customer.
@@ -167,7 +173,8 @@ if (!$llmSucceeded || empty($aiReply)) {
     $isApp = preg_match('/\b(app|mobile|android|ios|flutter|playstore|play store|app store|react native)\b/i', $msgLower);
     $isWeb = preg_match('/\b(web|website|saas|portal|software|dashboard|react|nextjs)\b/i', $msgLower);
     $isAI = preg_match('/\b(ai|agent|chatbot|bot|whatsapp bot|automation|automate|llm|ocr|rag)\b/i', $msgLower);
-    $isLocation = preg_match('/\b(office|location|address|karachi|where|kahan|lahore|islamabad|contact|phone|call|meeting)\b/i', $msgLower);
+    $isContact = preg_match('/\b(contact|phone|number|whatsapp|call|rabta|email|mobile|cell|num)\b/i', $msgLower);
+    $isLocation = preg_match('/\b(office|location|address|karachi|where|kahan|lahore|islamabad|meeting)\b/i', $msgLower);
 
     // 1. Lead Contact Submission
     if ($isContactSubmission) {
@@ -259,7 +266,17 @@ if (!$llmSucceeded || empty($aiReply)) {
             $aiReply = "We engineer autonomous AI agents, WhatsApp business chatbots, and smart document extractors (OCR/PDF) that handle customer inquiries and data workflows 24/7. Are you looking for a customer-facing sales agent or internal document automation?";
         }
     }
-    // 10. Office Location & Meetings
+    // 10. Direct Contact & WhatsApp
+    elseif ($isContact) {
+        if ($lang === 'ur') {
+            $aiReply = "آپ ہم سے براہ راست آفیشل واٹس ایپ / کال پر رابطہ کر سکتے ہیں: +92 315 2989922 (ڈائریکٹ لنک: https://wa.me/923152989922) یا info@softnexasolution.com پر ای میل بھیج سکتے ہیں۔ ہماری ٹیم فوری رہنمائی کے لیے دستیاب ہے!";
+        } elseif ($lang === 'ro') {
+            $aiReply = "Aap hum se direct official WhatsApp / Call par rabta kar sakte hain: +92 315 2989922 (Direct chat: https://wa.me/923152989922) ya info@softnexasolution.com par email bhej sakte hain. Hamari senior engineering team aapko foran response de gi!";
+        } else {
+            $aiReply = "You can reach our engineering leads directly on WhatsApp or phone at +92 315 2989922 (or click: https://wa.me/923152989922), or email us at info@softnexasolution.com. We're ready to discuss your project anytime!";
+        }
+    }
+    // 11. Office Location & Meetings
     elseif ($isLocation) {
         if ($lang === 'ur') {
             $aiReply = "سافٹ نیکسا کا مین انجینئرنگ ہاؤس شاہراہِ فیصل، کراچی میں واقع ہے، اور ہم امریکہ، برطانیہ، مشرق وسطیٰ اور پاکستان بھر کے کلائنٹس کو انٹرپرائز سافٹ ویئر سلوشنز فراہم کرتے ہیں۔ آپ کراچی آفس میں میٹنگ بھی شیڈول کر سکتے ہیں!";
