@@ -145,3 +145,16 @@ CREATE TABLE IF NOT EXISTS brief_notes (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX (brief_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS wa_messages (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  wa_msg_id VARCHAR(100) UNIQUE,
+  phone VARCHAR(50) NOT NULL,
+  name VARCHAR(120),
+  direction ENUM('in','out') NOT NULL,
+  message TEXT NOT NULL,
+  raw_payload TEXT,
+  status VARCHAR(40) DEFAULT 'delivered',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX (phone), INDEX (created_at), INDEX (direction)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

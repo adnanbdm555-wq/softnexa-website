@@ -493,3 +493,95 @@ function send_html_email($to, $subject, $htmlBody, $replyTo = '') {
     }
     return $success;
 }
+
+/* ---------- WhatsApp Cloud API Client & Table Helpers ---------- */
+function init_whatsapp_tables() {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    try {
+        db()->exec("CREATE TABLE IF NOT EXISTS wa_messages (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            wa_msg_id VARCHAR(100) UNIQUE,
+            phone VARCHAR(50) NOT NULL,
+            name VARCHAR(120),
+            direction ENUM('in','out') NOT NULL,
+            message TEXT NOT NULL,
+            raw_payload TEXT,
+            status VARCHAR(40) DEFAULT 'delivered',
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX (phone), INDEX (created_at), INDEX (direction)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    } catch (Exception $e) {
+        error_log("init_whatsapp_tables error: " . $e->getMessage());
+    }
+}
+
+function send_meta_whatsapp_message($toPhone, $messageText) {
+    init_whatsapp_tables();
+    $phoneId     = trim((string)setting('wa_phone_id', ''));
+    $accessToken = trim((string)setting('wa_token', ''));
+
+    // Normalize phone number (strip +, spaces, dashes, leading zeroes)
+    $cleanPhone = preg_replace('/[^0-9]/', '', (string)$toPhone);
+    if (strpos($cleanPhone, '03') === 0) {
+        $cleanPhone = '92' . substr($cleanPhone, 1);
+    }
+
+    if (empty($phoneId) || empty($accessToken) || empty($cleanPhone) || empty($messageText)) {
+        return ['ok' => false, 'error' => 'Missing Phone ID, Access Token or recipient phone'];
+    }
+
+    $url = 'https://graph.facebook.com/v21.0/' . urlencode($phoneId) . '/messages';
+    $payload = [
+        'messaging_product' => 'whatsapp',
+        'recipient_type'    => 'individual',
+        'to'                => $cleanPhone,
+        'type'              => 'text',
+        'text'              => [
+            'preview_url' => true,
+            'body'        => $messageText
+        ]
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => json_encode($payload),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 12,
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $accessToken
+        ]
+    ]);
+
+    $res = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr = curl_error($ch);
+    curl_close($ch);
+
+    $jsonRes = json_decode((string)$res, true);
+    $isOk = ($httpCode >= 200 && $httpCode < 300 && !empty($jsonRes['messages'][0]['id']));
+
+    // Log outbound message to database
+    try {
+        $outMsgId = $jsonRes['messages'][0]['id'] ?? ('out_' . bin2hex(random_bytes(8)));
+        $st = db()->prepare("INSERT INTO wa_messages (wa_msg_id, phone, name, direction, message, raw_payload, status) VALUES (?, ?, ?, 'out', ?, ?, ?)");
+        $st->execute([
+            $outMsgId,
+            $cleanPhone,
+            'SoftNexa AI',
+            $messageText,
+            $res,
+            $isOk ? 'sent' : 'failed'
+        ]);
+    } catch (Exception $e) {}
+
+    return [
+        'ok'        => $isOk,
+        'http_code' => $httpCode,
+        'response'  => $jsonRes ?: $res,
+        'curl_err'  => $curlErr
+    ];
+}
