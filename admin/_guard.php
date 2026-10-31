@@ -68,11 +68,12 @@ function nf($n) { return number_format((float)$n); }
 
 function admin_head($active = '', $title = '') {
     $nav = [
-        'dashboard.php' => 'Overview',
-        'leads.php'     => 'Leads',
-        'briefs.php'    => 'Client briefs',
-        'analytics.php' => 'Analytics',
-        'settings.php'  => 'Settings'
+        'dashboard.php'   => 'Overview',
+        'leads.php'       => 'Leads',
+        'lead_finder.php' => 'Lead Scout (B2B)',
+        'briefs.php'      => 'Client briefs',
+        'analytics.php'   => 'Analytics',
+        'settings.php'    => 'Settings'
     ];
     ?><!DOCTYPE html>
 <html lang="en"><head>
