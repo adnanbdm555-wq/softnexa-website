@@ -26,7 +26,12 @@ INSERT IGNORE INTO settings (k, v) VALUES
   ('founding_slots', '3'),
   ('founding_left', '3'),
   ('notify_email', 'info@softnexasolution.com'),
-  ('popups_on', '1');
+  ('popups_on', '1'),
+  ('wa_phone_id', '1439358495923133'),
+  ('wa_waba_id', '984640244701522'),
+  ('wa_token', 'EAAeIJS2vcIgBS3fScDub4J45m9PQcJNoGNy9X2HhsSpnTNC9d31xC9ZB6W1mMlvrNuymoA8NG4OZAiZCf26caKZCoYwvf2SYLTHdqI1vIy6YDzYtgW5D5lwABrdINBHjr7w8ZA1W7RX86ciYIEsLJpLrvCg6bEizefZBjJ627R92te7fGdvgPdXTxENsg0kT2fxB2uRIAIBS0TjMFqTjPZBfJMhkaZCeOm3DlmOe9nZBZBVT0ZBc6h7ZAioMICGPiGxkiEK6DR0us2qZBxAtKOfJZB38ja'),
+  ('wa_verify_token', 'softnexa_wa_bot_2026'),
+  ('wa_bot_enabled', '1');
 
 CREATE TABLE IF NOT EXISTS leads (
   id INT AUTO_INCREMENT PRIMARY KEY,

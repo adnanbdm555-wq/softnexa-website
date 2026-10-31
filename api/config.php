@@ -130,6 +130,11 @@ function setting($key, $default = null) {
             $val .= ', adnanbdm555@gmail.com';
         }
     }
+    if ($key === 'wa_phone_id' && empty($val)) $val = '1439358495923133';
+    if ($key === 'wa_waba_id' && empty($val)) $val = '984640244701522';
+    if ($key === 'wa_token' && empty($val)) $val = 'EAAeIJS2vcIgBS3fScDub4J45m9PQcJNoGNy9X2HhsSpnTNC9d31xC9ZB6W1mMlvrNuymoA8NG4OZAiZCf26caKZCoYwvf2SYLTHdqI1vIy6YDzYtgW5D5lwABrdINBHjr7w8ZA1W7RX86ciYIEsLJpLrvCg6bEizefZBjJ627R92te7fGdvgPdXTxENsg0kT2fxB2uRIAIBS0TjMFqTjPZBfJMhkaZCeOm3DlmOe9nZBZBVT0ZBc6h7ZAioMICGPiGxkiEK6DR0us2qZBxAtKOfJZB38ja';
+    if ($key === 'wa_verify_token' && empty($val)) $val = 'softnexa_wa_bot_2026';
+    if ($key === 'wa_bot_enabled' && $val === null) $val = '1';
     return $val;
 }
 function set_setting($key, $val) {
