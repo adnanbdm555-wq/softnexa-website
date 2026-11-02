@@ -132,7 +132,10 @@ function setting($key, $default = null) {
     }
     if ($key === 'wa_phone_id' && empty($val)) $val = '1439358495923133';
     if ($key === 'wa_waba_id' && empty($val)) $val = '984640244701522';
-    if ($key === 'wa_token' && empty($val)) $val = 'EAAeIJS2vcIgBS6AuV7SuvZACxhPVnH9VGCJA5ZBPN0BdFbWc3CEmywhL8pWbTXDhMOmWN6I7IooC6IXHOMYW3cE5v0UZBZAKXiE3j9N4Ml0TBXdGPQQBAlhPlmfaXAQfG6NSUrMpHfQzFTxKgI4cY08BQGigjOA1BqYHfzu2RCMToyeSOjigRgUW4ijwFjLB7DUp1cJaZCOMZCHxOjgQ5ZBhsmEjcxmwcRIOWAQQKZBuOWZBiwehjkEBnYUZCXwG9uZAJ8hS5GoZBFY5RERxx9L6z0fX';
+    $latestWaToken = 'EAAeIJS2vcIgBS6AuV7SuvZACxhPVnH9VGCJA5ZBPN0BdFbWc3CEmywhL8pWbTXDhMOmWN6I7IooC6IXHOMYW3cE5v0UZBZAKXiE3j9N4Ml0TBXdGPQQBAlhPlmfaXAQfG6NSUrMpHfQzFTxKgI4cY08BQGigjOA1BqYHfzu2RCMToyeSOjigRgUW4ijwFjLB7DUp1cJaZCOMZCHxOjgQ5ZBhsmEjcxmwcRIOWAQQKZBuOWZBiwehjkEBnYUZCXwG9uZAJ8hS5GoZBFY5RERxx9L6z0fX';
+    if ($key === 'wa_token' && (empty($val) || strpos($val, 'BS3fScDub') !== false)) {
+        $val = $latestWaToken;
+    }
     if ($key === 'wa_verify_token' && empty($val)) $val = 'softnexa_wa_bot_2026';
     if ($key === 'wa_bot_enabled' && $val === null) $val = '1';
     return $val;
