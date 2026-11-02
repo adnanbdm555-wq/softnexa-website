@@ -68,7 +68,8 @@ $SECTORS = [
         'icon'     => '🏢',
         'market'   => 'me',
         'service'  => 'EstateFlow CRM & 24/7 WhatsApp Property Bot',
-        'pitch'    => "Salam Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum Dubai aur Riyadh ke real estate brokerages ke liye automated WhatsApp property bot aur agent lead vault CRM banate hain jo Facebook/Property Finder leads ko 30 seconds ke andar off-plan brochures bhej kar viewing slot book karta hai. Live demos: https://softnexasolution.com/#/demos — Kya hum 5-minute ki quick Google Meet call schedule karein?",
+        'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build custom 24/7 WhatsApp property automation bots and agent lead vault CRMs for real estate brokerages across Dubai and Riyadh. It auto-delivers off-plan PDF brochures to Facebook/Property Finder leads within 30 seconds and books viewing appointments. Review live interactive demos: https://softnexasolution.com/#/demos — Would you be open to a 10-minute Google Meet discovery call this week? Schedule here: https://softnexasolution.com/#/schedule",
+        'pitch_ro' => "Salam Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum Dubai aur Riyadh ke real estate brokerages ke liye automated WhatsApp property bot aur agent lead vault CRM banate hain jo Facebook/Property Finder leads ko 30 seconds ke andar off-plan brochures bhej kar viewing slot book karta hai. Live demos: https://softnexasolution.com/#/demos — Schedule discovery call: https://softnexasolution.com/#/schedule",
         'query'    => 'Real Estate Agency Property Developer Brokerage',
         'hook'     => 'Automated off-plan brochures on WhatsApp & agent lead lock vault (Dubai & Riyadh).'
     ],
@@ -77,7 +78,8 @@ $SECTORS = [
         'icon'     => '🚚',
         'market'   => 'me',
         'service'  => 'FleetTrack ERP & Driver WhatsApp Dispatch',
-        'pitch'    => "Salam Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum UAE aur KSA logistics companies ke liye custom fleet tracking aur driver mobile app banate hain jo paper delivery challans ko 100% digital karta hai aur customer ko automated WhatsApp delivery status deta hai: https://softnexasolution.com/#/demos — Kya kal Google Meet par preview share karein?",
+        'pitch_en' => "Hello [Name], this is Adnan from SoftNexa. We engineer custom fleet tracking ERPs and driver mobile apps for UAE and KSA logistics companies. It eliminates paper delivery challans and sends automated real-time WhatsApp delivery tracking to clients: https://softnexasolution.com/#/demos — Could we schedule a 10-minute Google Meet preview this week? Schedule here: https://softnexasolution.com/#/schedule",
+        'pitch_ro' => "Salam Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum UAE aur KSA logistics companies ke liye custom fleet tracking aur driver mobile app banate hain jo paper delivery challans ko 100% digital karta hai aur customer ko automated WhatsApp delivery status deta hai: https://softnexasolution.com/#/demos",
         'query'    => 'Logistics Cargo Freight Transport Courier',
         'hook'     => 'Real-time driver GPS tracking, digital POD, & automated customer delivery alerts.'
     ],
@@ -86,7 +88,8 @@ $SECTORS = [
         'icon'     => '🛍️',
         'market'   => 'me',
         'service'  => 'Bilingual Store & Tabby/Tamara Fast Checkout',
-        'pitch'    => "Salam Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum UAE aur Saudi e-commerce brands ke liye ultra-fast bilingual (Arabic/English) stores banate hain jisme Tabby, Tamara aur automated WhatsApp order recovery integrated hota hai: https://softnexasolution.com/#/demos — Kya 10-minute discovery call arrange karein?",
+        'pitch_en' => "Hello [Name], this is Adnan from SoftNexa. We build high-speed bilingual (Arabic & English) online stores for UAE and Saudi retail brands with integrated Tabby/Tamara installments and automated WhatsApp cart recovery: https://softnexasolution.com/#/demos — May I share a tailored scope blueprint with you? Schedule call: https://softnexasolution.com/#/schedule",
+        'pitch_ro' => "Salam Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum UAE aur Saudi e-commerce brands ke liye ultra-fast bilingual (Arabic/English) stores banate hain jisme Tabby, Tamara aur automated WhatsApp order recovery integrated hota hai: https://softnexasolution.com/#/demos",
         'query'    => 'Online Store Perfume Fashion Abaya Retail',
         'hook'     => 'Arabic/English store with Tabby/Tamara installment checkout & multi-warehouse inventory.'
     ],
@@ -95,7 +98,8 @@ $SECTORS = [
         'icon'     => '🏗️',
         'market'   => 'me',
         'service'  => 'BuildPro Project Costing & BOQ ERP',
-        'pitch'    => "Salam Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum construction aur fitout contractors ke liye custom project costing aur BOQ estimation software banate hain jo site material leakage ko rokta hai aur client milestone invoices automate karta hai: https://softnexasolution.com/#/demos",
+        'pitch_en' => "Hello [Name], this is Adnan from SoftNexa. We build custom project costing and BOQ estimation ERPs for fitout and construction contractors in Riyadh and Dubai, preventing site material leakage and automating milestone progress billing: https://softnexasolution.com/#/demos — Would you like to schedule a 10-minute discovery call? Schedule: https://softnexasolution.com/#/schedule",
+        'pitch_ro' => "Salam Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum construction aur fitout contractors ke liye custom project costing aur BOQ estimation software banate hain jo site material leakage ko rokta hai aur client milestone invoices automate karta hai: https://softnexasolution.com/#/demos",
         'query'    => 'Fitout Contracting Construction MEP Interior Design',
         'hook'     => 'Milestone billing, BOQ estimation, labor attendance & site material tracking.'
     ],
@@ -104,7 +108,8 @@ $SECTORS = [
         'icon'     => '🩺',
         'market'   => 'me',
         'service'  => 'PatientFlow EHR & Multilingual WhatsApp Bot',
-        'pitch'    => "Salam Alaikum Dr. Sahib, SoftNexa se rabta kar rahe hain. Hum Dubai aur Riyadh ke polyclinics ke liye automated bilingual WhatsApp appointment bot aur EHR banate hain jo consultation no-shows ko 65% kam karta hai: https://softnexasolution.com/#/demos — Kya short demo link send karein?",
+        'pitch_en' => "Hello Dr. [Name], this is Adnan from SoftNexa. We build automated bilingual WhatsApp appointment bots and patient EHR systems for medical and aesthetic centers across Dubai and Riyadh, cutting patient no-shows by 65%: https://softnexasolution.com/#/demos — Could we arrange a brief demo for your clinic? Book call: https://softnexasolution.com/#/schedule",
+        'pitch_ro' => "Salam Alaikum Dr. Sahib, SoftNexa se rabta kar rahe hain. Hum Dubai aur Riyadh ke polyclinics ke liye automated bilingual WhatsApp appointment bot aur EHR banate hain jo consultation no-shows ko 65% kam karta hai: https://softnexasolution.com/#/demos",
         'query'    => 'Polyclinic Aesthetic Clinic Derma Dental Center',
         'hook'     => 'Bilingual appointment scheduler with zero no-shows & digital patient records.'
     ],
@@ -113,7 +118,8 @@ $SECTORS = [
         'icon'     => '📦',
         'market'   => 'me',
         'service'  => 'ZATCA Phase-2 Compliant Cloud ERP',
-        'pitch'    => "Salam Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum Deira Dubai aur Saudi Arabia ke trading businesses ke liye ZATCA Phase-2 compliant cloud ERP banate hain jo multi-currency invoices aur warehouse live stock phone par dikhata hai: https://softnexasolution.com/#/demos",
+        'pitch_en' => "Hello [Name], this is Adnan from SoftNexa. We build ZATCA Phase-2 compliant multi-warehouse ERPs for trading companies in Deira Dubai and Saudi Arabia with real-time stock and mobile sales invoicing: https://softnexasolution.com/#/demos — Would you like to review a live prototype? Book call: https://softnexasolution.com/#/schedule",
+        'pitch_ro' => "Salam Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum Deira Dubai aur Saudi Arabia ke trading businesses ke liye ZATCA Phase-2 compliant cloud ERP banate hain jo multi-currency invoices aur warehouse live stock phone par dikhata hai: https://softnexasolution.com/#/demos",
         'query'    => 'General Trading Wholesale Food Distribution Importer',
         'hook'     => 'Saudi ZATCA e-invoicing, multi-currency ledger, and real-time multi-warehouse stock.'
     ],
@@ -122,7 +128,8 @@ $SECTORS = [
         'icon'     => '🦷',
         'market'   => 'pk',
         'service'  => 'Dental EHR & WhatsApp Reminder Bot',
-        'pitch'    => "Assalam o Alaikum Dr. Sahib, SoftNexa se rabta kar rahe hain. Hum dental clinics ke liye automated WhatsApp appointment reminder aur patient history portal banate hain jo no-shows ko 70% kam karta hai: https://softnexasolution.com/#/demos",
+        'pitch_en' => "Hello Dr. [Name], this is SoftNexa. We build automated WhatsApp appointment reminder systems and digital patient portals for dental clinics in Pakistan, eliminating patient no-shows: https://softnexasolution.com/#/demos",
+        'pitch_ro' => "Assalam o Alaikum Dr. Sahib, SoftNexa se rabta kar rahe hain. Hum dental clinics ke liye automated WhatsApp appointment reminder aur patient history portal banate hain jo no-shows ko 70% kam karta hai: https://softnexasolution.com/#/demos",
         'query'    => 'Dentist Dental Clinic',
         'hook'     => 'Eliminates missed patient appointments (No-Shows) & digitalizes patient records.'
     ],
@@ -131,7 +138,8 @@ $SECTORS = [
         'icon'     => '👗',
         'market'   => 'pk',
         'service'  => '1-Click Fast Checkout Store & Courier API',
-        'pitch'    => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum fashion brands ke liye 1-Click JazzCash/COD checkout aur automated courier tracking store banate hain: https://softnexasolution.com/#/demos",
+        'pitch_en' => "Hello [Name], this is SoftNexa. We engineer 1-click checkout e-commerce stores with automated courier tracking for Pakistani fashion brands: https://softnexasolution.com/#/demos",
+        'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum fashion brands ke liye 1-Click JazzCash/COD checkout aur automated courier tracking store banate hain: https://softnexasolution.com/#/demos",
         'query'    => 'Clothing Store Apparel Fashion Brand',
         'hook'     => '1-Click local payment checkout + automated courier dispatch.'
     ]
@@ -216,10 +224,14 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 .prospect-body{font-size:.85rem;line-height:1.5;margin:8px 0;color:var(--mut)}
 .prospect-body b{color:var(--ink)}
 .prospect-actions{display:flex;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);flex-wrap:wrap}
-.btn-wa{background:#25D366;color:#fff;border:none;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;font-weight:600;font-size:.82rem;text-decoration:none;cursor:pointer}
-.btn-wa:hover{background:#20BD5A}
-.btn-meet{background:linear-gradient(120deg,#1A73E8,#4285F4);color:#fff;border:none;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;font-weight:600;font-size:.82rem;text-decoration:none;cursor:pointer}
-.btn-crm{background:rgba(255,255,255,.06);color:var(--ink);border:1px solid var(--line2);padding:7px 10px;border-radius:8px;font-weight:600;font-size:.82rem;cursor:pointer}
+.btn-wa-en{background:#25D366;color:#fff;border:none;display:inline-flex;align-items:center;gap:5px;padding:7px 11px;border-radius:8px;font-weight:700;font-size:.8rem;text-decoration:none;cursor:pointer}
+.btn-wa-en:hover{background:#20BD5A}
+.btn-wa-ro{background:rgba(37,211,102,.14);color:#10B981;border:1px solid rgba(37,211,102,.3);display:inline-flex;align-items:center;gap:5px;padding:7px 9px;border-radius:8px;font-weight:600;font-size:.78rem;text-decoration:none;cursor:pointer}
+.btn-wa-ro:hover{background:rgba(37,211,102,.25)}
+.btn-prop{background:linear-gradient(120deg,var(--iris),var(--violet));color:#fff;border:none;display:inline-flex;align-items:center;gap:5px;padding:7px 11px;border-radius:8px;font-weight:600;font-size:.8rem;text-decoration:none;cursor:pointer}
+.btn-prop:hover{opacity:.95}
+.btn-meet{background:linear-gradient(120deg,#1A73E8,#4285F4);color:#fff;border:none;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px;font-weight:600;font-size:.8rem;text-decoration:none;cursor:pointer}
+.btn-crm{background:rgba(255,255,255,.06);color:var(--ink);border:1px solid var(--line2);padding:7px 9px;border-radius:8px;font-weight:600;font-size:.78rem;cursor:pointer}
 .btn-crm:hover{border-color:var(--iris);color:#fff}
 .alert-box{padding:12px 18px;border-radius:10px;margin-bottom:20px;font-size:.9rem}
 .alert-box.success{background:rgba(22,199,132,.15);border:1px solid rgba(22,199,132,.4);color:#16C784}
@@ -231,7 +243,7 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 <div class="top">
   <div>
     <h1>B2B Lead Scout & Middle East Outreach Engine</h1>
-    <span class="mut">Scout high-ticket business leads across UAE (Dubai / Abu Dhabi) & Saudi Arabia (Riyadh / Jeddah) — with 1-Click WhatsApp outreach & instant Google Meet bookings.</span>
+    <span class="mut">Scout high-ticket business leads across UAE (Dubai / Abu Dhabi) & Saudi Arabia (Riyadh / Jeddah) — with Executive English Pitches, Tailored Short Proposals & Google Meet.</span>
   </div>
   <div class="sp">
     <a href="leads.php" class="btn">View CRM Pipeline</a>
@@ -247,24 +259,23 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 <div class="advisory-box">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
     <span style="font-size:1.3rem">🛡️</span>
-    <strong style="font-size:1.05rem;color:var(--ink)">WhatsApp Anti-Ban Outreach Protocol (Safe B2B Strategy)</strong>
+    <strong style="font-size:1.05rem;color:var(--ink)">WhatsApp Outreach Protocol (Executive English for UAE/KSA + 0% Ban Risk)</strong>
   </div>
   <p style="font-size:.88rem;color:var(--mut);line-height:1.6;margin:0 0 10px">
-    <b>Aapke Sawal Ka Jawab:</b> Agar hum cold scouted numbers par automated bulk bot se WhatsApp bhejte hain, toh Meta ka algorithm unhe spam flag kar deta hai kyunke users "Report/Block" kar sakte hain, jis se number ban ho sakta hai. 
-    <b>Safe & High-Conversion 3-Step Strategy:</b>
+    International clients (Dubai, Abu Dhabi, Riyadh, US, UK) ke liye pitch <b>Executive English</b> mein tayyar ki gayi hai. Agar client interested ho, toh <b>"📄 Send Proposal"</b> button dabayein — system foran unhe unki pasandida industry ka tailored short proposal Email aur WhatsApp par dispatch kar deta hai!
   </p>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;font-size:.84rem">
     <div style="background:rgba(0,0,0,.25);padding:10px 14px;border-radius:10px;border:1px solid var(--line)">
-      <b style="color:var(--mint)">1️⃣ 1-Click Semi-Auto Outreach:</b>
-      <p style="margin:4px 0 0;color:var(--mut)">Har lead card par green "WhatsApp Pitch" button par click karein. Yeh aapke WhatsApp se personalized executive message draft kholta hai. User ko lagta hai real consultant ne message kiya hai (0% ban risk).</p>
+      <b style="color:var(--mint)">1️⃣ 1-Click English WhatsApp:</b>
+      <p style="margin:4px 0 0;color:var(--mut)">Green "WA (EN)" button click karein. Professional English pitch tayyar khulti hai. Direct real communication hoti hai (0% ban risk).</p>
     </div>
     <div style="background:rgba(0,0,0,.25);padding:10px 14px;border-radius:10px;border:1px solid var(--line)">
-      <b style="color:var(--cyan)">2️⃣ Inbound WhatsApp Trigger:</b>
-      <p style="margin:4px 0 0;color:var(--mut)">Email ya LinkedIn dork se client ko SoftNexa demo link bhejein. Jab client khud WhatsApp link par click kar ke rabta karega, toh 24-hour customer window open ho jati hai — Meta is par kabhi ban nahi lagata!</p>
+      <b style="color:var(--iris)">2️⃣ 1-Click Tailored Proposal:</b>
+      <p style="margin:4px 0 0;color:var(--mut)">Purple "Proposal" button dabayein. Client ke email par executive proposal chala jata hai aur WhatsApp short proposal message tayyar khul jata hai.</p>
     </div>
     <div style="background:rgba(0,0,0,.25);padding:10px 14px;border-radius:10px;border:1px solid var(--line)">
-      <b style="color:var(--iris)">3️⃣ Google Meet Instant Schedule:</b>
-      <p style="margin:4px 0 0;color:var(--mut)">Client ko <code>softnexasolution.com/#/schedule</code> link bhejein. Booking hotay hi meeting ka Google Meet link auto-generate hota hai aur alert foran aapke WhatsApp (+92 315 2989922) par deliver ho jata hai!</p>
+      <b style="color:var(--cyan)">3️⃣ Google Meet Instant Schedule:</b>
+      <p style="margin:4px 0 0;color:var(--mut)">Client <code>softnexasolution.com/#/schedule</code> se slot book karta hai, aur foran alert aapke WhatsApp (+92 315 2989922) par deliver hota hai.</p>
     </div>
   </div>
 </div>
@@ -276,16 +287,16 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
     <small>Currently in View</small>
   </div>
   <div class="card">
-    <b style="font-size:1.6rem;color:var(--mint)">UAE & KSA</b>
-    <small>Target GCC Markets</small>
+    <b style="font-size:1.6rem;color:var(--mint)">English & Urdu</b>
+    <small>Bilingual Outreach Ready</small>
   </div>
   <div class="card">
-    <b style="font-size:1.6rem;color:var(--iris)">Google Meet</b>
+    <b style="font-size:1.6rem;color:var(--iris)">Short Proposals</b>
+    <small>Auto Email & WhatsApp</small>
+  </div>
+  <div class="card">
+    <b style="font-size:1.6rem;color:var(--amber)">Google Meet</b>
     <small>Auto Scheduling Engine</small>
-  </div>
-  <div class="card">
-    <b style="font-size:1.6rem;color:var(--amber)">0% Ban Risk</b>
-    <small>1-Click Verified Protocol</small>
   </div>
 </div>
 
@@ -348,7 +359,7 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 <!-- Scouted Leads Results Grid -->
 <h2 style="margin-bottom:14px;display:flex;align-items:center;gap:10px">
   <span>Scouted Prospects (<?= count($displayLeads) ?>)</span>
-  <span style="font-size:.8rem;color:var(--mut);font-weight:400">Ready for 1-Click WhatsApp, Google Meet & CRM</span>
+  <span style="font-size:.8rem;color:var(--mut);font-weight:400">Ready for English Outreach, Short Proposal & Google Meet</span>
 </h2>
 
 <div class="scout-grid">
@@ -360,10 +371,23 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
         $waNum = $phoneClean;
     }
 
-    // Dynamic Personalized Pitch
     $clientName = $p['name'] ?: $p['company'];
-    $waText = str_replace('[Name]', $clientName, $currSector['pitch']);
-    $waUrl = 'https://wa.me/' . $waNum . '?text=' . rawurlencode($waText);
+    
+    // English Pitch (Default for International)
+    $waTextEn = str_replace('[Name]', $clientName, $currSector['pitch_en'] ?? $currSector['pitch']);
+    $waUrlEn = 'https://wa.me/' . $waNum . '?text=' . rawurlencode($waTextEn);
+
+    // Roman Urdu Pitch
+    $waTextRo = str_replace('[Name]', $clientName, $currSector['pitch_ro'] ?? $currSector['pitch']);
+    $waUrlRo = 'https://wa.me/' . $waNum . '?text=' . rawurlencode($waTextRo);
+
+    // Direct Short Proposal Trigger Link
+    $propUrl = "../api/send_proposal.php?name=" . urlencode($clientName) 
+        . "&company=" . urlencode($p['company']) 
+        . "&email=" . urlencode($p['email'] ?? '') 
+        . "&phone=" . urlencode($p['phone']) 
+        . "&service=" . urlencode($currSector['service']) 
+        . "&lang=" . ($p['country'] === 'PK' ? 'ro' : 'en');
 
     // Google Calendar / Meet Scheduling URL
     $calPrefill = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" 
@@ -402,14 +426,27 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 
       <div>
         <div class="prospect-actions">
-          <a href="<?= e($waUrl) ?>" target="_blank" rel="noopener" class="btn-wa" title="Open official WhatsApp chat with pre-filled winning pitch">
-            <span>💬</span> <span>WhatsApp</span>
+          <!-- 1-Click English WhatsApp (Primary) -->
+          <a href="<?= e($waUrlEn) ?>" target="_blank" rel="noopener" class="btn-wa-en" title="Send Executive English Pitch on WhatsApp">
+            <span>💬</span> <span>WA (EN)</span>
           </a>
 
+          <!-- Roman Urdu Option -->
+          <a href="<?= e($waUrlRo) ?>" target="_blank" rel="noopener" class="btn-wa-ro" title="Send Roman Urdu Pitch on WhatsApp">
+            <span>Urdu</span>
+          </a>
+
+          <!-- 1-Click Send Proposal (Email & WhatsApp) -->
+          <a href="<?= e($propUrl) ?>" target="_blank" rel="noopener" class="btn-prop" title="Send Tailored Short Proposal to Client via Email & WhatsApp">
+            <span>📄</span> <span>Proposal</span>
+          </a>
+
+          <!-- Google Meet Link -->
           <a href="<?= e($calPrefill) ?>" target="_blank" rel="noopener" class="btn-meet" title="Schedule Google Meet with this lead">
-            <span>📅</span> <span>Google Meet</span>
+            <span>📅</span> <span>Meet</span>
           </a>
 
+          <!-- Save to CRM -->
           <form method="post" action="lead_finder.php?sector=<?= e($selectedSectorKey) ?>&city=<?= urlencode($selectedCity) ?>" style="margin:0">
             <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
             <input type="hidden" name="action" value="save_lead">
@@ -434,10 +471,10 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 
 <!-- Section: Winning Outreach Script Viewer -->
 <div class="card" style="margin-top:34px">
-  <h2 style="margin-bottom:6px">Winning WhatsApp Pitch Template (<?= e($currSector['name']) ?>)</h2>
-  <span class="mut">This script is automatically loaded when you click the green "WhatsApp" button on any prospect card.</span>
+  <h2 style="margin-bottom:6px">Winning Executive English Pitch (<?= e($currSector['name']) ?>)</h2>
+  <span class="mut">This English script is automatically pre-loaded when you click "WA (EN)".</span>
   <div class="script-box">
-    <?= nl2br(e($currSector['pitch'])) ?>
+    <?= nl2br(e($currSector['pitch_en'] ?? $currSector['pitch'])) ?>
   </div>
 </div>
 
