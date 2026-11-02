@@ -169,6 +169,7 @@ Your Persona & Tone:
 
 About SoftNexa Offerings & Standards:
 - Custom Websites & Web Portals: Fast, responsive, modern UI/UX (corporate sites delivered in 5-7 days; e-commerce & portals in 2-3 weeks).
+- Digital & Social Media Marketing: 360° Meta & Google Ads, viral TikTok/Reels video production, monthly content calendars, and SEO ranking with full ROI transparency.
 - Custom Enterprise ERPs, POS & Inventory Systems: Multi-branch stock, billing, automated accounting, role-based controls.
 - Mobile Applications: High-performance Flutter apps for iOS & Android with offline support, push notifications, and payment gateways.
 - AI Agents & Automation: WhatsApp bots, CRM automations, and custom workflows.
@@ -235,8 +236,9 @@ if ($geminiKey) {
    ------------------------------------------------------------ */
 if (!$llmSucceeded || empty($aiReply)) {
     // Intent flags
-    $isFollowUp      = (bool)preg_match('/\b(are you there|online|reply|sun rahe ho|kahan ho|sun rha|hello\?|koi hai|response|jawab)\b/i', $msgLower);
-    $isWebsite       = (bool)preg_match('/\b(website|web site|site|webpage|web page|landing page|wordpress|web portal|web dev)\b/i', $msgLower);
+    $isFollowUp         = (bool)preg_match('/\b(are you there|online|reply|sun rahe ho|kahan ho|sun rha|hello\?|koi hai|response|jawab)\b/i', $msgLower);
+    $isDigitalMarketing = (bool)preg_match('/\b(marketing|digital marketing|social media|facebook ads|meta ads|instagram|tiktok|seo|ad campaign|leads|run ads|promotion|smm)\b/i', $msgLower);
+    $isWebsite          = (bool)preg_match('/\b(website|web site|site|webpage|web page|landing page|wordpress|web portal|web dev)\b/i', $msgLower);
     $isDoctorClinic  = (bool)preg_match('/\b(clinic|doctor|dental|dentist|teeth|hospital|patient|medical|health|pharma)\b/i', $msgLower);
     $isRealEstate    = (bool)preg_match('/\b(real estate|property|plots|plot|builder|housing|flats|apartments)\b/i', $msgLower);
     $isSalonGym      = (bool)preg_match('/\b(salon|parlor|parlour|spa|beauty|gym|fitness|workout)\b/i', $msgLower);
@@ -256,6 +258,14 @@ if (!$llmSucceeded || empty($aiReply)) {
             $aiReply = "جی بالکل، میں یہاں موجود ہوں اور آپ کی مدد کے لیے دستیاب ہوں! 😊\n\nبتائیں، آپ کس پروجیکٹ (ویب سائٹ، موبائل ایپ، یا سافٹ ویئر) کے حوالے سے رہنمائی چاہتے ہیں؟";
         } else {
             $aiReply = "Yes, I am right here and ready to help! 😊\n\nPlease let me know what software, website, or mobile application project you would like to discuss.";
+        }
+    } elseif ($isDigitalMarketing) {
+        if ($lang === 'ro') {
+            $aiReply = "G bilkul! Digital & Social Media Marketing SoftNexa ki core performance service hai. 🚀📈\n\nHum complete 360° marketing campaigns run karte hain:\n\n🎯 Targeted Meta & Google Ads (High-ROAS sales & verified leads)\n🎬 Viral TikTok & Instagram Reels (Script, hook creation & dynamic video editing)\n📅 30-Day Social Media Management (Creative graphics, copy & scheduled daily posting)\n🔍 SEO & Google Local Search Ranking\n\nAap apne kis business ya brand ke liye marketing karwana chahte hain?";
+        } elseif ($lang === 'ur') {
+            $aiReply = "جی بالکل! ڈیجیٹل مارکیٹنگ اور سوشل میڈیا مارکیٹنگ سافٹ نیکسا کی بنیادی پرفارمنس سروس ہے۔ 🚀📈\n\nہم مکمل مارکیٹنگ ہینڈل کرتے ہیں:\n🎯 فیس بک، انسٹاگرام اور گوگل ایڈز\n🎬 ٹک ٹاک اور انسٹاگرام وائرل ریلز ویڈیو پروڈکشن\n📅 30 دن کی سوشل میڈیا پوسٹس اور مینجمنٹ\n🔍 ایس ای او اور رینکنگ\n\nآپ اپنے کس کاروبار کی مارکیٹنگ کروانا چاہتے ہیں؟";
+        } else {
+            $aiReply = "Absolutely! Digital & Social Media Marketing is our core performance service at SoftNexa. 🚀📈\n\n🎯 Targeted Meta & Google Ads (High-ROAS lead generation & sales)\n🎬 Viral TikTok & Instagram Reels Video Production\n📅 30-Day Social Media Management & Creative Graphics\n🔍 SEO & Top Google Search Ranking\n\nWhat type of business are you scaling, and what is your primary objective (Leads or Direct Sales)?";
         }
     } elseif ($isWebsite) {
         if ($lang === 'ro') {

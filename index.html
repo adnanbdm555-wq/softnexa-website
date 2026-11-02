@@ -136,6 +136,14 @@
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
+              "name": "Digital Marketing & Social Media Marketing",
+              "description": "Targeted Meta & Google Ads, viral reels, 360° social media management, SEO, and ROI growth funnels."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
               "name": "Cloud DevOps & Infrastructure",
               "description": "Secure AWS/GCP cloud deployments, Docker containerization, CI/CD, and server hardening."
             }
@@ -203,45 +211,45 @@
    SOFTNEXA — design tokens
    ============================================================ */
 :root{
-  --void:#07061A; --panel:#0E0C24; --panel-2:#151234; --panel-3:#1B1740;
-  --ink:#F4F2FF; --muted:#A49DD4; --line:#252048; --line-2:#332C63;
+  --void:#08071E; --panel:#0F0D28; --panel-2:#16133B; --panel-3:#1E1A4A;
+  --ink:#FFFFFF; --muted:#D6D1F8; --line:#2C265A; --line-2:#433B7E;
   --iris:#6E4BFF; --violet:#9B5CFF; --cyan:#1FD3F0; --pink:#FF4D8D;
   --mint:#16C784; --amber:#FFB020;
-  --glass:rgba(255,255,255,.045);
-  --glass-2:rgba(255,255,255,.08);
+  --glass:rgba(255,255,255,.06);
+  --glass-2:rgba(255,255,255,.1);
   --shadow:0 30px 80px -40px rgba(0,0,0,.9);
   --shadow-lg:0 60px 120px -50px rgba(0,0,0,.95);
   --ring:0 0 0 1px var(--line);
   --r:20px; --r-sm:13px; --r-lg:30px;
   --maxw:1220px;
   --ease:cubic-bezier(.22,.9,.28,1);
-  --grid-line:rgba(255,255,255,.045);
-  --hero-tint:rgba(110,75,255,.16);
+  --grid-line:rgba(255,255,255,.05);
+  --hero-tint:rgba(110,75,255,.18);
   --font-display:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --font-body:"Inter","Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
 }
 @media (prefers-color-scheme: light){
   :root:not([data-theme="dark"]){
-    --void:#F7F5FF; --panel:#FFFFFF; --panel-2:#F2EFFD; --panel-3:#EAE5FB;
-    --ink:#100C2C; --muted:#5C5688; --line:#E4DFF8; --line-2:#D5CEF3;
+    --void:#F8FAFC; --panel:#FFFFFF; --panel-2:#F1F5F9; --panel-3:#E2E8F0;
+    --ink:#0F172A; --muted:#334155; --line:#E2E8F0; --line-2:#CBD5E1;
     --iris:#5B3DF5; --violet:#8A3DF5; --cyan:#0FA9C9;
-    --glass:rgba(16,12,44,.03); --glass-2:rgba(16,12,44,.06);
-    --shadow:0 28px 70px -40px rgba(38,20,110,.4);
-    --shadow-lg:0 60px 110px -50px rgba(38,20,110,.45);
-    --grid-line:rgba(16,12,44,.05);
-    --hero-tint:rgba(91,61,245,.1);
+    --glass:rgba(15,23,42,.035); --glass-2:rgba(15,23,42,.07);
+    --shadow:0 24px 60px -25px rgba(15,23,42,.15);
+    --shadow-lg:0 45px 90px -30px rgba(15,23,42,.2);
+    --grid-line:rgba(15,23,42,.04);
+    --hero-tint:rgba(91,61,245,.08);
   }
 }
 :root[data-theme="light"]{
-  --void:#F7F5FF; --panel:#FFFFFF; --panel-2:#F2EFFD; --panel-3:#EAE5FB;
-  --ink:#100C2C; --muted:#5C5688; --line:#E4DFF8; --line-2:#D5CEF3;
+  --void:#F8FAFC; --panel:#FFFFFF; --panel-2:#F1F5F9; --panel-3:#E2E8F0;
+  --ink:#0F172A; --muted:#334155; --line:#E2E8F0; --line-2:#CBD5E1;
   --iris:#5B3DF5; --violet:#8A3DF5; --cyan:#0FA9C9;
-  --glass:rgba(16,12,44,.03); --glass-2:rgba(16,12,44,.06);
-  --shadow:0 28px 70px -40px rgba(38,20,110,.4);
-  --shadow-lg:0 60px 110px -50px rgba(38,20,110,.45);
-  --grid-line:rgba(16,12,44,.05);
-  --hero-tint:rgba(91,61,245,.1);
+  --glass:rgba(15,23,42,.035); --glass-2:rgba(15,23,42,.07);
+  --shadow:0 24px 60px -25px rgba(15,23,42,.15);
+  --shadow-lg:0 45px 90px -30px rgba(15,23,42,.2);
+  --grid-line:rgba(15,23,42,.04);
+  --hero-tint:rgba(91,61,245,.08);
 }
 
 *{box-sizing:border-box}
@@ -567,30 +575,31 @@ header.stuck{background:color-mix(in srgb,var(--void) 72%,transparent);backdrop-
    ============================================================ */
 .bento{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:52px}
 .tile{position:relative;padding:28px;border-radius:var(--r);overflow:hidden;text-decoration:none;color:inherit;
-  background:color-mix(in srgb,var(--panel) 80%,transparent);border:1px solid var(--line);
+  background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line-2);
   display:flex;flex-direction:column;min-height:0;height:100%;padding:18px;
-  transition:border-color .35s,transform .45s var(--ease),background .35s;will-change:transform}
-.tile:hover{border-color:var(--line-2);background:color-mix(in srgb,var(--panel) 100%,transparent)}
+  box-shadow:0 14px 34px -16px rgba(0,0,0,.65);
+  transition:border-color .35s,transform .45s var(--ease),background .35s,box-shadow .35s;will-change:transform}
+.tile:hover{border-color:color-mix(in srgb,var(--iris) 65%,transparent);background:color-mix(in srgb,var(--panel) 100%,transparent);box-shadow:0 24px 50px -18px rgba(110,75,255,.3)}
 .tile .halo{position:absolute;width:280px;height:280px;border-radius:50%;filter:blur(70px);opacity:0;
   transition:opacity .45s;pointer-events:none;top:-90px;right:-70px}
 .tile:hover .halo{opacity:.4}
 .tile.w3,.tile.w2,.tile.w4{grid-column:span 1}
 .tico{width:58px;height:58px;border-radius:17px;display:grid;place-items:center;font-size:1.25rem;
   color:#fff;margin-bottom:auto;box-shadow:0 12px 30px -14px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.22)}
-.tile h3{margin:18px 0 8px;font-size:1.18rem}
-.tile p{color:var(--muted);font-size:.93rem;margin:0}
+.tile h3{margin:18px 0 8px;font-size:1.18rem;color:var(--ink);font-weight:700}
+.tile p{color:var(--muted);font-size:.94rem;margin:0;line-height:1.6}
 .tile>div{display:flex;flex-direction:column;flex:1}
 .tile .tags{margin-top:auto;padding-top:14px}
 .tile .go{margin-top:18px;display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:.94rem;
-  color:var(--iris);opacity:.85;transition:gap .3s,opacity .3s}
+  color:var(--cyan);opacity:.9;transition:gap .3s,opacity .3s}
 .tile:hover .go{gap:16px;opacity:1}
 .tile .go i{width:16px;height:1.6px;background:currentColor;border-radius:2px;position:relative;transition:width .3s var(--ease)}
 .tile .go i::after{content:"";position:absolute;right:0;top:-3px;width:7px;height:7px;border:solid currentColor;
   border-width:1.6px 1.6px 0 0;transform:rotate(45deg);border-radius:1px}
 .tile:hover .go i{width:26px}
 .tile .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
-.tag{font-size:.76rem;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line);
-  background:var(--glass)}
+.tag{font-size:.76rem;color:var(--muted);padding:5px 11px;border-radius:999px;border:1px solid var(--line-2);
+  background:var(--glass);font-weight:500}
 
 /* ============================================================
    CARDS / GRIDS
@@ -598,11 +607,12 @@ header.stuck{background:color-mix(in srgb,var(--void) 72%,transparent);backdrop-
 .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.card{padding:26px;border-radius:var(--r);background:color-mix(in srgb,var(--panel) 78%,transparent);
-  border:1px solid var(--line);transition:border-color .3s,transform .4s var(--ease)}
-.card:hover{border-color:var(--line-2)}
-.card h3{margin-bottom:9px}
-.card p{color:var(--muted);font-size:.96rem;margin:0}
+.card{padding:26px;border-radius:var(--r);background:color-mix(in srgb,var(--panel) 90%,transparent);
+  border:1px solid var(--line-2);box-shadow:0 14px 34px -16px rgba(0,0,0,.65);
+  transition:border-color .3s,transform .4s var(--ease),box-shadow .4s var(--ease)}
+.card:hover{border-color:color-mix(in srgb,var(--cyan) 50%,var(--iris));box-shadow:0 24px 50px -18px rgba(110,75,255,.35)}
+.card h3{margin-bottom:9px;color:var(--ink);font-weight:700}
+.card p{color:var(--muted);font-size:.96rem;margin:0;line-height:1.6}
 .cic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;color:#fff;
   font-weight:700;margin-bottom:18px;font-size:1.05rem;box-shadow:0 12px 26px -14px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.22)}
 .split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
@@ -1057,16 +1067,16 @@ footer p{color:var(--muted);font-size:.95rem}
    ============================================================ */
 .art{height:132px;position:relative;overflow:hidden;border-radius:15px;margin-bottom:18px;
   border:1px solid var(--line)}
-.art .bgm{position:absolute;inset:0;opacity:.92}
-.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;
-  transition:transform .6s var(--ease)}
+.art .bgm{position:absolute;inset:0;opacity:.85}
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;filter:contrast(1.08) brightness(1.05) saturate(1.12);
+  transition:transform .6s var(--ease),filter .4s ease}
 .art .ovl{z-index:2}
 .art .em,.art .rings,.art .glassbar,.art .spark2{z-index:3}
-.tile:hover .art img,.card:hover .art img{transform:scale(1.05)}
-.art.has-img .bgm{opacity:.32}
-.art.has-img .ovl{background:linear-gradient(180deg,rgba(7,6,26,.12),rgba(7,6,26,.6))}
+.tile:hover .art img,.card:hover .art img{transform:scale(1.05);filter:contrast(1.12) brightness(1.08) saturate(1.18)}
+.art.has-img .bgm{opacity:.12}
+.art.has-img .ovl{background:linear-gradient(180deg,rgba(8,7,30,.02) 0%,rgba(8,7,30,.32) 100%)}
 .art .ovl{position:absolute;inset:0;
-  background:radial-gradient(120% 90% at 80% 10%,rgba(255,255,255,.28),transparent 60%)}
+  background:radial-gradient(120% 90% at 80% 10%,rgba(255,255,255,.24),transparent 60%)}
 .art .glassbar{position:absolute;left:14px;right:14px;bottom:14px;height:40px;border-radius:11px;
   background:rgba(255,255,255,.18);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.28);
   display:flex;align-items:center;gap:8px;padding:0 11px}
@@ -1103,16 +1113,16 @@ footer p{color:var(--muted);font-size:.95rem}
 
 .shot-bg-img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;
-  z-index:1;opacity:.36;filter:contrast(1.08) saturate(1.15);
+  z-index:1;opacity:.92;filter:contrast(1.1) saturate(1.2) brightness(1.04);
   transition:transform .6s var(--ease),opacity .5s ease,filter .5s ease;
 }
 .shot:hover .shot-bg-img{
-  transform:scale(1.06);opacity:.52;filter:contrast(1.15) saturate(1.25);
+  transform:scale(1.04);opacity:1;filter:contrast(1.15) saturate(1.26) brightness(1.08);
 }
 .shot-overlay{
   position:absolute;inset:0;z-index:2;
-  background:linear-gradient(180deg,rgba(7,6,26,.4) 0%,rgba(7,6,26,.88) 100%),
-             radial-gradient(circle at 80% 20%,rgba(31,211,240,.18),transparent 60%);
+  background:linear-gradient(180deg,rgba(8,7,30,.1) 0%,rgba(8,7,30,.45) 100%),
+             radial-gradient(circle at 80% 20%,rgba(31,211,240,.12),transparent 60%);
   pointer-events:none;
 }
 
@@ -2841,20 +2851,20 @@ var SERVICES = [
     showcase:'DESIGN'
   },
   {
-    slug:'marketing-ai', nav:'Marketing & AI content', ico:'◭', g:'linear-gradient(140deg,#FF4D8D,#9B5CFF)',
-    short:'AI-assisted content, video ads and scheduled posting across every channel.',
-    h1:['A marketing engine that','posts while you sleep.'],
-    lede:'Creative, campaigns and publishing handled as one system: AI drafts the posts and ad variants in your brand voice, generates video ads from your product shots, routes everything through approval, then schedules and posts it across Meta, TikTok, YouTube and LinkedIn — with the results coming back into one dashboard.',
+    slug:'digital-marketing', nav:'Digital & Social Media Marketing', ico:'◭', g:'linear-gradient(140deg,#FF4D8D,#9B5CFF)',
+    short:'Complete 360° social media management, Meta & Google Ads, viral reels, SEO and growth funnels.',
+    h1:['Data-driven marketing that','fills your pipeline with buyers.'],
+    lede:'Complete 360° Digital & Social Media Marketing: Targeted Meta & Google ad campaigns, viral Instagram & TikTok reels, brand content calendars, search engine optimization (SEO), and automated WhatsApp conversion funnels with 100% transparent ROAS tracking.',
     features:[
-      ['AI content design','Posts, carousels and static ads generated in your brand palette and voice, ready for review.'],
-      ['AI video ads','Product shots and clips turned into short-form ad cuts with hooks, captions and end frames.'],
-      ['Scheduled posting','One calendar publishing to Meta, TikTok, YouTube, LinkedIn and Google Business.'],
-      ['Approval built in','Nothing goes live until the brand owner taps approve — with comments and version history.'],
-      ['Multi-brand workspaces','Agencies run every client from one login, with separate assets, voices and calendars.'],
-      ['Performance loop','Spend, reach and conversions joined back to each creative, so the next batch is better.']
+      ['Targeted Meta & Google Ads','High-intent PPC, search campaigns, and Facebook/Instagram ads with precise custom audience targeting and retargeting funnels.'],
+      ['Viral Reels & Short-Form Video','Hook writing, high-impact video editing, trending audio, and subtitle animations for TikTok, Instagram Reels, and YouTube Shorts.'],
+      ['360° Social Media Management','Complete monthly content calendars, graphic design, copywriting, and daily scheduled posting across all platforms.'],
+      ['SEO & Local Search Ranking','On-page, technical, and Google Business Profile optimization to rank your business at the top of organic search.'],
+      ['Lead Gen Funnels & WhatsApp Routing','High-converting landing pages and WhatsApp click-to-chat ads that turn casual scrollers into qualified paying leads.'],
+      ['Pixel, CAPI & ROI Dashboard','Server-side Meta Conversions API (CAPI), Google Analytics 4, and real-time dashboard tracking cost per lead and ROAS.']
     ],
-    includes:['Brand voice and visual style setup','Monthly content calendar template','AI creative pipeline with human review','Video ad generation and caption burn-in','Channel connections and posting automation','Approval workflow for client sign-off','Campaign performance dashboard','Training for your marketing team'],
-    stack:['Claude API','Meta API','TikTok API','n8n','FFmpeg','Next.js'],
+    includes:['Dedicated Social Media Manager & Creative Design Team','30-Day Content Calendar & High-Impact Graphics','High-Converting Short-Form Video Ads & Viral Reels','Meta Ads (Facebook/Instagram), Google & TikTok Campaign Setup','Conversion Funnel & Click-to-WhatsApp Lead Routing','SEO Audit & Keyword Ranking Optimization','Bi-Weekly Performance Calls & Live Transparent ROI Dashboard','Influencer Outreach & Community Management'],
+    stack:['Meta Ads Manager','Google Ads','TikTok Ads','Semrush','Google Analytics 4','Canva Pro','Premiere Pro','Meta Business Suite'],
     showcase:'MKT'
   },
   {
@@ -3247,7 +3257,7 @@ var FAQ_GENERAL = [
    ============================================================ */
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 function kicker(n,txt){return '<div class="kicker rv">'+txt+'<span></span></div>'}
-function svcBy(slug){for(var i=0;i<SERVICES.length;i++){if(SERVICES[i].slug===slug)return SERVICES[i]}return null}
+function svcBy(slug){for(var i=0;i<SERVICES.length;i++){if(SERVICES[i].slug===slug)return SERVICES[i];if((slug==='digital-marketing'||slug==='marketing-ai')&&(SERVICES[i].slug==='digital-marketing'||SERVICES[i].slug==='marketing-ai'))return SERVICES[i]}return null}
 
 function tiles(exclude){
   var sizes=['w3','w3','w2','w2','w2','w3','w3','w2'];
@@ -3338,7 +3348,7 @@ function art(emoji,grad,kind,src){
     '<span class="em">'+icon(emoji,26)+'</span>'+inner+'</div>';
 }
 var SVC_ART={'web-apps':'◧','mobile-apps':'▯','custom-software':'▤','ecommerce':'▣',
-  'ai-automation':'◈','data-dashboards':'◱','product-design':'◐','cloud-support':'◇'};
+  'ai-automation':'◈','data-dashboards':'◱','product-design':'◐','digital-marketing':'◭','marketing-ai':'◭','cloud-support':'◇'};
 
 /* ============================================================
    FRAME LIBRARY
@@ -3580,6 +3590,7 @@ function heroVisual(slug){
     case 'data-dashboards': return frameCharts();
     case 'product-design': return frameDesign();
     case 'cloud-support': return frameCloud();
+    case 'digital-marketing':
     case 'marketing-ai': return frameMarketing();
     default: return heroConsole();
   }
@@ -3625,10 +3636,15 @@ var SERVICE_SCREENS = {
     rep: { kpi1: '88 / 100', lbl1: 'System Usability Score', kpi2: '-48%', lbl2: 'Fewer Clicks / Task', note: 'Drop-off reduced by 34%' },
     mob: { notif: 'Interactive Prototype Ready', detail: 'Ergonomic thumb zone tested', action: 'Approved by Lead' }
   },
+  'digital-marketing': {
+    ws: { url: 'ads.softnexa.io/campaigns/q4', title: 'Meta & Google 360° Ad Studio', status: '48 Active Ad Sets Live', metric: 'Meta CAPI & Pixel Synced', btn: 'Launch Campaign' },
+    rep: { kpi1: '4.8×', lbl1: 'Target ROAS', kpi2: '2.6M', lbl2: 'Audience Reach', note: 'Cost per acquired lead: -44%' },
+    mob: { notif: 'Viral Reel #08 Approved', detail: 'Estimated reach: 180k+ views', action: 'Live on IG & TikTok' }
+  },
   'marketing-ai': {
-    ws: { url: 'studio.softnexa.io/campaigns/q4', title: 'AI Ad Creative & Video Studio', status: '42 Video Ads Rendered', metric: 'TikTok & Meta Synced', btn: 'Schedule All' },
-    rep: { kpi1: '3.8×', lbl1: 'Target ROAS', kpi2: '1.8M', lbl2: 'Audience Reach', note: 'Cost per lead: -41%' },
-    mob: { notif: 'Reel #04 Ready to Publish', detail: 'Viral hook score: 9.2/10', action: 'Published Live' }
+    ws: { url: 'ads.softnexa.io/campaigns/q4', title: 'Meta & Google 360° Ad Studio', status: '48 Active Ad Sets Live', metric: 'Meta CAPI & Pixel Synced', btn: 'Launch Campaign' },
+    rep: { kpi1: '4.8×', lbl1: 'Target ROAS', kpi2: '2.6M', lbl2: 'Audience Reach', note: 'Cost per acquired lead: -44%' },
+    mob: { notif: 'Viral Reel #08 Approved', detail: 'Estimated reach: 180k+ views', action: 'Live on IG & TikTok' }
   },
   'cloud-support': {
     ws: { url: 'infra.softnexa.io/k8s/clusters', title: 'Kubernetes Cluster & DevOps', status: '12 Pods Active (12ms)', metric: 'Zero Downtime Pipeline', btn: 'Run Healthcheck' },
@@ -5993,7 +6009,7 @@ var SDEMOS=[
 ];
 
 function sdBy(slug){for(var i=0;i<SDEMOS.length;i++){if(SDEMOS[i].slug===slug)return SDEMOS[i]}return null}
-function sdFor(svc){return SDEMOS.filter(function(d){return d.s===svc})}
+function sdFor(svc){return SDEMOS.filter(function(d){return d.s===svc || (svc==='digital-marketing' && d.s==='marketing-ai') || (svc==='marketing-ai' && d.s==='digital-marketing')})}
 function sdGrad(d){return 'linear-gradient(140deg,'+d.th[0]+','+d.th[1]+')'}
 var SDKIND={portal:'Web portal',phone:'Mobile app',erp:'ERP module',store:'Online store',
   ai:'AI console',bi:'Dashboard',studio:'Design file',post:'Content studio',ops:'Ops console'};
@@ -7027,7 +7043,7 @@ var BRIEF_TYPES=[
   ['mobile','phone','Mobile app','Android and iOS, customer or field staff'],
   ['software','grid','Custom software / ERP','Inventory, accounts, workflow, multi-branch'],
   ['ai','sparkles','AI & automation','Chatbot, document reading, auto reports'],
-  ['marketing','megaphone','Marketing & content','AI content, video ads, scheduled posting'],
+  ['marketing','megaphone','Digital & Social Media Marketing','Meta/Google Ads, viral reels, social management, SEO'],
   ['other','puzzle','Something else','Not sure yet — tell us in your own words']
 ];
 
@@ -7038,7 +7054,7 @@ var BRIEF_FEATURES={
   mobile:['Android','iOS','Customer-facing app','Field staff app','Works offline','Push notifications','In-app payments','Maps / live tracking','Barcode or QR scan'],
   software:['Inventory / stock','Sales and invoicing','Purchase and vendors','Accounts and ledgers','HR and attendance','Production / manufacturing','Dispatch and delivery','Multi-branch','Reports for management','Import data from Excel'],
   ai:['Chatbot on website / WhatsApp','Reads invoices or documents','Auto reports','Lead scoring and routing','Call or meeting summaries','Trained on our own documents'],
-  marketing:['Content calendar','AI post design','AI video ads','Scheduled posting','Client approval flow','Performance dashboard'],
+  marketing:['Meta Ads (Facebook & Instagram)','Google Ads & Search PPC','TikTok & Viral Reels Production','30-Day Social Content Calendar','SEO & Google Ranking','WhatsApp Click-to-Chat Funnels','Graphic Design & Brand Creatives','Influencer Outreach & UGC','Meta Pixel & CAPI Setup','Monthly ROAS & Performance Report'],
   other:['Not sure yet — needs discussion']
 };
 
@@ -7330,8 +7346,10 @@ var OFFERS={
     ['Annotated screenshot','Quick wins vs bigger fixes','Delivered in 3 working days'],'Review my screen'],
   'cloud-support':['🛡️','Free uptime & backup health check','We check certificates, backups, uptime and the obvious security holes — and tell you what would fail first.',
     ['SSL, backup and uptime check','Top three risks','Plain-language report'],'Check my setup'],
-  'marketing-ai':['🎬','Free 30-day content automation plan','We map a month of posts and video ads for your brand, and show which parts AI drafts and which your team approves.',
-    ['A 30-day calendar outline','Which channels to automate','Sample AI-drafted posts'],'Plan my content']
+  'digital-marketing':['🚀','Free 30-Day Growth & Ad Campaign Blueprint','We audit your Meta/Google ads, social channels, and SEO to map a complete 30-day customer acquisition blueprint — 100% free, zero commitment.',
+    ['Targeted ad & ROAS audit','Viral reels & content plan','Organic SEO keyword opportunities'],'Claim my growth blueprint'],
+  'marketing-ai':['🚀','Free 30-Day Growth & Ad Campaign Blueprint','We audit your Meta/Google ads, social channels, and SEO to map a complete 30-day customer acquisition blueprint — 100% free, zero commitment.',
+    ['Targeted ad & ROAS audit','Viral reels & content plan','Organic SEO keyword opportunities'],'Claim my growth blueprint']
 };
 
 (function(){
@@ -7568,10 +7586,15 @@ var SERVICES_SEO = {
     desc: 'Design systems, interactive Figma prototypes, and conversion-focused user interfaces engineered for complex workflows and high-retention software.',
     kw: 'UI UX design agency, product design company, Figma prototype design, enterprise UX design, software interface design'
   },
+  'digital-marketing': {
+    title: 'Digital Marketing & Social Media Marketing Services · SoftNexa',
+    desc: 'Complete 360° digital marketing: Meta Ads (Facebook & Instagram), Google Ads PPC, viral TikTok reels, monthly social media management, SEO, and ROI-driven growth funnels.',
+    kw: 'digital marketing agency, social media marketing agency, Meta ads management, Facebook Instagram ads, Google ads PPC, TikTok marketing, SEO services Karachi Pakistan'
+  },
   'marketing-ai': {
-    title: 'AI Marketing Systems & Content Automation · SoftNexa',
-    desc: 'Automated campaign engines, dynamic customer segmentation, and AI-driven personalized outreach systems built for lead generation at scale.',
-    kw: 'marketing automation systems, AI content engines, automated lead outreach, customer segmentation software'
+    title: 'Digital Marketing & Social Media Marketing Services · SoftNexa',
+    desc: 'Complete 360° digital marketing: Meta Ads (Facebook & Instagram), Google Ads PPC, viral TikTok reels, monthly social media management, SEO, and ROI-driven growth funnels.',
+    kw: 'digital marketing agency, social media marketing agency, Meta ads management, Facebook Instagram ads, Google ads PPC, TikTok marketing, SEO services Karachi Pakistan'
   },
   'cloud-support': {
     title: 'Cloud Infrastructure, DevOps & 24/7 Support · SoftNexa',
