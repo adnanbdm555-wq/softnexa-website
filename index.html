@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
+<script>(function(){try{var t=localStorage.getItem('sx-theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4P1MGZ9W6B"></script>
 <script>
@@ -19,7 +20,7 @@
 <meta name="keywords" content="SoftNexa, softnexa solutions, custom software development, enterprise ERP software, web application development, SaaS platform development, mobile apps iOS Android, AI automation workflows, Karachi software house, bespoke software Pakistan">
 <meta name="author" content="SoftNexa Solutions">
 <meta name="publisher" content="SoftNexa Solutions">
-<meta name="theme-color" content="#07061A">
+<meta name="theme-color" content="#F8FAFC">
 
 <!-- Geographic & Local SEO (GEO) -->
 <meta name="geo.region" content="PK-SD">
@@ -211,6 +212,36 @@
    SOFTNEXA — design tokens
    ============================================================ */
 :root{
+  --void:#F8FAFC; --panel:#FFFFFF; --panel-2:#F1F5F9; --panel-3:#E2E8F0;
+  --ink:#0F172A; --muted:#334155; --line:#E2E8F0; --line-2:#CBD5E1;
+  --iris:#5B3DF5; --violet:#8A3DF5; --cyan:#0FA9C9; --pink:#FF4D8D;
+  --mint:#10B981; --amber:#F59E0B;
+  --glass:rgba(15,23,42,.035);
+  --glass-2:rgba(15,23,42,.07);
+  --shadow:0 24px 60px -25px rgba(15,23,42,.12);
+  --shadow-lg:0 45px 90px -30px rgba(15,23,42,.18);
+  --ring:0 0 0 1px var(--line);
+  --r:20px; --r-sm:13px; --r-lg:30px;
+  --maxw:1220px;
+  --ease:cubic-bezier(.22,.9,.28,1);
+  --grid-line:rgba(15,23,42,.04);
+  --hero-tint:rgba(91,61,245,.08);
+  --font-display:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --font-body:"Inter","Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+}
+:root[data-theme="light"]{
+  --void:#F8FAFC; --panel:#FFFFFF; --panel-2:#F1F5F9; --panel-3:#E2E8F0;
+  --ink:#0F172A; --muted:#334155; --line:#E2E8F0; --line-2:#CBD5E1;
+  --iris:#5B3DF5; --violet:#8A3DF5; --cyan:#0FA9C9; --pink:#FF4D8D;
+  --mint:#10B981; --amber:#F59E0B;
+  --glass:rgba(15,23,42,.035); --glass-2:rgba(15,23,42,.07);
+  --shadow:0 24px 60px -25px rgba(15,23,42,.12);
+  --shadow-lg:0 45px 90px -30px rgba(15,23,42,.18);
+  --grid-line:rgba(15,23,42,.04);
+  --hero-tint:rgba(91,61,245,.08);
+}
+:root[data-theme="dark"]{
   --void:#08071E; --panel:#0F0D28; --panel-2:#16133B; --panel-3:#1E1A4A;
   --ink:#FFFFFF; --muted:#D6D1F8; --line:#2C265A; --line-2:#433B7E;
   --iris:#6E4BFF; --violet:#9B5CFF; --cyan:#1FD3F0; --pink:#FF4D8D;
@@ -219,37 +250,8 @@
   --glass-2:rgba(255,255,255,.1);
   --shadow:0 30px 80px -40px rgba(0,0,0,.9);
   --shadow-lg:0 60px 120px -50px rgba(0,0,0,.95);
-  --ring:0 0 0 1px var(--line);
-  --r:20px; --r-sm:13px; --r-lg:30px;
-  --maxw:1220px;
-  --ease:cubic-bezier(.22,.9,.28,1);
   --grid-line:rgba(255,255,255,.05);
   --hero-tint:rgba(110,75,255,.18);
-  --font-display:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  --font-body:"Inter","Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-}
-@media (prefers-color-scheme: light){
-  :root:not([data-theme="dark"]){
-    --void:#F8FAFC; --panel:#FFFFFF; --panel-2:#F1F5F9; --panel-3:#E2E8F0;
-    --ink:#0F172A; --muted:#334155; --line:#E2E8F0; --line-2:#CBD5E1;
-    --iris:#5B3DF5; --violet:#8A3DF5; --cyan:#0FA9C9;
-    --glass:rgba(15,23,42,.035); --glass-2:rgba(15,23,42,.07);
-    --shadow:0 24px 60px -25px rgba(15,23,42,.15);
-    --shadow-lg:0 45px 90px -30px rgba(15,23,42,.2);
-    --grid-line:rgba(15,23,42,.04);
-    --hero-tint:rgba(91,61,245,.08);
-  }
-}
-:root[data-theme="light"]{
-  --void:#F8FAFC; --panel:#FFFFFF; --panel-2:#F1F5F9; --panel-3:#E2E8F0;
-  --ink:#0F172A; --muted:#334155; --line:#E2E8F0; --line-2:#CBD5E1;
-  --iris:#5B3DF5; --violet:#8A3DF5; --cyan:#0FA9C9;
-  --glass:rgba(15,23,42,.035); --glass-2:rgba(15,23,42,.07);
-  --shadow:0 24px 60px -25px rgba(15,23,42,.15);
-  --shadow-lg:0 45px 90px -30px rgba(15,23,42,.2);
-  --grid-line:rgba(15,23,42,.04);
-  --hero-tint:rgba(91,61,245,.08);
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -308,6 +310,143 @@ section{padding:112px 0;position:relative}
   0%{background-position:100% 50%}
   50%{background-position:0% 50%}
   100%{background-position:100% 50%}
+}
+
+/* Light Theme High-Contrast SaaS Polish */
+:root[data-theme="light"],
+:root:not([data-theme="dark"]){
+  --card-bg:#FFFFFF;
+  --card-border:#E2E8F0;
+  --card-shadow:0 10px 30px -10px rgba(15,23,42,.08);
+}
+:root[data-theme="light"] .tile,
+:root:not([data-theme="dark"]) .tile{
+  background:#FFFFFF;
+  border-color:#E2E8F0;
+  box-shadow:0 10px 30px -12px rgba(15,23,42,.08);
+}
+:root[data-theme="light"] .tile:hover,
+:root:not([data-theme="dark"]) .tile:hover{
+  border-color:var(--iris);
+  box-shadow:0 18px 45px -14px rgba(91,61,245,.2);
+}
+:root[data-theme="light"] .card,
+:root:not([data-theme="dark"]) .card{
+  background:#FFFFFF;
+  border-color:#E2E8F0;
+  box-shadow:0 10px 30px -12px rgba(15,23,42,.08);
+}
+:root[data-theme="light"] .bsec,
+:root:not([data-theme="dark"]) .bsec{
+  background:#FFFFFF;
+  border-color:#E2E8F0;
+  box-shadow:0 10px 30px -12px rgba(15,23,42,.08);
+}
+:root[data-theme="light"] .bsec > header,
+:root:not([data-theme="dark"]) .bsec > header{
+  background:#F8FAFC;
+  border-bottom:1px solid #E2E8F0;
+}
+:root[data-theme="light"] .pick,
+:root:not([data-theme="dark"]) .pick{
+  background:#F8FAFC;
+  border-color:#E2E8F0;
+}
+:root[data-theme="light"] .pick:hover,
+:root:not([data-theme="dark"]) .pick:hover{
+  background:#F1F5F9;
+  border-color:#CBD5E1;
+}
+:root[data-theme="light"] .pick.on,
+:root:not([data-theme="dark"]) .pick.on{
+  background:rgba(91,61,245,.08);
+  border-color:var(--iris);
+}
+:root[data-theme="light"] .shot-art,
+:root:not([data-theme="dark"]) .shot-art{
+  background:#FFFFFF;
+  border-color:#E2E8F0;
+  box-shadow:0 14px 35px -14px rgba(15,23,42,.1);
+}
+:root[data-theme="light"] .shot-chrome,
+:root:not([data-theme="dark"]) .shot-chrome{
+  background:#F8FAFC;
+  border-bottom:1px solid #E2E8F0;
+}
+:root[data-theme="light"] .shot-url,
+:root:not([data-theme="dark"]) .shot-url{
+  background:#F1F5F9;
+  border-color:#E2E8F0;
+  color:#475569;
+}
+:root[data-theme="light"] .shot-overlay,
+:root:not([data-theme="dark"]) .shot-overlay{
+  background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(15,23,42,.12) 100%),
+             radial-gradient(circle at 80% 20%,rgba(15,169,201,.06),transparent 60%);
+}
+:root[data-theme="light"] .megamenu,
+:root:not([data-theme="dark"]) .megamenu{
+  background:rgba(255,255,255,.98);
+  border-color:#E2E8F0;
+  box-shadow:0 24px 60px -20px rgba(15,23,42,.2);
+}
+:root[data-theme="light"] header.stuck,
+:root:not([data-theme="dark"]) header.stuck{
+  background:rgba(248,250,252,.88);
+  border-bottom-color:#E2E8F0;
+}
+:root[data-theme="light"] .sx-chat-window,
+:root:not([data-theme="dark"]) .sx-chat-window{
+  background:#FFFFFF;
+  border-left:1px solid #E2E8F0;
+  box-shadow:-18px 0 50px rgba(15,23,42,.14);
+}
+:root[data-theme="light"] .sx-chat-head,
+:root:not([data-theme="dark"]) .sx-chat-head{
+  background:#F8FAFC;
+  border-bottom:1px solid #E2E8F0;
+}
+:root[data-theme="light"] .sx-quick-bar,
+:root:not([data-theme="dark"]) .sx-quick-bar{
+  background:#F1F5F9;
+  border-bottom:1px solid #E2E8F0;
+}
+:root[data-theme="light"] .sx-chat-foot,
+:root:not([data-theme="dark"]) .sx-chat-foot{
+  background:#F8FAFC;
+  border-top:1px solid #E2E8F0;
+}
+:root[data-theme="light"] .sx-chat-input,
+:root:not([data-theme="dark"]) .sx-chat-input{
+  background:#FFFFFF;
+  color:#0F172A;
+  border-color:#CBD5E1;
+}
+:root[data-theme="light"] .sx-chip,
+:root:not([data-theme="dark"]) .sx-chip{
+  background:#FFFFFF;
+  color:#0F172A;
+  border-color:#E2E8F0;
+}
+:root[data-theme="light"] .sx-msg-bot .sx-msg-bubble,
+:root:not([data-theme="dark"]) .sx-msg-bot .sx-msg-bubble{
+  background:#F1F5F9;
+  color:#0F172A;
+  border-color:#E2E8F0;
+}
+:root[data-theme="light"] .sx-msg-bot .sx-msg-bubble strong,
+:root:not([data-theme="dark"]) .sx-msg-bot .sx-msg-bubble strong{
+  color:#0F172A;
+}
+:root[data-theme="light"] .sx-chat-teaser,
+:root:not([data-theme="dark"]) .sx-chat-teaser{
+  background:#FFFFFF;
+  border-color:#CBD5E1;
+  box-shadow:0 14px 34px rgba(15,23,42,.14);
+}
+:root[data-theme="light"] .sx-teaser-txt strong,
+:root:not([data-theme="dark"]) .sx-teaser-txt strong{
+  color:#0F172A;
 }
 .txt-rotator-box{
   display:inline-block;
@@ -8203,16 +8342,28 @@ paintRegionBtn();
 
 /* theme */
 var root=document.documentElement;
-try{ var saved=localStorage.getItem('sx-theme'); if(saved) root.setAttribute('data-theme',saved); }catch(e){}
+try{ 
+  var saved=localStorage.getItem('sx-theme'); 
+  root.setAttribute('data-theme', saved === 'dark' ? 'dark' : 'light'); 
+}catch(e){
+  root.setAttribute('data-theme', 'light');
+}
 function effectiveTheme(){
   var a=root.getAttribute('data-theme');
-  if(a) return a;
-  return matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  return a || 'light';
 }
+function updateThemeIcon(){
+  var t=$('#theme');
+  if(!t) return;
+  t.innerHTML = effectiveTheme()==='dark' ? icon('sun',18) : icon('moon',18);
+  t.setAttribute('aria-label', effectiveTheme()==='dark' ? 'Switch to light theme' : 'Switch to dark theme');
+}
+updateThemeIcon();
 $('#theme').addEventListener('click',function(){
   var next = effectiveTheme()==='light' ? 'dark' : 'light';
   root.setAttribute('data-theme',next);
   try{ localStorage.setItem('sx-theme',next) }catch(e){}
+  updateThemeIcon();
 });
 
 /* cursor */

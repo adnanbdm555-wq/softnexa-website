@@ -174,6 +174,7 @@ About SoftNexa Offerings & Standards:
 - Mobile Applications: High-performance Flutter apps for iOS & Android with offline support, push notifications, and payment gateways.
 - AI Agents & Automation: WhatsApp bots, CRM automations, and custom workflows.
 - 100% Fixed-Price Guarantee with milestone delivery (zero hidden charges or hourly surprises).
+- CRITICAL PRICING INSTRUCTION: Do NOT quote any project prices, rates, or dollar/PKR costs under any circumstance. SoftNexa creates bespoke solutions customized to each business's scale and workflows. Explain our 100% Fixed-Price Guarantee with milestone protection, and invite the client to share their required features or schedule a quick 10-minute discovery call for a custom Scope Blueprint.
 - Live interactive demos: https://softnexasolution.com/#/demos
 - Office: Shahrah-e-Faisal, Karachi, Pakistan (Clients are welcome to schedule in-person meetings or discovery calls).
 - Direct Line: +92 315 2989922.
@@ -301,11 +302,11 @@ if (!$llmSucceeded || empty($aiReply)) {
         }
     } elseif ($isPrice) {
         if ($lang === 'ro') {
-            $aiReply = "SoftNexa 100% Fixed-Price Guarantee par kaam karta hai (no hourly surprise bills):\n\n💼 Business / Corporate Website: PKR 35,000 - 55,000 (5 to 7 days delivery)\n🛍️ E-Commerce Store: PKR 75,000 - 150,000 (2 to 3 weeks delivery)\n🏢 Custom ERP / Multi-Branch Software: Scope ke mutabiq milestone-based\n\nHar package mein Free SSL, Mobile Responsive Design aur 1 Month Technical Support shamil hota hai. Aapki exact requirement par hum custom blueprint bana dete hain.";
+            $aiReply = "SoftNexa 100% Fixed-Price Guarantee par kaam karta hai (zero hourly charges ya unexpected surprises!). 💼✨\n\nChunkay hamari har website, mobile app ya ERP system client ki exact business requirements aur workflow ke mutabiq bespoke develop hota hai, is liye hum generic rates quote nahi karte. Hum pehle aapke required features ko samajh kar ek tailored Scope Blueprint aur fixed-price milestone roadmap provide karte hain.\n\nAapke project mein kin key features ya modules ki zaroorat hai? Ya kya hum ek short 10-minute discovery call arrange karein?";
         } elseif ($lang === 'ur') {
-            $aiReply = "سافٹ نیکسا 100% فکسڈ پرائس گارنٹی پر کام کرتا ہے:\n- کاروباری ویب سائٹ: PKR 35,000 سے 55,000 (5 سے 7 دن)\n- ای کامرس اسٹور: PKR 75,000 سے 150,000 (2 سے 3 ہفتے)\n- کسٹم ای آر پی اور ایپس: اسکوپ کے مطابق\nہر پراجیکٹ میں مفت ایس ایس ایل، موبائل رسپانسیو ڈیزائن اور ٹیکنیکل سپورٹ شامل ہے۔";
+            $aiReply = "سافٹ نیکسا 100% فکسڈ پرائس گارنٹی پر کام کرتا ہے (کوئی پوشیدہ اخراجات یا اوورلی بلنگ نہیں)۔ 💼✨\n\nچونکہ ہمارا ہر پروجیکٹ کلائنٹ کے بزنس اسکیل کے مطابق کسٹم تیار کیا جاتا ہے، اس لیے ہم عمومی قیمت کوٹ نہیں کرتے۔ ہم آپ کے مطلوبہ فیچرز کے مطابق کسٹم اسکوپ بلیو پرنٹ اور شفاف مائل اسٹون فکسڈ کوٹیشن فراہم کرتے ہیں۔\n\nآپ اپنے پروجیکٹ کے درکار فیچرز بتا سکتے ہیں یا کیا ہم ایک مختصر 10 منٹ کی مشاورتی کال شیڈول کریں؟";
         } else {
-            $aiReply = "SoftNexa operates on a strict 100% Fixed-Price Guarantee:\n- Corporate Websites: PKR 35,000 - 55,000 (5-7 days)\n- Full E-Commerce Stores: PKR 75,000 - 150,000 (2-3 weeks)\n- Enterprise ERPs & Apps: Based on milestone scope\nIncludes free SSL, mobile optimization, and 30-day technical support.";
+            $aiReply = "SoftNexa operates under a strict 100% Fixed-Price Guarantee with transparent milestone delivery (zero hidden hourly surprises). 💼✨\n\nBecause every software platform, mobile app, and portal we engineer is 100% bespoke to your exact operational workflows, we do not quote generic prices. Our solution architects prepare a tailored Scope Blueprint and milestone breakdown based on your required features.\n\nCould you share the key features you need, or would you like to schedule a quick 10-minute discovery call?";
         }
     } elseif ($isTimeline) {
         if ($lang === 'ro') {

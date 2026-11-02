@@ -81,9 +81,9 @@ Our core offerings:
 4. Autonomous AI Automations & WhatsApp AI Agents (document processing, OCR, customer support bots).
 
 Pricing & Delivery Model:
-- 100% Fixed-Price Guarantee (no surprise hourly bills).
+- 100% Fixed-Price Guarantee (zero surprise hourly bills or unexpected costs).
 - Fast MVP launches in 2 to 4 weeks. Full enterprise systems in 4 to 8 weeks.
-- MVPs typically start around $3,000 / PKR equivalent; enterprise systems range $6,000 - $15,000+ depending on scope.
+- CRITICAL PRICING RULE: NEVER quote specific dollar or PKR figures/costs for projects under any circumstances. SoftNexa builds 100% bespoke, tailor-made systems architected specifically to each client's unique workflow and business scale. Explain our 100% Fixed-Price Guarantee and invite them to share their required features or book a free 10-minute discovery call so our engineering architects can prepare a customized Scope Blueprint & milestone proposal.
 - We offer a free 48-hour tailored scope blueprint and prototype demo.
 
 Official Contact & WhatsApp:
@@ -189,11 +189,11 @@ if (!$llmSucceeded || empty($aiReply)) {
     // 2. Pricing and Budget Inquiry
     elseif ($isPrice) {
         if ($lang === 'ur') {
-            $aiReply = "ہم 100% فکسڈ پرائس گارنٹی پر کام کرتے ہیں، یعنی درمیان میں کوئی پوشیدہ اخراجات نہیں ہوتے۔\n- بنیادی ایم وی پی (MVP): تقریباً $3,000 سے شروع ہوتا ہے۔\n- مکمل انٹرپرائز ای آر پی / پورٹل: ماڈیولز کے مطابق $6,000 سے $15,000+ تک ہوتا ہے۔\nادائیگی مائل اسٹون کی بنیاد پر ہوتی ہے۔ اگر آپ چاہیں تو 48 گھنٹوں کے مفت اسکوپ کے لیے اپنا نام اور واٹس ایپ نمبر شیئر کر سکتے ہیں (اختیاری)، یا آپ مجھ سے بلا جھجھک مزید سوالات پوچھ سکتے ہیں!";
+            $aiReply = "ہم 100% فکسڈ پرائس گارنٹی پر کام کرتے ہیں، یعنی پروجیکٹ کے دوران کوئی پوشیدہ اخراجات یا اوورلی بلنگ نہیں ہوتی۔\n\nچونکہ سافٹ نیکسا کا ہر سسٹم کلائنٹ کے مخصوص بزنس ماڈل اور ضروریات کے مطابق تیار کیا جاتا ہے، اس لیے ہم عمومی ریٹس کوٹ نہیں کرتے۔ ہم آپ کے فیچرز کو سمجھ کر ایک کسٹم اسکوپ بلیو پرنٹ اور فکسڈ پرائس مائل اسٹون روڈ میپ فراہم کرتے ہیں۔\n\nاگر آپ چاہیں تو اپنے درکار فیچرز شیئر کریں یا 10 منٹ کی ڈسکوری کال کے لیے اپنا نام اور واٹس ایپ نمبر شیئر کر سکتے ہیں (اختیاری)!";
         } elseif ($lang === 'ro') {
-            $aiReply = "SoftNexa 100% Fixed-Price Guarantee par kaam karta hai (no hidden hourly charges):\n- Core MVP / Focused System: $3,000 / PKR equivalent se start hota hai.\n- Full Enterprise ERP / Multi-Branch System: Scope ke mutabiq $6,000 se $15,000+ tak hota hai.\nPayment milestone-based hoti hai (25% advance, 25% prototype, 25% testing, 25% live launch). Aapke project ka tailored 48-Hour Scope Blueprint tayyar karne ke liye agar aap chahein toh apna Name aur WhatsApp number ya Email share kar dein (optional), ya aap mujhse mazeed technical sawalat bhi yahan pooch sakte hain!";
+            $aiReply = "SoftNexa 100% Fixed-Price Guarantee par kaam karta hai (no hidden hourly charges ya unexpected bills).\n\nChunkay hamara har software, mobile app ya website client ki exact requirements aur business workflow ke mutabiq bespoke develop hoti hai, is liye hum generic rates quote nahi karte. Hum pehle aapke required features samajh kar ek tailored Scope Blueprint aur custom milestone-based fixed quotation provide karte hain.\n\nAapke project mein kin key features ya modules ki zaroorat hai? Ya agar aap chahein toh ek quick 10-minute discovery call ke liye apna Name aur WhatsApp number share kar sakte hain (optional)!";
         } else {
-            $aiReply = "All SoftNexa engineering is delivered under a 100% Fixed-Price Guarantee with milestone-based delivery:\n- Focused MVPs start at $3,000.\n- Full Enterprise ERPs & Multi-Branch Systems range from $6,000 to $15,000+ depending on modules.\nPayments are tied to tangible sprint milestones. If you'd like, feel free to share your Name and WhatsApp number or Email (optional) so we can draft your free 48-hour scope blueprint, or let me know what questions you have!";
+            $aiReply = "SoftNexa delivers all projects under a strict 100% Fixed-Price Guarantee with milestone-based delivery (zero hidden hourly surprises).\n\nBecause every solution we engineer is 100% bespoke and custom-architected for your specific business workflows, we do not quote generic project prices. Instead, our engineering leads prepare a tailored Scope Blueprint and milestone breakdown after understanding your feature requirements.\n\nCould you share the core features or modules you have in mind? Alternatively, feel free to share your Name and WhatsApp/Email to schedule a quick 10-minute discovery call!";
         }
     }
     // 3. Timeline & Delivery Duration
