@@ -2718,6 +2718,7 @@ table.sdt .mu{color:var(--muted)}
     <a href="#/pricing" data-nav>Pricing</a>
     <a href="#/about" data-nav>About</a>
     <a href="#/brief" data-nav style="color:var(--iris)">Client brief form</a>
+    <a href="#/schedule" data-nav style="color:var(--cyan);font-weight:600">📅 Schedule Google Meet</a>
     <a href="#/contact" data-nav style="color:var(--iris);font-weight:600">Contact Us</a>
   </div>
 </div>
@@ -2748,6 +2749,7 @@ table.sdt .mu{color:var(--muted)}
         <a href="#/about" data-nav>About</a>
         <a href="#/pricing" data-nav>Pricing</a>
         <a href="#/brief" data-nav>Client brief form</a>
+        <a href="#/schedule" data-nav style="color:var(--cyan);font-weight:600">📅 Schedule Google Meet</a>
         <a href="#/contact" data-nav>Contact Us</a>
       </div>
       <div><h4>Get in touch</h4>
@@ -4444,6 +4446,12 @@ PAGES.contact=function(){
     '<span style="flex:1"><h3 style="margin-bottom:4px">Know what you want built? Fill the client brief instead.</h3>'+
     '<p style="margin:0">A 3-minute form: project type, features, budget and timeline — so we can quote properly without twenty messages back and forth.</p></span>'+
     '<span class="go" style="color:var(--iris);font-weight:600;white-space:nowrap">Open the brief</span></a>'+
+
+    '<a class="card rv" href="#/schedule" data-nav style="display:flex;gap:18px;align-items:center;text-decoration:none;border-color:rgba(18,200,240,.4);background:rgba(18,200,240,.04);margin-top:14px">'+
+    '<span class="cic" style="background:linear-gradient(135deg,#1A73E8,#4285F4);margin-bottom:0;color:#fff">📅</span>'+
+    '<span style="flex:1"><h3 style="margin-bottom:4px">Prefer a face-to-face video consultation? Schedule a Google Meet call.</h3>'+
+    '<p style="margin:0">Pick any 30-minute slot that fits your day (UAE, KSA, Pakistan, UK, or USA). Your Google Meet link is generated instantly.</p></span>'+
+    '<span class="go" style="color:#12C8F0;font-weight:600;white-space:nowrap">Book call →</span></a>'+
     '</div></section>'+
     '<section style="padding-top:6px">'+ctaBlock('Or just send a message.','Fill this in and we will reply with two or three call times that suit your day.')+'</section>'+
     '<section><div class="wrap">'+kicker('01','What happens next')+
@@ -4459,6 +4467,97 @@ PAGES.contact=function(){
       '<div class="card"><h3 style="font-size:1.02rem">Email</h3><p><a href="mailto:info@softnexasolution.com" style="color:var(--iris);text-decoration:none">info@softnexasolution.com</a></p></div>'+
       '<div class="card"><h3 style="font-size:1.02rem">Phone & WhatsApp</h3><p><a href="https://wa.me/923152989922?text=Hello%20SoftNexa,%20I%20would%20like%20to%20discuss%20a%20project" target="_blank" rel="noopener" style="color:#25D366;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px"><span>💬</span> +92 315 2989922</a></p><span style="font-size:.82rem;color:var(--muted)">Instant WhatsApp & Call Support</span></div>'+
       '<div class="card"><h3 style="font-size:1.02rem">Office</h3><p>Shahrah-e-Faisal, Karachi<br>Mon–Fri, 10am–7pm PKT</p></div>'+
+    '</div></div></section>';
+};
+
+PAGES.schedule=function(){
+  var now = new Date();
+  now.setDate(now.getDate() + 1);
+  var defDate = now.toISOString().split('T')[0];
+
+  return '<section class="pagehead"><div class="gridbg"></div>'+
+    '<div class="aurora"><div class="blob a"></div><div class="blob c"></div></div><div class="wrap">'+
+    '<span class="tagpill"><span style="width:7px;height:7px;border-radius:50%;background:#10B981;display:inline-block"></span>100% Free · 30-Minute Google Meet Video Call</span>'+
+    '<h1>Schedule a 1-on-1<br><span class="grad">Discovery Call.</span></h1>'+
+    '<p class="lede" style="margin-top:20px">Talk directly with our lead solutions architects over Google Meet. Pick a 30-minute slot that fits your schedule — Dubai (GST), Riyadh (AST), Karachi (PKT), London, or New York.</p>'+
+    '</div></section>'+
+    '<section style="padding-top:26px"><div class="wrap">'+
+    '<div class="grid2" style="gap:36px;align-items:start">'+
+    '<div>'+
+      '<div class="card" style="margin-bottom:18px">'+
+        '<h3 style="font-size:1.15rem;margin-bottom:12px">What we will cover on the call:</h3>'+
+        '<ul class="checklist" style="font-size:.95rem;line-height:1.7">'+
+          '<li><b>✓</b> <b>Direct with Solution Architects:</b> No junior sales scripts. You speak directly with our senior software leads.</li>'+
+          '<li><b>✓</b> <b>Live Architecture Review:</b> We map out your workflows, ERP modules, or app screens live.</li>'+
+          '<li><b>✓</b> <b>48-Hour Scope Blueprint & Fixed Quote:</b> A clear milestone document and fixed pricing you can take anywhere.</li>'+
+          '<li><b>✓</b> <b>100% Confidential NDA Guarantee:</b> Your business ideas and operational workflows are strictly protected.</li>'+
+        '</ul>'+
+      '</div>'+
+      '<div class="card">'+
+        '<h3 style="font-size:1.02rem;margin-bottom:8px">Middle East & Global Support:</h3>'+
+        '<p class="mut" style="font-size:.88rem;margin:0 0 10px">We actively accommodate UAE (Dubai / Abu Dhabi), Saudi Arabia (Riyadh / Jeddah), UK, USA, and Pakistan timezones.</p>'+
+        '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'+
+          '<a href="https://wa.me/923152989922?text=Hi%20Adnan,%20I%20would%20like%20to%20schedule%20a%20Google%20Meet%20call" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="color:#25D366;font-weight:700">💬 Direct WhatsApp Line</a>'+
+          '<span class="mut" style="font-size:.85rem">+92 315 2989922</span>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="card" id="meet-card" style="border-color:color-mix(in srgb,var(--cyan) 40%,var(--iris));box-shadow:0 18px 45px -15px rgba(110,75,255,.2)">'+
+      '<div id="meet-form-wrap">'+
+        '<h3 style="font-size:1.25rem;margin-bottom:6px">Select Your Date & Time Slot</h3>'+
+        '<p class="mut" style="font-size:.88rem;margin-bottom:20px">Your Google Meet room link will be generated instantly.</p>'+
+        '<form id="meet-form" style="display:grid;gap:14px">'+
+          '<div class="grid2" style="gap:12px">'+
+            '<div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:5px">Your Name *</label>'+
+            '<input type="text" name="name" required placeholder="e.g. Tariq Mansoor" class="field" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink)"></div>'+
+            '<div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:5px">Company / Brand</label>'+
+            '<input type="text" name="company" placeholder="e.g. Apex Horizon Realty" class="field" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink)"></div>'+
+          '</div>'+
+          '<div class="grid2" style="gap:12px">'+
+            '<div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:5px">Work Email *</label>'+
+            '<input type="email" name="email" required placeholder="name@company.com" class="field" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink)"></div>'+
+            '<div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:5px">WhatsApp Number *</label>'+
+            '<input type="tel" name="phone" required placeholder="+971 50... or +92 315..." class="field" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink)"></div>'+
+          '</div>'+
+          '<div class="grid3" style="gap:10px">'+
+            '<div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:5px">Meeting Date *</label>'+
+            '<input type="date" name="date" required value="'+defDate+'" min="'+defDate+'" class="field" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink)"></div>'+
+            '<div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:5px">Time Slot *</label>'+
+            '<select name="time_slot" required style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink)">'+
+              '<option value="11:00 AM">11:00 AM</option>'+
+              '<option value="01:30 PM">01:30 PM</option>'+
+              '<option value="03:30 PM" selected>03:30 PM</option>'+
+              '<option value="05:30 PM">05:30 PM</option>'+
+              '<option value="07:30 PM">07:30 PM</option>'+
+              '<option value="09:30 PM">09:30 PM</option>'+
+            '</select></div>'+
+            '<div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:5px">Timezone</label>'+
+            '<select name="timezone" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink)">'+
+              '<option value="Asia/Dubai">UAE / Dubai (GST GMT+4)</option>'+
+              '<option value="Asia/Riyadh">Saudi Arabia / Riyadh (AST GMT+3)</option>'+
+              '<option value="Asia/Karachi" selected>Pakistan (PKT GMT+5)</option>'+
+              '<option value="Europe/London">UK / London (GMT)</option>'+
+              '<option value="America/New_York">US / Eastern (EST)</option>'+
+            '</select></div>'+
+          '</div>'+
+          '<div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:5px">Project Topic / Service</label>'+
+          '<select name="topic" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink)">'+
+            '<option value="Custom Enterprise ERP & CRM">Custom Enterprise ERP & CRM (Multi-branch, Inventory, Accounting)</option>'+
+            '<option value="Web Apps & Scalable SaaS">Web Apps & Scalable SaaS Platform</option>'+
+            '<option value="Mobile Application (Flutter iOS/Android)">Native / Cross-Platform Mobile App (iOS & Android)</option>'+
+            '<option value="High-Speed E-Commerce Store">E-Commerce Online Store (Tabby/Tamara / COD)</option>'+
+            '<option value="Autonomous AI Agent & WhatsApp Bot">Autonomous AI Agent & WhatsApp Automation</option>'+
+            '<option value="Digital & Social Media Marketing">Digital & Social Media Marketing (Meta / Google Ads)</option>'+
+          '</select></div>'+
+          '<div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:5px">Brief Notes / What are you looking to build?</label>'+
+          '<textarea name="notes" rows="2" placeholder="Tell us briefly about your current process or the software you want to build..." style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font-family:inherit"></textarea></div>'+
+          '<div id="meet-err" style="display:none;color:#EF4444;font-size:.85rem"></div>'+
+          '<button type="submit" class="btn btn-primary" id="meet-btn" style="width:100%;justify-content:center;padding:12px;font-size:.96rem">Schedule & Generate Google Meet Link<span class="sh"></span></button>'+
+        '</form>'+
+      '</div>'+
+      '<div id="meet-success" style="display:none;text-align:center;padding:20px 10px">'+
+      '</div>'+
+    '</div>'+
     '</div></div></section>';
 };
 
@@ -7349,6 +7448,66 @@ PAGES.brief=function(){
     ])+'</div></section>';
 };
 
+function scheduleInit(root){
+  var form=$('#meet-form',root);
+  if(!form) return;
+  var wrap=$('#meet-form-wrap',root);
+  var succ=$('#meet-success',root);
+  var err=$('#meet-err',root);
+  var btn=$('#meet-btn',root);
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(err) err.style.display='none';
+    if(btn){ btn.disabled=true; btn.textContent='Booking Google Meet...'; }
+
+    var payload = {
+      name: (form.name.value||'').trim(),
+      company: (form.company.value||'').trim(),
+      email: (form.email.value||'').trim(),
+      phone: (form.phone.value||'').trim(),
+      date: form.date.value,
+      time_slot: form.time_slot.value,
+      timezone: form.timezone.value,
+      topic: form.topic.value,
+      notes: (form.notes.value||'').trim()
+    };
+
+    fetch('api/schedule_meeting.php',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      if(res && res.ok){
+        wrap.style.display='none';
+        succ.style.display='block';
+        succ.innerHTML = '<div style="width:56px;height:56px;border-radius:50%;background:rgba(22,199,132,.18);color:#10B981;font-size:1.8rem;display:grid;place-items:center;margin:0 auto 16px">✓</div>'+
+          '<h3 style="font-size:1.4rem;margin-bottom:8px">Discovery Call Confirmed!</h3>'+
+          '<p class="mut" style="font-size:.92rem;margin-bottom:20px">Your 30-minute Google Meet session has been booked for <b>'+res.date+' at '+res.time_slot+' ('+res.timezone+')</b>.</p>'+
+          '<div style="background:var(--void);border:1px solid var(--line2);border-radius:12px;padding:16px;margin-bottom:20px;text-align:left">'+
+            '<span style="display:block;font-size:.76rem;color:var(--muted);margin-bottom:6px">YOUR GOOGLE MEET ROOM LINK:</span>'+
+            '<a href="'+res.meet_link+'" target="_blank" rel="noopener" style="font-family:var(--font-mono);font-size:1.05rem;font-weight:700;color:var(--cyan);word-break:break-all">'+res.meet_link+'</a>'+
+          '</div>'+
+          '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'+
+            '<a href="'+res.meet_link+'" target="_blank" rel="noopener" class="btn btn-primary">Join Google Meet Room<span class="sh"></span></a>'+
+            '<a href="'+res.calendar_url+'" target="_blank" rel="noopener" class="btn btn-ghost">📅 Add to Google Calendar</a>'+
+            '<a href="https://wa.me/923152989922?text=Hello%20SoftNexa,%20I%20just%20scheduled%20a%20Google%20Meet%20call%20for%20'+encodeURIComponent(res.date+' at '+res.time_slot)+'" target="_blank" rel="noopener" class="btn btn-ghost" style="color:#25D366;font-weight:700">💬 Message on WhatsApp</a>'+
+          '</div>'+
+          '<p class="mut" style="font-size:.78rem;margin-top:20px">An automated WhatsApp confirmation and calendar invite have also been dispatched to your details.</p>';
+      } else {
+        if(err){ err.textContent=(res&&res.error)||'Could not schedule meeting. Please check details or WhatsApp us directly.'; err.style.display='block'; }
+        if(btn){ btn.disabled=false; btn.textContent='Schedule & Generate Google Meet Link'; }
+      }
+    })
+    .catch(function(ex){
+      if(err){ err.textContent='Network error. Please try again or message our WhatsApp directly at +92 315 2989922.'; err.style.display='block'; }
+      if(btn){ btn.disabled=false; btn.textContent='Schedule & Generate Google Meet Link'; }
+    });
+  });
+}
+
 function briefInit(root){
   var host=$('#briefroot',root); if(!host) return;
   var S={type:'',features:[],integ:[],style:'',ready:[],budget:'',time:'',size:'',how:'',
@@ -7769,6 +7928,11 @@ var PAGE_SEO = {
     desc: 'Guaranteed fixed-price software engineering with no runaway hourly bills. Dedicated senior engineers and full IP & code ownership.',
     kw: 'custom software pricing, SaaS development cost, fixed price software development, ERP cost estimate'
   },
+  schedule: {
+    title: 'Schedule a Google Meet Discovery Call · SoftNexa',
+    desc: 'Book a 30-minute 1-on-1 discovery call with SoftNexa solution architects over Google Meet. Pick a slot that fits UAE, KSA, UK, USA, or Pakistan timezones.',
+    kw: 'schedule discovery call, Google Meet software consultation, book software architect meeting, SoftNexa meeting'
+  },
   work: {
     title: 'Our Work, Case Studies & Delivered Systems · SoftNexa',
     desc: 'Explore our portfolio of delivered enterprise software, customer portals, warehouse platforms, and mobile apps engineered with modern tech stacks.',
@@ -7987,6 +8151,7 @@ function parse(){
   if(!p.length) return {page:'home'};
   if(p[0]==='services') return p[1]?{page:'service',slug:p[1]}:{page:'services'};
   if(p[0]==='demo') return p[1]?{page:'demo',slug:p[1]}:{page:'demos'};
+  if(p[0]==='schedule' || p[0]==='meet' || p[0]==='book') return {page:'schedule'};
   if(p[0]==='start') return {page:'contact'};
   if(p[0]==='brief') return {page:'brief'};
   if(PAGES[p[0]]) return {page:p[0]};
@@ -8298,6 +8463,7 @@ function boot(root){
   briefInit(root);
   sdInit(root);
   sdIndexInit(root);
+  scheduleInit(root);
 
   /* lead form */
   var form=$('#lead',root);
