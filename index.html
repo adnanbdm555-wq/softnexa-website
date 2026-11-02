@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<script>(function(){try{var t=localStorage.getItem('sx-theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<script>(function(){try{localStorage.setItem('sx-theme','light');}catch(e){}document.documentElement.setAttribute('data-theme','light');})();</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4P1MGZ9W6B"></script>
 <script>
@@ -2700,8 +2700,6 @@ table.sdt .mu{color:var(--muted)}
     </nav>
     <div style="display:flex;gap:10px;align-items:center">
       <a class="btn btn-primary btn-sm mobile-cta" href="#/brief" data-nav>Start a brief<span class="sh"></span></a>
-      <button class="iconbtn wide" id="regionbtn" aria-label="Switch pricing region"></button>
-      <button class="iconbtn" id="theme" aria-label="Switch theme">◐</button>
       <button class="iconbtn menu-btn" id="menu" aria-label="Open menu" aria-expanded="false">☰</button>
     </div>
   </div>
@@ -3399,14 +3397,77 @@ function track(type,label,meta){
    ============================================================ */
 var REGION='intl';
 function detectRegion(){
-  try{ var saved=localStorage.getItem('sx-region'); if(saved) return saved }catch(e){}
-  try{ var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
-       if(tz==='Asia/Karachi') return 'pk'; }catch(e){}
+  // 1. Check Search Link / URL Query Parameters
+  try{
+    var q = new URLSearchParams(window.location.search);
+    var qCur = (q.get('currency') || q.get('cur') || '').toLowerCase();
+    var qReg = (q.get('region') || q.get('country') || '').toLowerCase();
+    if(qCur === 'pkr' || qReg === 'pk') return 'pk';
+    if(qCur === 'usd' || qReg === 'intl' || qReg === 'us') return 'intl';
+  }catch(e){}
+
+  // 2. Check search referrer domain (e.g. google.com.pk)
+  try{
+    var ref = (document.referrer || '').toLowerCase();
+    if(ref.indexOf('.google.com.pk') > -1 || ref.indexOf('.pk/') > -1) return 'pk';
+  }catch(e){}
+
+  // 3. Saved region (if previously confirmed)
+  try{ var saved=localStorage.getItem('sx-region'); if(saved) return saved; }catch(e){}
+
+  // 4. Timezone check (Asia/Karachi is Pakistan's dedicated official timezone)
+  try{ 
+    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    if(tz === 'Asia/Karachi' || tz === 'Asia/Islamabad') return 'pk';
+    if(tz && tz !== 'Asia/Karachi' && tz !== 'Asia/Islamabad') {
+      var l=(navigator.language||'').toLowerCase();
+      if(l.indexOf('ur')===0 || l.indexOf('-pk')>0) return 'pk';
+      return 'intl';
+    }
+  }catch(e){}
+
+  // 5. Browser language / locale
   var l=(navigator.language||'').toLowerCase();
-  if(l.indexOf('ur')===0||l.indexOf('-pk')>0) return 'pk';
+  if(l.indexOf('ur')===0 || l.indexOf('-pk')>0) return 'pk';
+
   return 'intl';
 }
 REGION=detectRegion();
+
+// Non-blocking auto Geo-IP lookup to guarantee exact country matching
+(function autoDetectCountry(){
+  try{
+    var q = new URLSearchParams(window.location.search);
+    if(q.get('currency') || q.get('region') || q.get('country')) return;
+    
+    fetch('https://api.country.is/', { cache: 'no-store' })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.country){
+          var detected = (data.country === 'PK') ? 'pk' : 'intl';
+          if(REGION !== detected){
+            REGION = detected;
+            try{ localStorage.setItem('sx-region', detected); }catch(e){}
+            if(typeof render === 'function') render();
+          }
+        }
+      })
+      .catch(function(){
+        fetch('https://get.geojs.io/v1/ip/country.json')
+          .then(function(res){ return res.json(); })
+          .then(function(data){
+            if(data && data.country){
+              var detected = (data.country === 'PK') ? 'pk' : 'intl';
+              if(REGION !== detected){
+                REGION = detected;
+                try{ localStorage.setItem('sx-region', detected); }catch(e){}
+                if(typeof render === 'function') render();
+              }
+            }
+          }).catch(function(){});
+      });
+  }catch(e){}
+})();
 var PKR_PER_USD=78;                       /* local-market rate, not an FX rate */
 function fmtUSD(n){return '$'+Math.round(n).toLocaleString('en-US')}
 function fmtPKR(n){var v=n*PKR_PER_USD,s=v<600000?10000:25000;return '\u20a8 '+(Math.round(v/s)*s).toLocaleString('en-US')}
@@ -8327,44 +8388,30 @@ if(TRACK_ON){
 function paintRegionBtn(){
   var b=$('#regionbtn'); if(b) b.textContent=(REGION==='pk'?'PKR':'USD');
 }
-function setRegion(r){ REGION=r; try{localStorage.setItem('sx-region',r)}catch(e){} paintRegionBtn(); render(); }
-$('#regionbtn').addEventListener('click',function(){ setRegion(REGION==='pk'?'intl':'pk') });
+function setRegion(r){ 
+  REGION=r; 
+  try{localStorage.setItem('sx-region',r)}catch(e){} 
+  paintRegionBtn(); 
+  if(typeof render === 'function') render(); 
+}
+var rb=$('#regionbtn'); 
+if(rb) rb.addEventListener('click',function(){ setRegion(REGION==='pk'?'intl':'pk') });
 document.addEventListener('click',function(e){
   var el=e.target.closest('[data-region]'); if(el) setRegion(el.getAttribute('data-region'));
 });
 paintRegionBtn();
+
 (function(){
   var m=$('#menu'); if(m) m.innerHTML=icon('menu',20);
-  var t=$('#theme'); if(t) t.innerHTML=icon('moon',18);
   var c=$('#sclose'); if(c) c.innerHTML=icon('close',18);
   $$('footer .iconbtn').forEach(function(b){ var g=b.textContent.trim(); b.innerHTML=icon(g,18) });
 })();
 
-/* theme */
+/* theme - permanently fixed in light SaaS aesthetic */
 var root=document.documentElement;
-try{ 
-  var saved=localStorage.getItem('sx-theme'); 
-  root.setAttribute('data-theme', saved === 'dark' ? 'dark' : 'light'); 
-}catch(e){
-  root.setAttribute('data-theme', 'light');
-}
-function effectiveTheme(){
-  var a=root.getAttribute('data-theme');
-  return a || 'light';
-}
-function updateThemeIcon(){
-  var t=$('#theme');
-  if(!t) return;
-  t.innerHTML = effectiveTheme()==='dark' ? icon('sun',18) : icon('moon',18);
-  t.setAttribute('aria-label', effectiveTheme()==='dark' ? 'Switch to light theme' : 'Switch to dark theme');
-}
-updateThemeIcon();
-$('#theme').addEventListener('click',function(){
-  var next = effectiveTheme()==='light' ? 'dark' : 'light';
-  root.setAttribute('data-theme',next);
-  try{ localStorage.setItem('sx-theme',next) }catch(e){}
-  updateThemeIcon();
-});
+root.setAttribute('data-theme', 'light');
+try{ localStorage.setItem('sx-theme', 'light'); }catch(e){}
+function effectiveTheme(){ return 'light'; }
 
 /* cursor */
 if(matchMedia('(pointer:fine)').matches && !reduce){
