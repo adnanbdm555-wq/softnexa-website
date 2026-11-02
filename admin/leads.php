@@ -2,7 +2,7 @@
 require_once __DIR__ . '/_guard.php';
 require_admin();
 $pdo = db();
-$STATUSES = ['new', 'contacted', 'qualified', 'proposal', 'won', 'lost'];
+$STATUSES = ['new', 'meeting_scheduled', 'contacted', 'qualified', 'proposal', 'won', 'lost'];
 
 /* ---------- actions ---------- */
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
