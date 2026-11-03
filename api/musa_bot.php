@@ -9,6 +9,8 @@
 require_once __DIR__ . '/config.php';
 
 $verifyToken = 'musa_pickndrop_2026';
+$musaBusinessPhone = '923052148006'; // +92 305 2148006
+$ownerAlertPhone   = '923152989922'; // +92 315 2989922 (Owner notification line)
 
 /* ------------------------------------------------------------
    1. META WEBHOOK VERIFICATION CHALLENGE (GET)
@@ -209,13 +211,24 @@ try {
             $ins = db()->prepare("INSERT INTO leads (name, phone, service, message, source, status, lead_score) VALUES (?, ?, 'Musa Pick & Drop (Female)', ?, 'musa_whatsapp_bot', 'new', 75)");
             $ins->execute([$senderName, $senderPhone, $msgText]);
 
-            // Notify owner via email
+            // Notify owner via email and instant WhatsApp alert
             $leadAlert = "<h2>New Musa Pick & Drop Lead! 🚗🌸</h2>"
+                . "<p><b>Musa Line:</b> +92 305 2148006</p>"
                 . "<p><b>Passenger:</b> " . htmlspecialchars($senderName) . "</p>"
-                . "<p><b>WhatsApp:</b> <a href='https://wa.me/" . htmlspecialchars($senderPhone) . "'>+" . htmlspecialchars($senderPhone) . "</a></p>"
+                . "<p><b>Passenger WhatsApp:</b> <a href='https://wa.me/" . htmlspecialchars($senderPhone) . "'>+" . htmlspecialchars($senderPhone) . "</a></p>"
                 . "<p><b>Inquiry:</b> " . htmlspecialchars($msgText) . "</p>"
-                . "<p><b>AI Response:</b> " . htmlspecialchars($aiReply) . "</p>";
-            send_html_email(NOTIFY_EMAIL, "New Musa Pick & Drop Lead: {$senderName}", $leadAlert);
+                . "<p><b>Sarah AI Reply:</b> " . htmlspecialchars($aiReply) . "</p>";
+            send_html_email(NOTIFY_EMAIL, "New Musa Pick & Drop Lead: {$senderName} (+92 305 2148006)", $leadAlert);
+
+            // Instant WhatsApp alert to owner
+            $ownerMsg = "🚗 *NEW MUSA PICK & DROP INQUIRY!*\n"
+                . "━━━━━━━━━━━━━━━━━━━━━\n"
+                . "📱 *Musa Line:* +92 305 2148006\n"
+                . "👤 *Passenger:* {$senderName} (+{$senderPhone})\n"
+                . "💬 *Message:* {$msgText}\n\n"
+                . "🤖 *Sarah AI Responded:* AC Alto | North-Numaish-Clifton-DHA | Rs. 22k-25k\n"
+                . "━━━━━━━━━━━━━━━━━━━━━";
+            send_meta_whatsapp_message($ownerAlertPhone, $ownerMsg);
         }
     }
 } catch (Exception $e) {}
