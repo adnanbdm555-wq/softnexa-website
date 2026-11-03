@@ -110,7 +110,7 @@ admin_head('whatsapp_bot.php', 'WhatsApp AI Bot · ' . ADMIN_TITLE);
   </div>
   <div class="card stat">
     <h3>Official Business Phone</h3>
-    <div class="v" style="font-size:1.4rem;color:#fff">+92 315 2989922</div>
+    <div class="v" style="font-size:1.4rem;color:var(--iris)">+92 315 2989922</div>
     <div class="sub">Direct SoftNexa line</div>
   </div>
 </div>
@@ -131,7 +131,7 @@ admin_head('whatsapp_bot.php', 'WhatsApp AI Bot · ' . ADMIN_TITLE);
         <div>
           <label style="font-weight:600">Callback URL (Webhook Endpoint)</label>
           <div style="display:flex;gap:8px">
-            <input type="text" id="wh-url" value="<?= e($webhookUrl) ?>" readonly style="background:#07061A;color:#1FD3F0;font-family:monospace;font-weight:600">
+            <input type="text" id="wh-url" value="<?= e($webhookUrl) ?>" readonly style="background:var(--panel2);border:1px solid var(--line2);color:var(--cyan);font-family:monospace;font-weight:600">
             <button type="button" class="btn" onclick="copyField('wh-url', this)" style="white-space:nowrap">Copy URL</button>
           </div>
         </div>
@@ -139,7 +139,7 @@ admin_head('whatsapp_bot.php', 'WhatsApp AI Bot · ' . ADMIN_TITLE);
         <div>
           <label style="font-weight:600">Verify Token</label>
           <div style="display:flex;gap:8px">
-            <input type="text" id="wh-token" value="<?= e($verifyToken) ?>" readonly style="background:#07061A;color:var(--mint);font-family:monospace;font-weight:600">
+            <input type="text" id="wh-token" value="<?= e($verifyToken) ?>" readonly style="background:var(--panel2);border:1px solid var(--line2);color:var(--mint);font-family:monospace;font-weight:600">
             <button type="button" class="btn" onclick="copyField('wh-token', this)" style="white-space:nowrap">Copy Token</button>
           </div>
         </div>
@@ -154,7 +154,7 @@ admin_head('whatsapp_bot.php', 'WhatsApp AI Bot · ' . ADMIN_TITLE);
       <h2 style="margin-bottom:4px">2. Meta Cloud API Credentials</h2>
       <span class="muted" style="font-size:.82rem">Required for the bot to send automated replies back to clients via WhatsApp Cloud API.</span>
 
-      <label style="display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.04);padding:10px 14px;border-radius:10px;border:1px solid var(--line);cursor:pointer">
+      <label style="display:flex;gap:10px;align-items:center;background:var(--panel2);padding:10px 14px;border-radius:10px;border:1px solid var(--line);cursor:pointer">
         <input type="checkbox" name="wa_bot_enabled" value="1" style="width:auto" <?= $botEnabled ? 'checked' : '' ?>>
         <span style="font-weight:600;color:var(--ink)">Enable Autonomous AI WhatsApp Bot (Uncheck to pause and handle manually)</span>
       </label>
@@ -228,7 +228,7 @@ admin_head('whatsapp_bot.php', 'WhatsApp AI Bot · ' . ADMIN_TITLE);
       </div>
 
       <?php if ($testResult): ?>
-        <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;font-size:.75rem;font-family:monospace;max-height:160px;overflow-y:auto">
+        <div style="background:var(--panel2);border:1px solid var(--line2);color:var(--ink);border-radius:8px;padding:10px;font-size:.75rem;font-family:monospace;max-height:160px;overflow-y:auto">
           <?= e(json_encode($testResult, JSON_PRETTY_PRINT)) ?>
         </div>
       <?php endif; ?>

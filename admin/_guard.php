@@ -84,38 +84,38 @@ function admin_head($active = '', $title = '') {
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--void:#07061A;--panel:#0E0C24;--panel2:#151234;--ink:#F4F2FF;--mut:#A49DD4;--line:#252048;--line2:#332C63;
- --iris:#6E4BFF;--cyan:#1FD3F0;--pink:#FF4D8D;--mint:#16C784;--amber:#FFB020;--r:16px}
+:root{--void:#F8FAFC;--panel:#FFFFFF;--panel2:#F1F5F9;--ink:#0F172A;--mut:#64748B;--line:#E2E8F0;--line2:#CBD5E1;
+ --iris:#6E4BFF;--cyan:#0284C7;--pink:#E11D48;--mint:#10B981;--amber:#F59E0B;--r:16px}
 *{box-sizing:border-box}
 body{margin:0;background:var(--void);color:var(--ink);font-family:"Hanken Grotesk",system-ui,sans-serif;font-size:15px}
 a{color:inherit}
 h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;letter-spacing:-.03em;margin:0}
-h1{font-size:1.7rem;font-weight:800}h2{font-size:1.12rem;font-weight:600}h3{font-size:.98rem;font-weight:600}
+h1{font-size:1.7rem;font-weight:800;color:var(--ink)}h2{font-size:1.12rem;font-weight:700;color:var(--ink)}h3{font-size:.98rem;font-weight:600;color:var(--ink)}
 .mono{font-family:"JetBrains Mono",monospace}
 .shell{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
-aside{border-right:1px solid var(--line);padding:20px 16px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:6px}
+aside{border-right:1px solid var(--line);padding:20px 16px;background:#FFFFFF;display:flex;flex-direction:column;gap:6px}
 .brand{display:flex;align-items:center;gap:11px;padding-bottom:18px;margin-bottom:8px;border-bottom:1px solid var(--line)}
 .brand .sq{width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,var(--iris),var(--cyan))}
-.brand b{font-family:"Bricolage Grotesque";font-size:1.05rem;letter-spacing:-.03em;display:block}
+.brand b{font-family:"Bricolage Grotesque";font-size:1.05rem;letter-spacing:-.03em;display:block;color:var(--ink)}
 .brand small{color:var(--mut);font-size:.72rem}
 nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;text-decoration:none;
- color:var(--mut);font-size:.94rem;border:1px solid transparent}
-nav a:hover{background:rgba(255,255,255,.05);color:var(--ink)}
-nav a.on{background:color-mix(in srgb,var(--iris) 18%,transparent);border-color:color-mix(in srgb,var(--iris) 45%,transparent);color:var(--ink)}
+ color:var(--mut);font-size:.94rem;border:1px solid transparent;font-weight:500;transition:all .15s ease}
+nav a:hover{background:var(--panel2);color:var(--ink)}
+nav a.on{background:color-mix(in srgb,var(--iris) 10%,#fff);border-color:color-mix(in srgb,var(--iris) 35%,transparent);color:var(--iris);font-weight:700}
 nav a i{width:8px;height:8px;border-radius:3px;background:var(--line2);font-style:normal}
 nav a.on i{background:linear-gradient(135deg,var(--iris),var(--cyan))}
 aside .foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);font-size:.8rem;color:var(--mut)}
-main{padding:26px 28px 40px;min-width:0}
+main{padding:26px 28px 40px;min-width:0;background:var(--void)}
 .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px}
 .top .sp{margin-left:auto;display:flex;gap:9px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid var(--line2);
- background:rgba(255,255,255,.04);color:var(--ink);text-decoration:none;cursor:pointer;font:inherit;font-size:.88rem;font-weight:600}
-.btn:hover{border-color:var(--iris)}
+ background:#FFFFFF;color:var(--ink);text-decoration:none;cursor:pointer;font:inherit;font-size:.88rem;font-weight:600;box-shadow:0 1px 2px rgba(15,23,42,.05);transition:all .15s ease}
+.btn:hover{border-color:var(--iris);background:var(--panel2)}
 .btn.p{background:linear-gradient(110deg,var(--iris),var(--cyan));border-color:transparent;color:#fff}
 .btn.sm{padding:6px 12px;font-size:.8rem}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}
-.card.big b{font-family:"Bricolage Grotesque";font-size:1.9rem;font-weight:800;letter-spacing:-.04em;display:block;line-height:1.05}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:0 1px 3px rgba(15,23,42,.04),0 1px 2px rgba(15,23,42,.02)}
+.card.big b{font-family:"Bricolage Grotesque";font-size:1.9rem;font-weight:800;letter-spacing:-.04em;display:block;line-height:1.05;color:var(--ink)}
 .card small{color:var(--mut);font-size:.8rem}
 .card .delta{font-size:.76rem;margin-top:6px;display:inline-block}
 .up{color:var(--mint)}.down{color:var(--pink)}
@@ -123,16 +123,16 @@ main{padding:26px 28px 40px;min-width:0}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 table{width:100%;border-collapse:collapse;font-size:.88rem}
 th{text-align:left;padding:11px 12px;color:var(--mut);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;
- border-bottom:1px solid var(--line);background:rgba(255,255,255,.03)}
-td{padding:11px 12px;border-bottom:1px solid var(--line)}
-tr:hover td{background:rgba(255,255,255,.02)}
-.pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.74rem;border:1px solid transparent}
-.s-new{background:rgba(110,75,255,.18);color:#b9a8ff;border-color:rgba(110,75,255,.4)}
-.s-contacted{background:rgba(31,211,240,.14);color:var(--cyan);border-color:rgba(31,211,240,.4)}
-.s-qualified{background:rgba(255,176,32,.14);color:var(--amber);border-color:rgba(255,176,32,.4)}
-.s-proposal{background:rgba(255,77,141,.14);color:var(--pink);border-color:rgba(255,77,141,.4)}
-.s-won{background:rgba(22,199,132,.16);color:var(--mint);border-color:rgba(22,199,132,.4)}
-.s-lost{background:rgba(255,255,255,.06);color:var(--mut);border-color:var(--line2)}
+ border-bottom:1px solid var(--line);background:var(--panel2);font-weight:700}
+td{padding:11px 12px;border-bottom:1px solid var(--line);color:var(--ink)}
+tr:hover td{background:rgba(110,75,255,.03)}
+.pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.74rem;border:1px solid transparent;font-weight:600}
+.s-new{background:rgba(110,75,255,.1);color:var(--iris);border-color:rgba(110,75,255,.25)}
+.s-contacted{background:rgba(2,132,199,.1);color:var(--cyan);border-color:rgba(2,132,199,.25)}
+.s-qualified{background:rgba(245,158,11,.1);color:#D97706;border-color:rgba(245,158,11,.25)}
+.s-proposal{background:rgba(225,29,72,.1);color:var(--pink);border-color:rgba(225,29,72,.25)}
+.s-won{background:rgba(16,185,129,.12);color:var(--mint);border-color:rgba(16,185,129,.3)}
+.s-lost{background:rgba(100,116,139,.1);color:var(--mut);border-color:var(--line2)}
 .score{font-family:"JetBrains Mono",monospace;font-weight:600}
 .hot{color:var(--mint)}.warm{color:var(--amber)}.cold{color:var(--mut)}
 .bars{display:flex;align-items:flex-end;gap:6px;height:170px;margin-top:10px}
@@ -148,10 +148,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .fst{padding:12px 14px;border-radius:12px;background:linear-gradient(110deg,var(--iris),var(--cyan));color:#fff;font-size:.86rem}
 .fst b{font-family:"Bricolage Grotesque";font-size:1.15rem;display:block}
 .drop{font-size:.74rem;color:var(--mut);text-align:center}
-input,select,textarea{background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink);
- border-radius:11px;padding:9px 12px;font:inherit;font-size:.88rem;width:100%}
-input:focus,select:focus,textarea:focus{outline:0;border-color:var(--iris)}
-label{display:block;font-size:.78rem;color:var(--mut);margin-bottom:5px}
+input,select,textarea{background:#FFFFFF;border:1px solid var(--line2);color:var(--ink);
+ border-radius:11px;padding:9px 12px;font:inherit;font-size:.88rem;width:100%;transition:border-color .15s ease}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--iris);box-shadow:0 0 0 3px rgba(110,75,255,.1)}
+label{display:block;font-size:.78rem;color:var(--mut);margin-bottom:5px;font-weight:600}
 .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .filters > div{min-width:150px}
 .muted{color:var(--mut)}

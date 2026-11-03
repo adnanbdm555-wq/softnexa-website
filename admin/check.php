@@ -67,17 +67,17 @@ $allOk = !array_filter($rows, function ($r) { return !$r[0]; });
 ?><!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Setup check · SoftNexa</title>
 <style>
-body{margin:0;background:#07061A;color:#F4F2FF;font-family:system-ui,-apple-system,Segoe UI,sans-serif;padding:32px 18px}
+body{margin:0;background:#F8FAFC;color:#0F172A;font-family:system-ui,-apple-system,Segoe UI,sans-serif;padding:32px 18px}
 .box{max-width:760px;margin:0 auto}
-h1{font-size:1.5rem;margin:0 0 6px}p.s{color:#A49DD4;margin:0 0 22px}
-.r{display:flex;gap:14px;padding:14px 16px;border:1px solid #252048;border-radius:14px;margin-bottom:10px;background:#0E0C24}
+h1{font-size:1.5rem;margin:0 0 6px;color:#0F172A}p.s{color:#64748B;margin:0 0 22px}
+.r{display:flex;gap:14px;padding:14px 16px;border:1px solid #E2E8F0;border-radius:14px;margin-bottom:10px;background:#FFFFFF;box-shadow:0 1px 3px rgba(15,23,42,.04)}
 .i{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-weight:700;flex:none}
-.ok .i{background:rgba(22,199,132,.18);color:#16C784}.bad .i{background:rgba(255,77,141,.18);color:#FF4D8D}
-.bad{border-color:rgba(255,77,141,.45)}
-b{display:block}small{color:#A49DD4;word-break:break-all}.fix{margin-top:6px;color:#FFB020;font-size:.9rem}
+.ok .i{background:rgba(22,199,132,.14);color:#059669}.bad .i{background:rgba(255,77,141,.14);color:#E11D48}
+.bad{border-color:rgba(255,77,141,.4)}
+b{display:block;color:#0F172A}small{color:#64748B;word-break:break-all}.fix{margin-top:6px;color:#D97706;font-size:.9rem}
 .sum{padding:16px;border-radius:14px;margin:18px 0;font-weight:600}
-.sum.good{background:rgba(22,199,132,.12);color:#16C784}.sum.no{background:rgba(255,77,141,.12);color:#FF4D8D}
-a{color:#1FD3F0}
+.sum.good{background:rgba(22,199,132,.12);color:#059669}.sum.no{background:rgba(255,77,141,.12);color:#E11D48}
+a{color:#0284C7}
 </style></head><body><div class="box">
 <h1>SoftNexa setup check</h1>
 <p class="s">Each line is one step of the setup. Fix the first red one, then reload this page.</p>
