@@ -525,9 +525,9 @@ function init_whatsapp_tables() {
     }
 }
 
-function send_meta_whatsapp_message($toPhone, $messageText) {
+function send_meta_whatsapp_message($toPhone, $messageText, $customPhoneId = null) {
     init_whatsapp_tables();
-    $phoneId     = trim((string)setting('wa_phone_id', ''));
+    $phoneId     = trim((string)($customPhoneId ?: setting('wa_phone_id', '')));
     $accessToken = trim((string)setting('wa_token', ''));
 
     // Normalize phone number (strip +, spaces, dashes, leading zeroes)

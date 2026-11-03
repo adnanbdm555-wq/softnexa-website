@@ -64,6 +64,10 @@ $changes = $entry['changes'][0]['value'] ?? [];
 $message = $changes['messages'][0] ?? null;
 $contact = $changes['contacts'][0] ?? null;
 
+$metadata         = $changes['metadata'] ?? [];
+$receivedOnPhone  = preg_replace('/[^0-9]/', '', (string)($metadata['display_phone_number'] ?? ''));
+$recipientPhoneId = (string)($metadata['phone_number_id'] ?? '');
+
 // Support third-party or generic gateway payloads if not Meta native
 if (!$message && isset($data['message']) && (isset($data['phone']) || isset($data['sender']))) {
     $senderPhone = preg_replace('/[^0-9]/', '', (string)($data['phone'] ?? $data['sender']));
@@ -159,7 +163,38 @@ $geminiKey = setting('gemini_api_key', getenv('GEMINI_API_KEY') ?: '');
 $aiReply = '';
 $llmSucceeded = false;
 
-$systemPrompt = "You are the Senior Software Solutions Architect & Lead Consultant at SoftNexa (softnexasolution.com), based on Shahrah-e-Faisal, Karachi, Pakistan.
+$isMusaMessage = ($receivedOnPhone === '923052148006' || stripos($msgText, 'Musa Pick') !== false || stripos($msgText, 'OFFICE PICK & DROP SERVICE') !== false);
+
+if ($isMusaMessage) {
+    $systemPrompt = "You are 'Sarah', the polite, reassuring, and highly professional female customer coordinator for 'Musa Pick & Drop Services' in Karachi.
+You communicate warmly, respectfully, and conversationally in friendly Pakistani Roman Urdu.
+
+CRITICAL SERVICE SPECIFICATIONS:
+- Brand: Musa Pick & Drop Services (Karachi)
+- Target Audience: EXCLUSIVELY for Female Corporate Staff / Working Ladies. Strictly NO male passengers.
+- Vehicle Experience: Fully Air-Conditioned (AC Alto Car) — clean, private, comfortable, maximum 3-4 passengers, door-to-door. (NOT a crowded commercial van!).
+- Dedicated Direct Route Corridor:
+  * Pickups (Home): North Karachi, FB Area (including Ayesha Manzil & nearby blocks), and Nazimabad.
+  * Transit & Drops (Office): Via Numaish, directly to Clifton and Defence (DHA).
+  * STRICT EXCLUSION: Shahrah-e-Faisal is strictly NOT in our route (avoid traffic delays).
+- Available Office Shift Timings:
+  1) Morning Shift: 08:00 AM to 05:00 PM
+  2) Second Shift: 09:00 AM to 06:30 PM
+- Monthly Package: Rs. 22,000 to Rs. 25,000 per seat (Fixed monthly rate for premium door-to-door AC Alto car pool).
+- Safety & Drivers: 100% verified, courteous, family-trusted drivers.
+
+BEHAVIOR & CONVERSATION RULES:
+1. Always maintain a warm, respectful sisterly tone ('G Baji', 'Assalam-o-Alaikum', 'JazakAllah').
+2. When the ad prefill message arrives, welcome them warmly, confirm AC Alto for female staff, and ask for:
+   - 1. Pick-up Area & Block (Ghar)
+   - 2. Drop-off Location (Clifton ya DHA Office)
+   - 3. Shift Timing (8 to 5 ya 9 to 6:30)
+   - 4. Joining Date (Kab se start karna hai)
+3. If they ask about Shahrah-e-Faisal, explain that the route avoids it to reach on time.
+4. If they ask about charges, explain the value of door-to-door AC Alto car vs public van.
+5. Format cleanly with friendly emojis (🚗, 🌸, ✨, 📍).";
+} else {
+    $systemPrompt = "You are the Senior Software Solutions Architect & Lead Consultant at SoftNexa (softnexasolution.com), based on Shahrah-e-Faisal, Karachi, Pakistan.
 You are communicating directly with a prospective business client on WhatsApp.
 
 Your Persona & Tone:
@@ -186,6 +221,7 @@ WhatsApp Communication Rules:
    - English: Clear, executive, consultative English.
 2. Format cleanly for mobile: 2 to 4 concise paragraphs or bullet points, friendly emojis (💻, 📱, ✨, 💼).
 3. Always guide the user forward with ONE clear, smart question or next step (e.g., asking about their business type, key features, or offering a quick 10-minute discovery call).";
+}
 
 if ($geminiKey) {
     try {
@@ -386,7 +422,11 @@ try {
 /* ------------------------------------------------------------
    8. DISPATCH OUTBOUND MESSAGE VIA META CLOUD API
    ------------------------------------------------------------ */
-$sendRes = send_meta_whatsapp_message($senderPhone, $aiReply);
+$sendRes = send_meta_whatsapp_message($senderPhone, $aiReply, $recipientPhoneId);
+
+if ($isMusaMessage) {
+    send_meta_whatsapp_message('923152989922', "🚗 *NEW MUSA PICK & DROP INQUIRY!*\n━━━━━━━━━━━━━━━━━━━━━\n📱 *Musa Line:* +92 305 2148006\n👤 *Passenger:* {$senderName} (+{$senderPhone})\n💬 *Message:* {$msgText}\n\n🤖 *Sarah AI Responded:* AC Alto | North-Numaish-Clifton-DHA | Rs. 22k-25k\n━━━━━━━━━━━━━━━━━━━━━");
+}
 
 http_response_code(200);
 header('Content-Type: application/json');
