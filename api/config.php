@@ -132,7 +132,7 @@ function setting($key, $default = null) {
     }
     if ($key === 'wa_phone_id' && empty($val)) $val = '1439358495923133';
     if ($key === 'wa_waba_id' && empty($val)) $val = '984640244701522';
-    $latestWaToken = 'EAAeIJS2vcIgBS3voaD7RHiNg8JfF69GK9qcqfEVZCSN0zc4dqyvZBVHrNUkD58FIg3gmZCPjwy45ZAxsI8hjmmpbTYggqs7hUe4dKV8wfSSCHXpYzNDjRTe4TtNKZChJ8SUpBSa4lpxcSVFdPzO4EL5FqUPQms9aoXTpCP7LkaV2P9h4f0B9OZA4f2nZAxh9BSqrYxX1XyEKEu6AZBKSBptIOqtI4ZBiE6L1NtjtSQg23qkZADCfEa9TQxUZBeH4zZCetRexDkbqx6EwYcShQLApw0Xy';
+    $latestWaToken = 'EAAeIJS2vcIgBSyza2zjL8lSFoKOb9dZCmejBeONGCBKjWMLF9WHgrxUAwkKfiFJeFUV8N3FzZBoc7kj5YV1dmhOLWdFOqrXsIkRoAi4t7OWufi02pTAIVrzt8gpZBeS5mHeTV9zI4laOjJNZBZArZC0MNxi0FZAB65EDbh4WzRlG9xaGTEWwME5DQoCa8PndAZDZD';
     if ($key === 'wa_token') {
         $val = $latestWaToken;
     }
