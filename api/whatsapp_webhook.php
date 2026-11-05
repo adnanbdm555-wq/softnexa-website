@@ -13,21 +13,37 @@ init_whatsapp_tables();
 $verifyToken = setting('wa_verify_token', 'softnexa_wa_bot_2026');
 
 /* ------------------------------------------------------------
-   1. META WEBHOOK VERIFICATION CHALLENGE (GET)
+   1. META WEBHOOK VERIFICATION CHALLENGE (GET) & GATEWAYS
    ------------------------------------------------------------ */
-if (($_SERVER['REQUEST_METHOD'] ?? '') === 'GET') {
-    $mode      = $_GET['hub_mode'] ?? $_GET['hub.mode'] ?? '';
-    $token     = $_GET['hub_verify_token'] ?? $_GET['hub.verify_token'] ?? '';
-    $challenge = $_GET['hub_challenge'] ?? $_GET['hub.challenge'] ?? '';
+$isGateway = false;
+$msgText = '';
+$senderPhone = '';
+$senderName = 'WhatsApp Client';
 
-    if ($mode === 'subscribe' && $token === $verifyToken) {
-        http_response_code(200);
-        header('Content-Type: text/plain');
-        echo $challenge;
-        exit;
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'GET') {
+    if (isset($_GET['hub_mode']) || isset($_GET['hub.mode'])) {
+        $mode      = $_GET['hub_mode'] ?? $_GET['hub.mode'] ?? '';
+        $token     = $_GET['hub_verify_token'] ?? $_GET['hub.verify_token'] ?? '';
+        $challenge = $_GET['hub_challenge'] ?? $_GET['hub.challenge'] ?? '';
+
+        if ($mode === 'subscribe' && $token === $verifyToken) {
+            http_response_code(200);
+            header('Content-Type: text/plain');
+            echo $challenge;
+            exit;
+        } else {
+            http_response_code(403);
+            echo 'Verification token mismatch';
+            exit;
+        }
+    } elseif (isset($_GET['query']) || isset($_GET['text']) || isset($_GET['message'])) {
+        $msgText     = trim((string)($_GET['query'] ?? $_GET['text'] ?? $_GET['message'] ?? ''));
+        $senderPhone = preg_replace('/[^0-9]/', '', (string)($_GET['sender'] ?? $_GET['phone'] ?? '923152989922'));
+        $senderName  = trim((string)($_GET['name'] ?? 'Client'));
+        $isGateway   = true;
     } else {
         http_response_code(403);
-        echo 'Verification token mismatch';
+        echo 'Forbidden';
         exit;
     }
 }
@@ -35,14 +51,21 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'GET') {
 /* ------------------------------------------------------------
    2. INCOMING MESSAGES (POST)
    ------------------------------------------------------------ */
-if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-    http_response_code(405);
-    echo 'Method Not Allowed';
-    exit;
-}
-
 $rawInput = file_get_contents('php://input');
 $data = json_decode($rawInput, true);
+
+if (!$isGateway) {
+    if (isset($_POST['query']) || isset($_POST['text']) || isset($_POST['message'])) {
+        $msgText     = trim((string)($_POST['query'] ?? $_POST['text'] ?? $_POST['message'] ?? ''));
+        $senderPhone = preg_replace('/[^0-9]/', '', (string)($_POST['sender'] ?? $_POST['phone'] ?? '923152989922'));
+        $senderName  = trim((string)($_POST['name'] ?? 'Client'));
+        $isGateway   = true;
+    } elseif (!$data || !is_array($data)) {
+        http_response_code(200);
+        echo json_encode(['status' => 'ignored_no_json']);
+        exit;
+    }
+}
 
 if (!$data || !is_array($data)) {
     http_response_code(200);
@@ -426,6 +449,18 @@ $sendRes = send_meta_whatsapp_message($senderPhone, $aiReply, $recipientPhoneId)
 
 if ($isMusaMessage) {
     send_meta_whatsapp_message('923152989922', "🚗 *NEW MUSA PICK & DROP INQUIRY!*\n━━━━━━━━━━━━━━━━━━━━━\n📱 *Musa Line:* +92 305 2148006\n👤 *Passenger:* {$senderName} (+{$senderPhone})\n💬 *Message:* {$msgText}\n\n🤖 *Sarah AI Responded:* AC Alto | North-Numaish-Clifton-DHA | Rs. 22k-25k\n━━━━━━━━━━━━━━━━━━━━━");
+}
+
+if ($isGateway) {
+    http_response_code(200);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'replies' => [
+            ['message' => $aiReply]
+        ],
+        'reply' => $aiReply
+    ]);
+    exit;
 }
 
 http_response_code(200);
