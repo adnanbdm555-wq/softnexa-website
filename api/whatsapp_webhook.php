@@ -67,7 +67,7 @@ if (!$isGateway) {
     }
 }
 
-if (!$data || !is_array($data)) {
+if (!$isGateway && (!$data || !is_array($data))) {
     http_response_code(200);
     echo json_encode(['status' => 'ignored_no_json']);
     exit;
@@ -92,7 +92,10 @@ $receivedOnPhone  = preg_replace('/[^0-9]/', '', (string)($metadata['display_pho
 $recipientPhoneId = (string)($metadata['phone_number_id'] ?? '');
 
 // Support third-party or generic gateway payloads if not Meta native
-if (!$message && isset($data['message']) && (isset($data['phone']) || isset($data['sender']))) {
+if ($isGateway) {
+    // Already extracted from GET / POST params
+    $msgId = 'gw_' . bin2hex(random_bytes(8));
+} elseif (!$message && isset($data['message']) && (isset($data['phone']) || isset($data['sender']))) {
     $senderPhone = preg_replace('/[^0-9]/', '', (string)($data['phone'] ?? $data['sender']));
     $senderName  = (string)($data['name'] ?? 'WhatsApp Client');
     $msgText     = trim((string)$data['message']);
