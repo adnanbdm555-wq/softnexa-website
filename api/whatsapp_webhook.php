@@ -455,6 +455,11 @@ if ($isMusaMessage) {
 }
 
 if ($isGateway) {
+    try {
+        $st = db()->prepare("INSERT INTO wa_messages (wa_msg_id, phone, name, direction, message, raw_payload, status) VALUES (?, ?, ?, 'out', ?, ?, 'sent')");
+        $st->execute(['gw_out_' . bin2hex(random_bytes(6)), $senderPhone, 'SoftNexa AI', $aiReply, 'gateway_reply']);
+    } catch (Exception $e) {}
+
     http_response_code(200);
     header('Content-Type: application/json');
     echo json_encode([
