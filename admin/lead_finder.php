@@ -150,6 +150,99 @@ function run_serper_scrape($apiKey, $mode, $query, $city) {
     return ['ok' => true, 'leads' => $results];
 }
 
+// Helper: 100% Free Zero-Key Live Business Scraper (OpenStreetMap Overpass API)
+function run_free_osm_scrape($query, $city) {
+    $cityCoords = [
+        'Dubai'     => [25.05, 55.10, 25.32, 55.45],
+        'Abu Dhabi' => [24.35, 54.30, 24.55, 54.60],
+        'Sharjah'   => [25.28, 55.35, 25.42, 55.55],
+        'Riyadh'    => [24.55, 46.55, 24.85, 46.85],
+        'Jeddah'    => [21.42, 39.10, 21.68, 39.30],
+        'Karachi'   => [24.78, 66.98, 25.00, 67.18],
+        'Lahore'    => [31.42, 74.22, 31.60, 74.42],
+        'Islamabad' => [33.62, 72.95, 33.76, 73.15]
+    ];
+    $bbox = $cityCoords[$city] ?? [25.05, 55.10, 25.32, 55.45];
+    $bStr = implode(',', $bbox);
+
+    $ql = strtolower($query);
+    $tagFilter = '["office"]["name"]';
+    if (preg_match('/(real estate|property|broker|builder)/i', $ql)) {
+        $tagFilter = '["office"="estate_agent"]["name"]';
+    } elseif (preg_match('/(clinic|dental|dentist|doctor|hospital|medical)/i', $ql)) {
+        $tagFilter = '["amenity"~"clinic|dentist|doctors|hospital"]["name"]';
+    } elseif (preg_match('/(clothing|fashion|abaya|perfume|store|shop|retail|ecommerce|garments)/i', $ql)) {
+        $tagFilter = '["shop"~"clothes|boutique|fashion|perfumery|jewelry|shoes"]["name"]';
+    } elseif (preg_match('/(logistics|cargo|freight|transport|courier)/i', $ql)) {
+        $tagFilter = '["office"~"logistics|company|moving_company"]["name"]';
+    } elseif (preg_match('/(contract|construction|fitout|interior|architect|mep)/i', $ql)) {
+        $tagFilter = '["office"~"construction_company|architect|company"]["name"]';
+    } elseif (preg_match('/(trading|wholesale|foodstuff|export|import)/i', $ql)) {
+        $tagFilter = '["office"~"company|commercial|financial"]["name"]';
+    }
+
+    $overpassQuery = "[out:json][timeout:12];(node{$tagFilter}({$bStr});way{$tagFilter}({$bStr}););out center 20;";
+    $ch = curl_init("https://overpass-api.de/api/interpreter");
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => 'data=' . urlencode($overpassQuery),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 15,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_USERAGENT      => 'SoftNexaLeadScout/1.0'
+    ]);
+    $res = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($code !== 200 || !$res) {
+        return ['ok' => false, 'error' => "Free OSM Overpass busy (HTTP $code). Please retry in a few seconds."];
+    }
+    $json = json_decode($res, true);
+    $elements = $json['elements'] ?? [];
+
+    $countryCode = 'GCC';
+    if (in_array($city, ['Dubai', 'Abu Dhabi', 'Sharjah'])) $countryCode = 'UAE';
+    elseif (in_array($city, ['Riyadh', 'Jeddah'])) $countryCode = 'KSA';
+    elseif (in_array($city, ['Karachi', 'Lahore', 'Islamabad'])) $countryCode = 'PK';
+
+    $results = [];
+    $webChecked = 0;
+    foreach ($elements as $el) {
+        $tags = $el['tags'] ?? [];
+        $name = trim((string)($tags['name:en'] ?? $tags['name'] ?? ''));
+        if ($name === '') continue;
+        $phone   = trim((string)($tags['phone'] ?? $tags['contact:phone'] ?? $tags['mobile'] ?? ''));
+        $website = trim((string)($tags['website'] ?? $tags['contact:website'] ?? ''));
+        $email   = trim((string)($tags['email'] ?? $tags['contact:email'] ?? ''));
+        $street  = trim((string)($tags['addr:street'] ?? $tags['addr:suburb'] ?? ''));
+        $addr    = ($street ? ($street . ', ') : '') . $city;
+
+        if ($website && !preg_match('#^https?://#i', $website)) {
+            $website = 'https://' . $website;
+        }
+        if (empty($email) && !empty($website) && $webChecked < 5) {
+            $email = extract_email_from_url($website);
+            $webChecked++;
+        }
+
+        $results[] = [
+            'source_type'  => 'google_maps',
+            'name'         => $name,
+            'company'      => $name,
+            'phone'        => $phone,
+            'email'        => $email,
+            'website'      => $website,
+            'linkedin_url' => '',
+            'address'      => $addr,
+            'rating'       => '🌍 Live Business Directory',
+            'country'      => $countryCode
+        ];
+    }
+
+    return ['ok' => true, 'leads' => $results];
+}
+
 // Handle POST Actions
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
     $action = $_POST['action'] ?? '';
@@ -166,8 +259,33 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
         $ssector    = trim((string)($_POST['scrape_sector'] ?? 'realestate_uae'));
 
         if (empty($serperKey)) {
-            $flash = '⚠️ Pehle apni free Serper.dev API Key add karein ("⚙️ Live Scraper API Key" button par click karein — serper.dev par 2,500 searches bilkul free milti hain).';
-            $flashType = 'error';
+            if ($scrapeMode === 'linkedin') {
+                $flash = '💡 LinkedIn Live Scrape ke liye Serper.dev API key (business email info@softnexasolution.com se free signup) required hai — ya neeche "🚀 Run LinkedIn X-Ray on Google" button free use karein!';
+                $flashType = 'error';
+            } else {
+                // Zero-Key Free Live Business Scrape via OpenStreetMap Overpass API!
+                $out = run_free_osm_scrape($sq, $scity);
+                if (!empty($out['ok']) && !empty($out['leads'])) {
+                    $inserted = 0;
+                    $ins = $pdo->prepare("INSERT INTO scraped_leads (source_type, sector, city, name, company, phone, email, website, linkedin_url, address, rating, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    foreach ($out['leads'] as $ld) {
+                        $chk = $pdo->prepare("SELECT id FROM scraped_leads WHERE company = ? AND city = ? LIMIT 1");
+                        $chk->execute([$ld['company'], $scity]);
+                        if (!$chk->fetch()) {
+                            $ins->execute([
+                                $ld['source_type'], $ssector, $scity, $ld['name'], $ld['company'],
+                                $ld['phone'], $ld['email'], $ld['website'], $ld['linkedin_url'],
+                                $ld['address'], $ld['rating'], $ld['country']
+                            ]);
+                            $inserted++;
+                        }
+                    }
+                    $flash = "🚀 Free Zero-Key Live Scrape Complete! {$inserted} naye real businesses ({$scity}) pull hokar neeche save ho gaye hain!";
+                } else {
+                    $flash = '❌ Free Live Scrape Error: ' . ($out['error'] ?? 'No businesses found for this query.');
+                    $flashType = 'error';
+                }
+            }
         } else {
             $out = run_serper_scrape($serperKey, $scrapeMode, $sq, $scity);
             if (!empty($out['ok']) && !empty($out['leads'])) {
