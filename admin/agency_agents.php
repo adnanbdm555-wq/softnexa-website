@@ -223,52 +223,73 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
 
             $fullSystemPrompt = $currAgent['system'] . "\n\nCRITICAL LANGUAGE INSTRUCTION: " . $langInstruction;
 
-            try {
-                $ch = curl_init('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . urlencode($geminiKey));
-                $payload = json_encode([
-                    'contents' => [
-                        ['role' => 'user', 'parts' => [['text' => $fullSystemPrompt]]],
-                        ['role' => 'model', 'parts' => [['text' => "Understood. I am initialized as " . $currAgent['title'] . ". I will follow all rules and output high-converting deliverables."]]],
-                        ['role' => 'user', 'parts' => [['text' => $userPrompt]]]
-                    ],
-                    'generationConfig' => [
-                        'temperature'     => 0.7,
-                        'maxOutputTokens' => 1500
-                    ]
-                ]);
+            // Multi-model auto-fallback (tries Gemini 2.0 Flash, 1.5 Flash v1, latest, 001, and 1.5 Pro)
+            $candidateModels = [
+                'v1beta/models/gemini-2.0-flash',
+                'v1/models/gemini-1.5-flash',
+                'v1beta/models/gemini-1.5-flash-latest',
+                'v1beta/models/gemini-1.5-flash',
+                'v1beta/models/gemini-1.5-flash-001',
+                'v1beta/models/gemini-1.5-pro',
+                'v1/models/gemini-pro'
+            ];
 
-                curl_setopt_array($ch, [
-                    CURLOPT_POST           => true,
-                    CURLOPT_POSTFIELDS     => $payload,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_TIMEOUT        => 25,
-                    CURLOPT_HTTPHEADER     => ['Content-Type: application/json']
-                ]);
+            $payload = json_encode([
+                'contents' => [
+                    ['role' => 'user', 'parts' => [['text' => $fullSystemPrompt]]],
+                    ['role' => 'model', 'parts' => [['text' => "Understood. I am initialized as " . $currAgent['title'] . ". I will follow all rules and output high-converting deliverables."]]],
+                    ['role' => 'user', 'parts' => [['text' => $userPrompt]]]
+                ],
+                'generationConfig' => [
+                    'temperature'     => 0.7,
+                    'maxOutputTokens' => 1500
+                ]
+            ]);
 
-                $res = curl_exec($ch);
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close($ch);
+            $callSucceeded = false;
+            $lastErrMsg = '';
 
-                if ($httpCode === 200 && $res) {
-                    $json = json_decode($res, true);
-                    $resultText = trim($json['candidates'][0]['content']['parts'][0]['text'] ?? '');
-                    
-                    if (!empty($resultText)) {
-                        // Save run in database
-                        try {
-                            $ins = $pdo->prepare("INSERT INTO agency_agent_runs (agent_id, agent_title, language, prompt, output) VALUES (?, ?, ?, ?, ?)");
-                            $ins->execute([$activeAgentId, $currAgent['title'], $langPreference, $userPrompt, $resultText]);
-                        } catch (Exception $e) {}
+            foreach ($candidateModels as $modelEndpoint) {
+                try {
+                    $url = "https://generativelanguage.googleapis.com/{$modelEndpoint}:generateContent?key=" . urlencode($geminiKey);
+                    $ch = curl_init($url);
+                    curl_setopt_array($ch, [
+                        CURLOPT_POST           => true,
+                        CURLOPT_POSTFIELDS     => $payload,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_TIMEOUT        => 25,
+                        CURLOPT_HTTPHEADER     => ['Content-Type: application/json']
+                    ]);
+
+                    $res = curl_exec($ch);
+                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    curl_close($ch);
+
+                    if ($httpCode === 200 && $res) {
+                        $json = json_decode($res, true);
+                        $parsedText = trim($json['candidates'][0]['content']['parts'][0]['text'] ?? '');
+                        if (!empty($parsedText)) {
+                            $resultText = $parsedText;
+                            $callSucceeded = true;
+                            
+                            // Save run in database
+                            try {
+                                $ins = $pdo->prepare("INSERT INTO agency_agent_runs (agent_id, agent_title, language, prompt, output) VALUES (?, ?, ?, ?, ?)");
+                                $ins->execute([$activeAgentId, $currAgent['title'], $langPreference, $userPrompt, $resultText]);
+                            } catch (Exception $e) {}
+                            break; // Stop on first successful model
+                        }
                     } else {
-                        $runError = 'Agent returned an empty response. Please try again.';
+                        $jsonErr = json_decode($res, true);
+                        $lastErrMsg = $jsonErr['error']['message'] ?? "HTTP $httpCode";
                     }
-                } else {
-                    $jsonErr = json_decode($res, true);
-                    $errMsg = $jsonErr['error']['message'] ?? 'Gemini API Error (HTTP ' . $httpCode . ')';
-                    $runError = 'Error communicating with AI Brain: ' . htmlspecialchars($errMsg);
+                } catch (Exception $e) {
+                    $lastErrMsg = $e->getMessage();
                 }
-            } catch (Exception $e) {
-                $runError = 'Execution failed: ' . $e->getMessage();
+            }
+
+            if (!$callSucceeded && empty($resultText)) {
+                $runError = 'Error communicating with AI Brain: ' . htmlspecialchars($lastErrMsg);
             }
         }
     }

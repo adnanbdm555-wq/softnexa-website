@@ -321,47 +321,60 @@ WhatsApp Communication Rules:
 }
 
 if ($geminiKey) {
-    try {
-        $ch = curl_init('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . urlencode($geminiKey));
-        $contents = [];
-        $contents[] = ['role' => 'user', 'parts' => [['text' => $systemPrompt]]];
-        $contents[] = ['role' => 'model', 'parts' => [['text' => "Understood. I am the SoftNexa WhatsApp Solutions Consultant. I will reply concisely in the user's exact language with high authority, transparency, and warmth."]]];
+    $candidateModels = [
+        'v1beta/models/gemini-2.0-flash',
+        'v1/models/gemini-1.5-flash',
+        'v1beta/models/gemini-1.5-flash-latest',
+        'v1beta/models/gemini-1.5-flash',
+        'v1beta/models/gemini-1.5-flash-001',
+        'v1beta/models/gemini-1.5-pro',
+        'v1/models/gemini-pro'
+    ];
 
-        foreach (array_slice($recentHistory, -4) as $h) {
-            $contents[] = ['role' => $h['role'], 'parts' => [['text' => (string)$h['content']]]];
-        }
-        $contents[] = ['role' => 'user', 'parts' => [['text' => $msgText]]];
+    $contents = [];
+    $contents[] = ['role' => 'user', 'parts' => [['text' => $systemPrompt]]];
+    $contents[] = ['role' => 'model', 'parts' => [['text' => "Understood. I am the SoftNexa WhatsApp Solutions Consultant. I will reply concisely in the user's exact language with high authority, transparency, and warmth."]]];
 
-        $payload = json_encode([
-            'contents' => $contents,
-            'generationConfig' => [
-                'temperature'     => 0.65,
-                'maxOutputTokens' => 250
-            ]
-        ]);
+    foreach (array_slice($recentHistory, -4) as $h) {
+        $contents[] = ['role' => $h['role'], 'parts' => [['text' => (string)$h['content']]]];
+    }
+    $contents[] = ['role' => 'user', 'parts' => [['text' => $msgText]]];
 
-        curl_setopt_array($ch, [
-            CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => $payload,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 8,
-            CURLOPT_HTTPHEADER     => ['Content-Type: application/json']
-        ]);
+    $payload = json_encode([
+        'contents' => $contents,
+        'generationConfig' => [
+            'temperature'     => 0.65,
+            'maxOutputTokens' => 250
+        ]
+    ]);
 
-        $res = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+    foreach ($candidateModels as $modelEndpoint) {
+        try {
+            $ch = curl_init("https://generativelanguage.googleapis.com/{$modelEndpoint}:generateContent?key=" . urlencode($geminiKey));
+            curl_setopt_array($ch, [
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => $payload,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT        => 8,
+                CURLOPT_HTTPHEADER     => ['Content-Type: application/json']
+            ]);
 
-        if ($httpCode === 200 && $res) {
-            $json = json_decode($res, true);
-            $rawText = $json['candidates'][0]['content']['parts'][0]['text'] ?? '';
-            if (!empty(trim($rawText))) {
-                $aiReply = trim($rawText);
-                $llmSucceeded = true;
+            $res = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode === 200 && $res) {
+                $json = json_decode($res, true);
+                $rawText = $json['candidates'][0]['content']['parts'][0]['text'] ?? '';
+                if (!empty(trim($rawText))) {
+                    $aiReply = trim($rawText);
+                    $llmSucceeded = true;
+                    break;
+                }
             }
+        } catch (Exception $e) {
+            $llmSucceeded = false;
         }
-    } catch (Exception $e) {
-        $llmSucceeded = false;
     }
 }
 
