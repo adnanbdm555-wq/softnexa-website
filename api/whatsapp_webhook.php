@@ -291,33 +291,27 @@ BEHAVIOR & CONVERSATION RULES:
 4. If they ask about charges, explain the value of door-to-door AC Alto car vs public van.
 5. Format cleanly with friendly emojis (🚗, 🌸, ✨, 📍).";
 } else {
-    $systemPrompt = "You are the Senior Software Solutions Architect & Lead Consultant at SoftNexa (softnexasolution.com), based on Shahrah-e-Faisal, Karachi, Pakistan.
-You are communicating directly with a prospective business client on WhatsApp.
+    $systemPrompt = "You are Adnan's Senior Solutions Consultant at SoftNexa Solutions (softnexasolution.com), based on Shahrah-e-Faisal, Karachi, Pakistan.
+You are chatting directly with a prospective business client on WhatsApp.
 
-Your Persona & Tone:
-- Professional, warm, courteous, and deeply helpful — like a trusted human technical advisor and partner.
-- Never sound robotic, stiff, or like an automated script. Speak naturally, empathetically, and conversationally.
-- Directly acknowledge and answer the client's specific questions or business ideas first.
+CRITICAL HUMAN-LIKE CONVERSATION RULES:
+1. Sound 100% like a real, warm, empathetic human consultant — NEVER robotic, never scripted, never pushy.
+2. CLIENT REQUIREMENT FIRST: If the client mentions a specific business or need (e.g., beauty salon, leather e-commerce, dental clinic, real estate, restaurant, ERP, mobile app, marketing), respond DIRECTLY to their exact requirement with helpful, tailored advice. Do NOT dump a generic list of all services when they already told you what they want!
+3. Only when the client sends a general greeting ('Hi', 'Salam') or asks 'what services do you offer?', warmly welcome them and briefly introduce SoftNexa's Top 4 Core Services:
+   🤖 1. 24/7 AI WhatsApp Sales & Booking Bots (instant replies & appointment automation)
+   🛍️ 2. High-Converting Websites & E-Commerce Stores (Cards/JazzCash/COD/Tabby + WhatsApp order alerts)
+   📊 3. Custom ERP, CRM & POS Software (multi-branch inventory, billing & accounting automation)
+   📱 4. Mobile Apps (iOS/Android) & Performance Marketing (Meta/Google Ads + SEO)
+4. 100% Fixed-Price Guarantee with milestone delivery (zero hidden hourly bills).
+5. CRITICAL PRICING INSTRUCTION: Never quote fixed dollar/PKR prices. Explain that every project is custom-scoped to their exact features under our 100% Fixed-Price Guarantee, and offer a free 48-Hour Scope Blueprint or a quick 10-minute discovery call.
+6. Live demos: https://softnexasolution.com/#/demos | Office: Shahrah-e-Faisal, Karachi | Direct: +92 335 5556290.
 
-About SoftNexa Offerings & Standards:
-- Custom Websites & Web Portals: Fast, responsive, modern UI/UX (corporate sites delivered in 5-7 days; e-commerce & portals in 2-3 weeks).
-- Digital & Social Media Marketing: 360° Meta & Google Ads, viral TikTok/Reels video production, monthly content calendars, and SEO ranking with full ROI transparency.
-- Custom Enterprise ERPs, POS & Inventory Systems: Multi-branch stock, billing, automated accounting, role-based controls.
-- Mobile Applications: High-performance Flutter apps for iOS & Android with offline support, push notifications, and payment gateways.
-- AI Agents & Automation: WhatsApp bots, CRM automations, and custom workflows.
-- 100% Fixed-Price Guarantee with milestone delivery (zero hidden charges or hourly surprises).
-- CRITICAL PRICING INSTRUCTION: Do NOT quote any project prices, rates, or dollar/PKR costs under any circumstance. SoftNexa creates bespoke solutions customized to each business's scale and workflows. Explain our 100% Fixed-Price Guarantee with milestone protection, and invite the client to share their required features or schedule a quick 10-minute discovery call for a custom Scope Blueprint.
-- Live interactive demos: https://softnexasolution.com/#/demos
-- Office: Shahrah-e-Faisal, Karachi, Pakistan (Clients are welcome to schedule in-person meetings or discovery calls).
-- Direct Line: +92 335 5556290.
-
-WhatsApp Communication Rules:
-1. Match the client's exact language:
-   - Roman Urdu: Warm, natural, native Pakistani Roman Urdu (e.g. 'G bilkul', 'Hum zaroor bana sakte hain', 'Aap batayein').
-   - Urdu Script: Courteous, respectful Urdu.
-   - English: Clear, executive, consultative English.
-2. Format cleanly for mobile: 2 to 4 concise paragraphs or bullet points, friendly emojis (💻, 📱, ✨, 💼).
-3. Always guide the user forward with ONE clear, smart question or next step (e.g., asking about their business type, key features, or offering a quick 10-minute discovery call).";
+Language & Formatting:
+- Match the client's exact language naturally:
+  * Roman Urdu: Natural, warm Pakistani Roman Urdu ('G bilkul', 'Boht zabardast', 'Aap batayein').
+  * Urdu Script: Respectful, polite Urdu.
+  * English: Clear, executive, friendly English.
+- Keep replies concise for WhatsApp (2–4 short paragraphs/bullets) and end with ONE natural human follow-up question.";
 }
 
 if ($geminiKey) {
@@ -535,19 +529,19 @@ if (!$llmSucceeded || empty($aiReply)) {
         } else {
             $aiReply = "You can test our live industry software prototypes here:\n🌐 https://softnexasolution.com/#/demos\n\nCovers Healthcare, Retail POS, Logistics, and E-Commerce. Which vertical would you like to review?";
         }
-    } elseif ($isGreeting) {
+    } elseif ($isGreeting || preg_match('/\b(services|service|kya karte|kia kartay|kya kaam|what do you do|offer)\b/i', $msgLower)) {
         if ($lang === 'ur') {
-            $aiReply = "وعلیکم السلام! سافٹ نیکسا میں خوش آمدید۔ 👋\nہم کسٹم ویب سائٹس، موبائل ایپس اور انٹرپرائز سسٹمز 100% فکسڈ پرائس گارنٹی پر بناتے ہیں۔ آپ اپنے کاروبار کے لیے کس طرح کا حل تلاش کر رہے ہیں؟\n\nہمارے لائیو سسٹمز: https://softnexasolution.com/#/demos";
+            $aiReply = "وعلیکم السلام! سافٹ نیکسا میں خوش آمدید۔ 👋\n\nہم 100% فکسڈ پرائس گارنٹی پر کاروبار کے لیے یہ 4 اہم سروسز فراہم کرتے ہیں:\n\n🤖 1. 24/7 AI واٹس ایپ سیلز اور بکنگ بوٹ\n🛍️ 2. جدید ویب سائٹس اور ای کامرس اسٹورز\n📊 3. کسٹم ERP، CRM اور POS سافٹ ویئر\n📱 4. موبائل ایپس (iOS/Android) اور ڈیجیٹل مارکیٹنگ\n\nآپ اپنے کاروبار کے لیے کس چیز پر کام کروانا چاہتے ہیں؟ تفصیل بتائیں تاکہ میں آپ کو بہترین گائیڈ کر سکوں!";
         } elseif ($lang === 'ro') {
-            $aiReply = "Walaikum Assalam! SoftNexa Solutions mein khush aamdeed. 👋\n\nMain SoftNexa ka Solutions Consultant hoon. Hum modern Websites, Mobile Apps aur Business Software 100% Fixed-Price Guarantee par build karte hain.\n\nAap apne business ke liye kis project ke baare mein discuss karna chahte hain?";
+            $aiReply = "Walaikum Assalam! SoftNexa Solutions mein khush aamdeed. 👋\n\nHum **100% Fixed-Price Guarantee** par businesses ko grow karne ke liye 4 core services dete hain:\n\n🤖 **24/7 AI WhatsApp Sales & Booking Bot** (raat ko bhi clients auto-handle)\n🛍️ **Modern Websites & E-Commerce Stores** (Cards/JazzCash/COD + WA Alerts)\n📊 **Custom ERP, CRM & POS Software** (Stock, Billing & Accounts)\n📱 **Mobile Apps (iOS/Android) & Digital Marketing** (Meta/Google Ads + SEO)\n\nAap apne business ke liye kis cheez ke baare mein discuss karna chahte hain? Thora sa idea batayein taake main aapke mutabiq best solution suggest kar sakoon!";
         } else {
-            $aiReply = "Hello and welcome to SoftNexa Solutions! 👋\n\nI am your Solutions Consultant. We engineer bespoke Websites, Mobile Apps, and Enterprise Systems under a 100% Fixed-Price Guarantee.\n\nWhat type of digital system or website would you like to build?";
+            $aiReply = "Hello and welcome to SoftNexa Solutions! 👋\n\nWe help businesses scale faster under our **100% Fixed-Price Guarantee** across 4 core solutions:\n\n🤖 **24/7 AI WhatsApp Sales & Booking Bots**\n🛍️ **High-Converting Websites & E-Commerce Stores**\n📊 **Custom ERP, CRM & POS Software**\n📱 **Mobile Apps (iOS/Android) & Performance Marketing**\n\nWhat kind of business or project are you looking to build? Tell me a bit about your requirements so I can tailor the best solution for you!";
         }
     } else {
         if ($lang === 'ro') {
-            $aiReply = "Yeh aik boht zaroori aur high-impact requirement lag rahi hai! ✨\n\nSoftNexa isko modern cloud architecture aur 100% Fixed-Price Guarantee ke sath tailor-make kar sakta hai. Isme aapko kaunse zaroori features ya modules chahiye?\n\nHumare live prototypes dekhein: https://softnexasolution.com/#/demos";
+            $aiReply = "Boht zabardast! Aapki yeh requirement bilkul clear aur high-impact lag rahi hai. ✨\n\nHum isko aapke exact business workflow ke mutabiq **100% Fixed-Price Guarantee** par custom build kar sakte hain. Isme aap kaunse zaroori features chah rahe hain, aur kya main aapke sath hamare live demos share kar doon?\n\n🌐 https://softnexasolution.com/#/demos";
         } else {
-            $aiReply = "This sounds like a high-impact initiative! SoftNexa can architect this under our 100% Fixed-Price Guarantee. What specific workflows or modules should we include in your scope blueprint?\n\nLive demos: https://softnexasolution.com/#/demos";
+            $aiReply = "That sounds like a great initiative! ✨ We can custom-build this tailored specifically to your workflow under our **100% Fixed-Price Guarantee**.\n\nWhat are the top 2–3 features you'd like included? You can also preview our live systems here: https://softnexasolution.com/#/demos";
         }
     }
 }

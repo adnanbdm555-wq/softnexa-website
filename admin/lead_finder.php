@@ -705,14 +705,14 @@ function get_smart_pitch_for_lead($p, $currSector, $customQuery = '') {
         }
     }
 
-    // If custom query was searched and doesn't match the default sector tab, use universal business pitch
+    // If custom query was searched and doesn't match a specific niche, use SoftNexa Top 4 Core Services pitch
     if (!empty($customQuery) && stripos($currSector['query'], $customQuery) === false) {
         $ind = ucwords($customQuery);
         return [
             'label'    => $ind,
-            'service'  => "Custom Website, 24/7 WhatsApp AI Bot & Automation for {$ind}",
-            'pitch_en' => "Hello {$name}, this is Adnan from SoftNexa (softnexasolution.com). We build modern high-converting websites, 24/7 WhatsApp AI customer booking bots, and custom business automation under a 100% Fixed-Price Guarantee. Review our live interactive demos: https://softnexasolution.com/#/demos — Would you be open to a quick 10-minute Google Meet discovery call? Schedule here: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum {$name}, SoftNexa se Adnan baat kar raha hoon. Hum businesses ke liye modern website, 24/7 WhatsApp AI booking bot aur custom automation software 100% Fixed-Price Guarantee par banate hain. Live demos: https://softnexasolution.com/#/demos — Kya hum 10-minute ka quick demo share kar sakte hain?"
+            'service'  => "SoftNexa Top 4 Core Solutions for {$ind}",
+            'pitch_en' => "Hello {$name}, this is Adnan from SoftNexa Solutions (softnexasolution.com). We help businesses scale faster under our 100% Fixed-Price Guarantee across 4 core solutions:\n\n🤖 24/7 AI WhatsApp Sales & Booking Bots\n🛍️ High-Converting Websites & E-Commerce Stores\n📊 Custom ERP, CRM & Inventory Software\n📱 Mobile Apps (iOS/Android) & Performance Marketing\n\nLive interactive demos: https://softnexasolution.com/#/demos\nWould you be open to a quick 10-minute call this week? Schedule here: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum {$name}, SoftNexa (softnexasolution.com) se Adnan baat kar raha hoon. Hum 100% Fixed-Price Guarantee par businesses ko grow karne ke liye 4 core services dete hain:\n\n🤖 24/7 AI WhatsApp Sales & Booking Bot (raat ko bhi clients auto-handle)\n🛍️ Modern Websites & E-Commerce Stores (Cards/JazzCash/COD + WA Alerts)\n📊 Custom ERP, CRM & POS Software (Stock, Billing & Accounts)\n📱 Mobile Apps & Digital Marketing (Meta/Google Ads + SEO)\n\nLive Demos: https://softnexasolution.com/#/demos\nKya hum 10-minute ki quick call par aapke business ke mutabiq free blueprint share karein?"
         ];
     }
 
