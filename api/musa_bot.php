@@ -10,7 +10,7 @@ require_once __DIR__ . '/config.php';
 
 $verifyToken = 'musa_pickndrop_2026';
 $musaBusinessPhone = '923052148006'; // +92 305 2148006
-$ownerAlertPhone   = '923152989922'; // +92 315 2989922 (Owner notification line)
+$ownerAlertPhone   = '923355556290'; // +92 335 5556290 (Owner notification line)
 
 /* ------------------------------------------------------------
    1. META WEBHOOK VERIFICATION CHALLENGE (GET)

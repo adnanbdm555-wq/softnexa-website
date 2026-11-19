@@ -27,8 +27,8 @@ INSERT IGNORE INTO settings (k, v) VALUES
   ('founding_left', '3'),
   ('notify_email', 'info@softnexasolution.com'),
   ('popups_on', '1'),
-  ('wa_phone_id', '1439358495923133'),
-  ('wa_waba_id', '984640244701522'),
+  ('wa_phone_id', '437769600795348'),
+  ('wa_waba_id', '3789402937785482'),
   ('wa_token', 'EAAeIJS2vcIgBS6AuV7SuvZACxhPVnH9VGCJA5ZBPN0BdFbWc3CEmywhL8pWbTXDhMOmWN6I7IooC6IXHOMYW3cE5v0UZBZAKXiE3j9N4Ml0TBXdGPQQBAlhPlmfaXAQfG6NSUrMpHfQzFTxKgI4cY08BQGigjOA1BqYHfzu2RCMToyeSOjigRgUW4ijwFjLB7DUp1cJaZCOMZCHxOjgQ5ZBhsmEjcxmwcRIOWAQQKZBuOWZBiwehjkEBnYUZCXwG9uZAJ8hS5GoZBFY5RERxx9L6z0fX'),
   ('wa_verify_token', 'softnexa_wa_bot_2026'),
   ('wa_bot_enabled', '1');

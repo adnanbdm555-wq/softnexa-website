@@ -130,10 +130,10 @@ function setting($key, $default = null) {
             $val .= ', adnanbdm555@gmail.com';
         }
     }
-    if ($key === 'wa_phone_id' && empty($val)) $val = '1439358495923133';
-    if ($key === 'wa_waba_id' && empty($val)) $val = '984640244701522';
+    if ($key === 'wa_phone_id' && empty($val)) $val = '437769600795348';
+    if ($key === 'wa_waba_id' && empty($val)) $val = '3789402937785482';
     $latestWaToken = 'EAAeIJS2vcIgBSyza2zjL8lSFoKOb9dZCmejBeONGCBKjWMLF9WHgrxUAwkKfiFJeFUV8N3FzZBoc7kj5YV1dmhOLWdFOqrXsIkRoAi4t7OWufi02pTAIVrzt8gpZBeS5mHeTV9zI4laOjJNZBZArZC0MNxi0FZAB65EDbh4WzRlG9xaGTEWwME5DQoCa8PndAZDZD';
-    if ($key === 'wa_token') {
+    if ($key === 'wa_token' && empty($val)) {
         $val = $latestWaToken;
     }
     if ($key === 'wa_verify_token' && empty($val)) $val = 'softnexa_wa_bot_2026';
@@ -452,8 +452,8 @@ function render_customer_confirmation_email($data) {
               <div style="font-size:13px;color:#8B8AA5;margin-bottom:12px;">
                 Need an immediate consultation or have additional questions?
               </div>
-              <a href="https://wa.me/923152989922?text=Hello%20SoftNexa,%20I%20just%20submitted%20an%20inquiry%20on%20your%20website" target="_blank" style="display:inline-block;background:#25D366;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:13px;padding:10px 22px;border-radius:7px;margin-right:8px;box-shadow:0 3px 12px rgba(37,211,102,0.35);">
-                💬 WhatsApp: +92 315 2989922
+              <a href="https://wa.me/923355556290?text=Hello%20SoftNexa,%20I%20just%20submitted%20an%20inquiry%20on%20your%20website" target="_blank" style="display:inline-block;background:#25D366;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:13px;padding:10px 22px;border-radius:7px;margin-right:8px;box-shadow:0 3px 12px rgba(37,211,102,0.35);">
+                💬 WhatsApp: +92 335 5556290
               </a>
               <a href="mailto:info@softnexasolution.com" style="display:inline-block;background:linear-gradient(135deg,#6E4BFF 0%,#8A6BFF 100%);color:#FFFFFF;text-decoration:none;font-weight:600;font-size:13px;padding:10px 22px;border-radius:7px;box-shadow:0 3px 12px rgba(110,75,255,0.35);">
                 Reply to this Email &rarr;
@@ -465,7 +465,7 @@ function render_customer_confirmation_email($data) {
           <tr>
             <td style="padding:20px 28px;background:#090818;border-top:1px solid #1C1B33;text-align:center;">
               <div style="font-size:12px;color:#8B8AA5;margin-bottom:6px;">
-                SoftNexa Solutions • Shahrah-e-Faisal, Karachi, Pakistan • WhatsApp: +92 315 2989922
+                SoftNexa Solutions • Shahrah-e-Faisal, Karachi, Pakistan • WhatsApp: +92 335 5556290
               </div>
               <div style="font-size:11px;color:#5A5872;">
                 Official Website: <a href="https://softnexasolution.com" style="color:#1FD3F0;text-decoration:none;">softnexasolution.com</a> • <a href="mailto:info@softnexasolution.com" style="color:#1FD3F0;text-decoration:none;">info@softnexasolution.com</a>

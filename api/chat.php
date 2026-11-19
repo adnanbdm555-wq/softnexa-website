@@ -15,7 +15,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') { http_response_code(204);
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') json_out(['ok' => false, 'error' => 'method'], 405);
 
 if (!rate_ok('chat', 60, 3600)) {
-    json_out(['ok' => false, 'reply' => "You've sent quite a few messages! Please take a quick moment, or feel free to WhatsApp us directly at +92 315 2989922 (https://wa.me/923152989922) or email info@softnexasolution.com."]);
+    json_out(['ok' => false, 'reply' => "You've sent quite a few messages! Please take a quick moment, or feel free to WhatsApp us directly at +92 335 5556290 (https://wa.me/923355556290) or email info@softnexasolution.com."]);
 }
 
 $input = json_input();
@@ -87,10 +87,10 @@ Pricing & Delivery Model:
 - We offer a free 48-hour tailored scope blueprint and prototype demo.
 
 Official Contact & WhatsApp:
-- Official WhatsApp / Direct Call: +92 315 2989922 (https://wa.me/923152989922)
+- Official WhatsApp / Direct Call: +92 335 5556290 (https://wa.me/923355556290)
 - Official Email: info@softnexasolution.com
 - Office: Shahrah-e-Faisal, Karachi, Pakistan
-- When the user asks for contact info, phone, or how to WhatsApp us, provide +92 315 2989922 and invite them to connect.
+- When the user asks for contact info, phone, or how to WhatsApp us, provide +92 335 5556290 and invite them to connect.
 
 Tone & Behavior:
 - Talk like an empathetic, highly skilled technical consultant dealing directly with a customer.
@@ -269,11 +269,11 @@ if (!$llmSucceeded || empty($aiReply)) {
     // 10. Direct Contact & WhatsApp
     elseif ($isContact) {
         if ($lang === 'ur') {
-            $aiReply = "آپ ہم سے براہ راست آفیشل واٹس ایپ / کال پر رابطہ کر سکتے ہیں: +92 315 2989922 (ڈائریکٹ لنک: https://wa.me/923152989922) یا info@softnexasolution.com پر ای میل بھیج سکتے ہیں۔ ہماری ٹیم فوری رہنمائی کے لیے دستیاب ہے!";
+            $aiReply = "آپ ہم سے براہ راست آفیشل واٹس ایپ / کال پر رابطہ کر سکتے ہیں: +92 335 5556290 (ڈائریکٹ لنک: https://wa.me/923355556290) یا info@softnexasolution.com پر ای میل بھیج سکتے ہیں۔ ہماری ٹیم فوری رہنمائی کے لیے دستیاب ہے!";
         } elseif ($lang === 'ro') {
-            $aiReply = "Aap hum se direct official WhatsApp / Call par rabta kar sakte hain: +92 315 2989922 (Direct chat: https://wa.me/923152989922) ya info@softnexasolution.com par email bhej sakte hain. Hamari senior engineering team aapko foran response de gi!";
+            $aiReply = "Aap hum se direct official WhatsApp / Call par rabta kar sakte hain: +92 335 5556290 (Direct chat: https://wa.me/923355556290) ya info@softnexasolution.com par email bhej sakte hain. Hamari senior engineering team aapko foran response de gi!";
         } else {
-            $aiReply = "You can reach our engineering leads directly on WhatsApp or phone at +92 315 2989922 (or click: https://wa.me/923152989922), or email us at info@softnexasolution.com. We're ready to discuss your project anytime!";
+            $aiReply = "You can reach our engineering leads directly on WhatsApp or phone at +92 335 5556290 (or click: https://wa.me/923355556290), or email us at info@softnexasolution.com. We're ready to discuss your project anytime!";
         }
     }
     // 11. Office Location & Meetings

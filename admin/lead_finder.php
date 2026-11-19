@@ -275,7 +275,7 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
     </div>
     <div style="background:rgba(0,0,0,.25);padding:10px 14px;border-radius:10px;border:1px solid var(--line)">
       <b style="color:var(--cyan)">3️⃣ Google Meet Instant Schedule:</b>
-      <p style="margin:4px 0 0;color:var(--mut)">Client <code>softnexasolution.com/#/schedule</code> se slot book karta hai, aur foran alert aapke WhatsApp (+92 315 2989922) par deliver hota hai.</p>
+      <p style="margin:4px 0 0;color:var(--mut)">Client <code>softnexasolution.com/#/schedule</code> se slot book karta hai, aur foran alert aapke WhatsApp (+92 335 5556290) par deliver hota hai.</p>
     </div>
   </div>
 </div>

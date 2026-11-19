@@ -287,7 +287,7 @@ $emailHtml = '<!DOCTYPE html>
               <a href="https://softnexasolution.com/#/schedule" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#6E4BFF 0%,#1FD3F0 100%);color:#FFFFFF;text-decoration:none;font-weight:700;font-size:14px;padding:12px 26px;border-radius:8px;margin-right:8px;box-shadow:0 4px 16px rgba(110,75,255,0.4);">
                 📅 Schedule Google Meet Call &rarr;
               </a>
-              <a href="https://wa.me/923152989922?text=Hello%20SoftNexa,%20I%20reviewed%20your%20proposal%20for%20' . rawurlencode($servTitle) . '" target="_blank" style="display:inline-block;background:#25D366;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:13px;padding:12px 22px;border-radius:8px;box-shadow:0 3px 12px rgba(37,211,102,0.35);">
+              <a href="https://wa.me/923355556290?text=Hello%20SoftNexa,%20I%20reviewed%20your%20proposal%20for%20' . rawurlencode($servTitle) . '" target="_blank" style="display:inline-block;background:#25D366;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:13px;padding:12px 22px;border-radius:8px;box-shadow:0 3px 12px rgba(37,211,102,0.35);">
                 💬 Discuss on WhatsApp
               </a>
             </td>
@@ -297,7 +297,7 @@ $emailHtml = '<!DOCTYPE html>
           <tr>
             <td style="padding:20px 28px;background:#090818;border-top:1px solid #1C1B33;text-align:center;">
               <div style="font-size:12px;color:#8B8AA5;margin-bottom:4px;">
-                SoftNexa Solutions • Shahrah-e-Faisal, Karachi, Pakistan • WhatsApp: +92 315 2989922
+                SoftNexa Solutions • Shahrah-e-Faisal, Karachi, Pakistan • WhatsApp: +92 335 5556290
               </div>
               <div style="font-size:11px;color:#5A5872;">
                 Official Website: <a href="https://softnexasolution.com" style="color:#1FD3F0;text-decoration:none;">softnexasolution.com</a>

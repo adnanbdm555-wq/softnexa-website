@@ -39,6 +39,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 $err = '❌ Failed to send WhatsApp message. Meta API error: ' . htmlspecialchars(json_encode($testResult['response'] ?? $testResult['error'] ?? 'Unknown error'));
             }
         }
+    } elseif (($_POST['action'] ?? '') === 'toggle_chat_pause') {
+        $targetPhone = preg_replace('/[^0-9]/', '', (string)($_POST['phone'] ?? ''));
+        if ($targetPhone) {
+            $pausedPhones = json_decode((string)setting('wa_paused_phones', '[]'), true);
+            if (!is_array($pausedPhones)) $pausedPhones = [];
+            if (in_array($targetPhone, $pausedPhones)) {
+                $pausedPhones = array_values(array_diff($pausedPhones, [$targetPhone]));
+                $msg = '🟢 AI Bot resumed for +' . $targetPhone . '!';
+            } else {
+                $pausedPhones[] = $targetPhone;
+                $msg = '🛑 AI Bot paused for +' . $targetPhone . ' (Human Mode Active).';
+            }
+            set_setting('wa_paused_phones', json_encode(array_values($pausedPhones)));
+        }
     }
 }
 
@@ -110,7 +124,7 @@ admin_head('whatsapp_bot.php', 'WhatsApp AI Bot · ' . ADMIN_TITLE);
   </div>
   <div class="card stat">
     <h3>Official Business Phone</h3>
-    <div class="v" style="font-size:1.4rem;color:var(--iris)">+92 315 2989922</div>
+    <div class="v" style="font-size:1.4rem;color:var(--iris)">+92 335 5556290</div>
     <div class="sub">Direct SoftNexa line</div>
   </div>
 </div>
@@ -213,7 +227,7 @@ admin_head('whatsapp_bot.php', 'WhatsApp AI Bot · ' . ADMIN_TITLE);
 
       <div>
         <label>Recipient Phone Number (with Country Code)</label>
-        <input type="text" name="test_phone" value="923152989922" placeholder="e.g. 923152989922" style="font-weight:600;color:var(--mint)">
+        <input type="text" name="test_phone" value="923355556290" placeholder="e.g. 923355556290" style="font-weight:600;color:var(--mint)">
       </div>
 
       <div>
@@ -321,9 +335,24 @@ admin_head('whatsapp_bot.php', 'WhatsApp AI Bot · ' . ADMIN_TITLE);
                 <?= nl2br(e($c['message'])) ?>
               </td>
               <td style="white-space:nowrap">
-                <a href="https://wa.me/<?= e($c['phone']) ?>" target="_blank" rel="noopener" class="btn" style="padding:4px 10px;font-size:.76rem;background:#25D366;color:#fff;border:0" title="Take over chat on WhatsApp Web">
-                  💬 Chat Live
-                </a>
+                <?php
+                $pausedList = json_decode((string)setting('wa_paused_phones', '[]'), true);
+                if (!is_array($pausedList)) $pausedList = [];
+                $isChatPaused = in_array($c['phone'], $pausedList);
+                ?>
+                <div style="display:flex;gap:6px;align-items:center">
+                  <form method="post" style="display:inline;margin:0">
+                    <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+                    <input type="hidden" name="action" value="toggle_chat_pause">
+                    <input type="hidden" name="phone" value="<?= e($c['phone']) ?>">
+                    <button type="submit" class="btn" style="padding:4px 8px;font-size:.74rem;background:<?= $isChatPaused ? 'rgba(37,211,102,.15);color:#25D366;border:1px solid #25D366' : 'rgba(255,77,141,.15);color:#ff4d8d;border:1px solid #ff4d8d' ?>" title="<?= $isChatPaused ? 'Click to resume AI auto replies' : 'Click to pause AI (take over chat manually)' ?>">
+                      <?= $isChatPaused ? '🟢 Resume AI' : '🛑 Pause AI' ?>
+                    </button>
+                  </form>
+                  <a href="https://wa.me/<?= e($c['phone']) ?>" target="_blank" rel="noopener" class="btn" style="padding:4px 10px;font-size:.76rem;background:#25D366;color:#fff;border:0" title="Take over chat on WhatsApp Web">
+                    💬 Chat Live
+                  </a>
+                </div>
               </td>
             </tr>
           <?php endforeach; ?>

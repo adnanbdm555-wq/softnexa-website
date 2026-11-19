@@ -38,7 +38,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'GET') {
         }
     } elseif (isset($_GET['query']) || isset($_GET['text']) || isset($_GET['message'])) {
         $msgText     = trim((string)($_GET['query'] ?? $_GET['text'] ?? $_GET['message'] ?? ''));
-        $senderPhone = preg_replace('/[^0-9]/', '', (string)($_GET['sender'] ?? $_GET['phone'] ?? '923152989922'));
+        $senderPhone = preg_replace('/[^0-9]/', '', (string)($_GET['sender'] ?? $_GET['phone'] ?? '923355556290'));
         $senderName  = trim((string)($_GET['name'] ?? 'Client'));
         $isGateway   = true;
     } else {
@@ -57,7 +57,7 @@ $data = json_decode($rawInput, true);
 if (!$isGateway) {
     if (isset($_POST['query']) || isset($_POST['text']) || isset($_POST['message'])) {
         $msgText     = trim((string)($_POST['query'] ?? $_POST['text'] ?? $_POST['message'] ?? ''));
-        $senderPhone = preg_replace('/[^0-9]/', '', (string)($_POST['sender'] ?? $_POST['phone'] ?? '923152989922'));
+        $senderPhone = preg_replace('/[^0-9]/', '', (string)($_POST['sender'] ?? $_POST['phone'] ?? '923355556290'));
         $senderName  = trim((string)($_POST['name'] ?? 'Client'));
         $isGateway   = true;
     } elseif (!$data || !is_array($data)) {
@@ -80,6 +80,10 @@ if ($botEnabled !== 1) {
     echo json_encode(['status' => 'bot_disabled_human_mode']);
     exit;
 }
+
+// Check per-chat human takeover / pause
+$pausedPhones = json_decode((string)setting('wa_paused_phones', '[]'), true);
+if (!is_array($pausedPhones)) $pausedPhones = [];
 
 // Meta WhatsApp Cloud API standard structure
 $entry   = $data['entry'][0] ?? [];
@@ -148,12 +152,40 @@ try {
     $st->execute([$msgId, $senderPhone, $senderName, $msgText, $rawInput]);
 } catch (Exception $e) {}
 
+// Command to pause / unpause AI directly from WhatsApp chat
+$trimMsg = trim($msgText);
+if (preg_match('/^#(pause|stop|mute|human|takeover)$/i', $trimMsg)) {
+    if (!in_array($senderPhone, $pausedPhones)) {
+        $pausedPhones[] = $senderPhone;
+        set_setting('wa_paused_phones', json_encode(array_values($pausedPhones)));
+    }
+    send_meta_whatsapp_message($senderPhone, "🛑 *AI Agent Paused for this chat.*\nHuman mode is now active. You can chat manually without automated AI replies.\n\nType *#resume* to reactivate AI.", $recipientPhoneId);
+    http_response_code(200);
+    echo json_encode(['status' => 'chat_paused_by_command']);
+    exit;
+}
+if (preg_match('/^#(resume|start|unpause|ai)$/i', $trimMsg)) {
+    $pausedPhones = array_values(array_diff($pausedPhones, [$senderPhone]));
+    set_setting('wa_paused_phones', json_encode($pausedPhones));
+    send_meta_whatsapp_message($senderPhone, "🟢 *AI Agent Resumed for this chat.*\nSoftNexa AI will now handle incoming inquiries automatically.", $recipientPhoneId);
+    http_response_code(200);
+    echo json_encode(['status' => 'chat_resumed_by_command']);
+    exit;
+}
+
+// If chat is currently paused by admin or command, do not auto-reply
+if (in_array($senderPhone, $pausedPhones)) {
+    http_response_code(200);
+    echo json_encode(['status' => 'chat_paused_human_mode']);
+    exit;
+}
+
 /* ------------------------------------------------------------
    3. RETRIEVE RECENT CHAT HISTORY FOR CONTEXT
    ------------------------------------------------------------ */
 $recentHistory = [];
 try {
-    $histStmt = db()->prepare("SELECT direction, message FROM wa_messages WHERE phone = ? ORDER BY id DESC LIMIT 6");
+    $histStmt = db()->prepare("SELECT direction, message FROM wa_messages WHERE phone = ? ORDER BY id DESC LIMIT 10");
     $histStmt->execute([$senderPhone]);
     $rows = array_reverse($histStmt->fetchAll(PDO::FETCH_ASSOC));
     foreach ($rows as $r) {
@@ -169,16 +201,55 @@ try {
    ------------------------------------------------------------ */
 $msgLower = mb_strtolower($msgText);
 
-$isUrduScript = (bool)preg_match('/[\x{0600}-\x{06FF}]/u', $msgText);
-$romanUrduClues = ['kya', 'hai', 'hain', 'mein', 'hum', 'mujhe', 'chahiye', 'karna', 'kese', 'kaise', 'bataen', 'batao', 'boht', 'shukriya', 'rabta', 'kitna', 'kharcha', 'kitne', 'aap'];
-$isRomanUrdu = false;
-$foundWords = 0;
-foreach ($romanUrduClues as $w) {
-    if (preg_match('/\b' . preg_quote($w, '/') . '\b/i', $msgLower)) $foundWords++;
+// Detect if client requested human handover
+$isHumanRequest = (bool)preg_match('/\b(insaan|human|agent|representative|call me|phone pe baat|kisi se baat|direct call|baat karni hai|owner se|adnan se)\b/i', $msgLower);
+if ($isHumanRequest) {
+    if (!in_array($senderPhone, $pausedPhones)) {
+        $pausedPhones[] = $senderPhone;
+        set_setting('wa_paused_phones', json_encode(array_values($pausedPhones)));
+    }
+    $aiReply = "Ji bilkul! Main aapki chat hamare senior software solutions architect ko hand over kar raha hoon. Wo jald aapse direct rabta karenge. 🤝\n\nAap chahein to hamare direct number +92 335 5556290 par call bhi kar sakte hain.";
+    send_meta_whatsapp_message($senderPhone, $aiReply, $recipientPhoneId);
+    http_response_code(200);
+    echo json_encode(['status' => 'human_handover_triggered']);
+    exit;
 }
-if ($foundWords >= 2) $isRomanUrdu = true;
+
+$isUrduScript = (bool)preg_match('/[\x{0600}-\x{06FF}]/u', $msgText);
+$romanUrduClues = [
+    'kya', 'hai', 'hain', 'mein', 'hum', 'mujhe', 'chahiye', 'karna', 'kese', 'kaise',
+    'bataen', 'batao', 'boht', 'shukriya', 'rabta', 'kitna', 'kharcha', 'kitne', 'aap',
+    'mai', 'me', 'din', 'kab', 'kitnay', 'milega', 'milegi', 'hoga', 'hogi', 'banao',
+    'bana', 'banaen', 'lekin', 'acha', 'theek', 'ji', 'g', 'bhi', 'pe', 'par', 'se',
+    'ko', 'yeh', 'ye', 'woh', 'wo', 'krna', 'skte', 'skta', 'ap', 'hmaray', 'hamara'
+];
+
+$isRomanUrdu = false;
+foreach ($romanUrduClues as $w) {
+    if (preg_match('/\b' . preg_quote($w, '/') . '\b/i', $msgLower)) {
+        $isRomanUrdu = true;
+        break;
+    }
+}
+
+// Preserve Roman Urdu if previous history had Roman Urdu
+if (!$isRomanUrdu && !$isUrduScript) {
+    foreach ($recentHistory as $h) {
+        if ($h['role'] === 'user') {
+            $hLower = mb_strtolower((string)$h['content']);
+            foreach ($romanUrduClues as $w) {
+                if (preg_match('/\b' . preg_quote($w, '/') . '\b/i', $hLower)) {
+                    $isRomanUrdu = true;
+                    break 2;
+                }
+            }
+        }
+    }
+}
 
 $lang = 'en';
+if ($isUrduScript) $lang = 'ur';
+elseif ($isRomanUrdu) $lang = 'ro';
 if ($isUrduScript) $lang = 'ur';
 elseif ($isRomanUrdu) $lang = 'ro';
 
@@ -238,7 +309,7 @@ About SoftNexa Offerings & Standards:
 - CRITICAL PRICING INSTRUCTION: Do NOT quote any project prices, rates, or dollar/PKR costs under any circumstance. SoftNexa creates bespoke solutions customized to each business's scale and workflows. Explain our 100% Fixed-Price Guarantee with milestone protection, and invite the client to share their required features or schedule a quick 10-minute discovery call for a custom Scope Blueprint.
 - Live interactive demos: https://softnexasolution.com/#/demos
 - Office: Shahrah-e-Faisal, Karachi, Pakistan (Clients are welcome to schedule in-person meetings or discovery calls).
-- Direct Line: +92 315 2989922.
+- Direct Line: +92 335 5556290.
 
 WhatsApp Communication Rules:
 1. Match the client's exact language:
@@ -299,20 +370,60 @@ if ($geminiKey) {
    ------------------------------------------------------------ */
 if (!$llmSucceeded || empty($aiReply)) {
     // Intent flags
-    $isFollowUp         = (bool)preg_match('/\b(are you there|online|reply|sun rahe ho|kahan ho|sun rha|hello\?|koi hai|response|jawab)\b/i', $msgLower);
+    $isFollowUp         = (bool)preg_match('/\b(are you there|active ho|reply karo|sun rahe ho|kahan ho|sun rha|hello\?|koi hai|response do|jawab do)\b/i', $msgLower);
+    $isTimeline         = (bool)preg_match('/\b(kitne din|kitnay din|din|timeline|kab tak|kitna time|duration|delivery time|urgent|kab live|kab milega|kab milegi)\b/i', $msgLower);
+    $isPrice            = (bool)preg_match('/\b(price|cost|charges|rate|kharcha|kitna|pese|paise|fees|budget|quote|estimate)\b/i', $msgLower);
+    $isProductBusiness  = (bool)preg_match('/\b(leather|clothing|clothes|shoes|jewelry|bags|cosmetics|watches|perfumes|fashion|garments|food|products|items|saman|bechna|sell|selling|brand)\b/i', $msgLower);
+    $isEcommerce        = (bool)preg_match('/\b(ecommerce|e-commerce|online store|online shop|daraz|shopify|store|cart)\b/i', $msgLower);
     $isDigitalMarketing = (bool)preg_match('/\b(marketing|digital marketing|social media|facebook ads|meta ads|instagram|tiktok|seo|ad campaign|leads|run ads|promotion|smm)\b/i', $msgLower);
     $isWebsite          = (bool)preg_match('/\b(website|web site|site|webpage|web page|landing page|wordpress|web portal|web dev)\b/i', $msgLower);
-    $isDoctorClinic  = (bool)preg_match('/\b(clinic|doctor|dental|dentist|teeth|hospital|patient|medical|health|pharma)\b/i', $msgLower);
-    $isRealEstate    = (bool)preg_match('/\b(real estate|property|plots|plot|builder|housing|flats|apartments)\b/i', $msgLower);
-    $isSalonGym      = (bool)preg_match('/\b(salon|parlor|parlour|spa|beauty|gym|fitness|workout)\b/i', $msgLower);
-    $isEcommerce     = (bool)preg_match('/\b(ecommerce|e-commerce|online store|online shop|daraz|shopify|store|products sell|cart)\b/i', $msgLower);
-    $isPrice         = (bool)preg_match('/\b(price|cost|charges|rate|kharcha|kitna|pese|paise|fees|budget|quote|estimate)\b/i', $msgLower);
-    $isTimeline      = (bool)preg_match('/\b(kitne din|din|timeline|kab tak|time|duration|delivery time|urgent)\b/i', $msgLower);
-    $isOfficeContact = (bool)preg_match('/\b(office|address|kahan|location|call|phone|number|milna|visit|shahrah|karachi|rabta)\b/i', $msgLower);
-    $isERP           = (bool)preg_match('/\b(erp|pos|inventory|crm|warehouse|stock|accounting|billing|invoicing|distribution)\b/i', $msgLower);
-    $isApp           = (bool)preg_match('/\b(app|mobile|android|ios|flutter|playstore|apk)\b/i', $msgLower);
-    $isDemo          = (bool)preg_match('/\b(demo|sample|portfolio|previous work|link|check|live)\b/i', $msgLower);
-    $isGreeting      = (bool)preg_match('/\b(hi|hello|hey|assalam|salam|aoa|kese ho|kaise ho|keise|kaisa|kese hain)\b/i', $msgLower);
+    $isDoctorClinic     = (bool)preg_match('/\b(clinic|doctor|dental|dentist|teeth|hospital|patient|medical|health|pharma)\b/i', $msgLower);
+    $isRealEstate       = (bool)preg_match('/\b(real estate|property|plots|plot|builder|housing|flats|apartments)\b/i', $msgLower);
+    $isSalonGym         = (bool)preg_match('/\b(salon|parlor|parlour|spa|beauty|gym|fitness|workout)\b/i', $msgLower);
+    $isOfficeContact    = (bool)preg_match('/\b(office|address|kahan|location|call|phone|number|milna|visit|shahrah|karachi|rabta)\b/i', $msgLower);
+    $isERP              = (bool)preg_match('/\b(erp|pos|inventory|crm|warehouse|stock|accounting|billing|invoicing|distribution)\b/i', $msgLower);
+    $isApp              = (bool)preg_match('/\b(app|mobile|android|ios|flutter|playstore|apk)\b/i', $msgLower);
+    $isDemo             = (bool)preg_match('/\b(demo|sample|portfolio|previous work|link|check|live)\b/i', $msgLower);
+    $isGreeting         = (bool)preg_match('/\b(hi|hello|hey|assalam|salam|aoa|kese ho|kaise ho|keise|kaisa|kese hain)\b/i', $msgLower);
+
+    // 1. Timeline Question (kitnay din mein milegi)
+    if ($isTimeline) {
+        if ($lang === 'ro') {
+            $aiReply = "SoftNexa par project delivery guaranteed on-time hoti hai:\n\n🛍️ E-Commerce Online Store: 2 se 3 weeks mein complete payment gateways, product catalog aur WhatsApp order alerts ke sath live ho jata hai.\n⚡ Corporate / Business Website: 5 se 7 working days.\n📱 Mobile App / Custom ERP: 3 se 6 weeks (weekly milestone demos ke sath).\n\nAapko kab tak store launch karna hai? Hum timeline ko fast-track bhi kar sakte hain!";
+        } elseif ($lang === 'ur') {
+            $aiReply = "سافٹ نیکسا پر پراجیکٹ ڈیلیوری مقررہ وقت پر مکمل کی جاتی ہے:\n\n🛍️ ای کامرس آن لائن اسٹور: 2 سے 3 ہفتے (پیمنٹ گیٹ وے اور واٹس ایپ نوٹیفکیشن کے ساتھ)\n⚡ کاروباری ویب سائٹ: 5 سے 7 ورکنگ ڈیز\n📱 موبائل ایپ یا کسٹم سافٹ ویئر: 3 سے 6 ہفتے\n\nآپ کا ہدف کب تک لائیو کرنے کا ہے؟";
+        } else {
+            $aiReply = "Our delivery timelines:\n🛍️ E-Commerce Stores: 2-3 weeks (fully integrated with payments & order alerts)\n⚡ Corporate Websites: 5-7 working days\n📱 Mobile Apps & Custom ERPs: 3-6 weeks with weekly milestone demos.\n\nWhat is your target launch deadline?";
+        }
+    }
+    // 2. Pricing Question
+    elseif ($isPrice) {
+        if ($lang === 'ro') {
+            $aiReply = "SoftNexa 100% Fixed-Price Guarantee par kaam karta hai (zero hidden hourly charges ya unexpected bills!). 💼✨\n\nChunkay hamara har online store, website ya mobile app client ke business scale aur features ke mutabiq bespoke develop hota hai, is liye hum generic rates quote nahi karte. Hum pehle aapke required features ko samajh kar ek tailored Scope Blueprint aur fixed-price quotation provide karte hain.\n\nAapke store mein kitne products honge aur kya online payment gateway (Cards/JazzCash/Easypaisa) chahiye?";
+        } elseif ($lang === 'ur') {
+            $aiReply = "سافٹ نیکسا 100% فکسڈ پرائس گارنٹی پر کام کرتا ہے (کوئی غیر متوقع اخراجات نہیں)۔ 💼✨\n\nچونکہ ہر پراجیکٹ کلائنٹ کی ضروریات کے مطابق تیار ہوتا ہے، ہم آپ کے فیچرز دیکھ کر کسٹم اسکوپ بلیو پرنٹ اور فکسڈ کوٹیشن فراہم کرتے ہیں۔\n\nآپ کے مطلوبہ اہم فیچرز کیا ہیں؟";
+        } else {
+            $aiReply = "SoftNexa operates under a strict 100% Fixed-Price Guarantee with milestone delivery (no runaway hourly fees). 💼✨\n\nBecause every system is custom-tailored to your business workflows, we prepare a tailored Scope Blueprint and milestone breakdown based on your required features.\n\nCould you share the key features or payment gateways you need?";
+        }
+    }
+    // 3. Product / Business Type Details (e.g. Leather products, clothing, etc.)
+    elseif ($isProductBusiness) {
+        if ($lang === 'ro') {
+            $aiReply = "Boht zabardast! Aapke business ke liye hum modern, fast aur high-converting E-Commerce Online Store build kar sakte hain. 🛍️✨\n\nIsme yeh key features shamil honge:\n\n✅ Beautiful Product Catalog, High-Res Images & Filter options\n💳 Online Payment (Credit/Debit Cards, JazzCash, Easypaisa) + Cash on Delivery (COD)\n📦 Automatic WhatsApp Order Alerts (client aur aap dono ke liye)\n⚡ 100% Mobile Optimized Experience\n\nAapke paas taqreeban kitne products honge list karne ke liye?";
+        } elseif ($lang === 'ur') {
+            $aiReply = "بہت شاندار! آپ کے کاروبار کے لیے ہم جدید اور تیز رفتار ای کامرس اسٹور تیار کر سکتے ہیں۔ 🛍️✨\n\nاس میں پروڈکٹ کیٹلاگ، آن لائن پیمنٹس (کارڈز/جاز کیش/ایزی پیسہ/سی او ڈی) اور واٹس ایپ آرڈر الرٹس شامل ہوں گے۔\n\nآپ کے پاس تقریباً کتنی پراڈکٹس ہوں گی؟";
+        } else {
+            $aiReply = "Excellent! We can architect a high-converting, modern E-Commerce store for your product line with smooth product filtering, payment integrations (Card/COD), and automated WhatsApp order notifications. How many products are in your initial catalog?";
+        }
+    }
+    // 4. E-Commerce Specific
+    elseif ($isEcommerce) {
+        if ($lang === 'ro') {
+            $aiReply = "E-Commerce ke liye hum ultra-fast online shopping stores banate hain:\n\n🛍️ Smooth Product Catalog & Filtering\n💳 Payment Gateways (Credit Card, JazzCash, Easypaisa, COD)\n📦 Automated WhatsApp Order Confirmation & Tracking\n⚡ 100% Mobile Optimized Experience\n\nAapke store mein taqreeban kitne products honge aur kya aapko mobile app bhi chahiye?";
+        } else {
+            $aiReply = "We engineer high-performance E-Commerce stores with catalog search, payment gateway integrations, and automated WhatsApp order alerts. How many products are you looking to launch?";
+        }
+    }
 
     if ($isFollowUp) {
         if ($lang === 'ro') {
@@ -378,9 +489,9 @@ if (!$llmSucceeded || empty($aiReply)) {
         }
     } elseif ($isOfficeContact) {
         if ($lang === 'ro') {
-            $aiReply = "Aap hamari senior technical team se direct connect kar sakte hain:\n\n🏢 Office: Shahrah-e-Faisal, Karachi, Pakistan\n📞 Direct Call / WhatsApp: +92 315 2989922\n✉️ Email: info@softnexasolution.com\n🌐 Website: https://softnexasolution.com\n\nAap chahein to office visit kar sakte hain ya hum ek 10-minute discovery call arrange kar dein?";
+            $aiReply = "Aap hamari senior technical team se direct connect kar sakte hain:\n\n🏢 Office: Shahrah-e-Faisal, Karachi, Pakistan\n📞 Direct Call / WhatsApp: +92 335 5556290\n✉️ Email: info@softnexasolution.com\n🌐 Website: https://softnexasolution.com\n\nAap chahein to office visit kar sakte hain ya hum ek 10-minute discovery call arrange kar dein?";
         } else {
-            $aiReply = "You can connect directly with our technical leadership:\n🏢 Office: Shahrah-e-Faisal, Karachi, Pakistan\n📞 Direct Phone / WhatsApp: +92 315 2989922\n✉️ Email: info@softnexasolution.com\n\nWould you prefer an in-person meeting or a 10-minute discovery call?";
+            $aiReply = "You can connect directly with our technical leadership:\n🏢 Office: Shahrah-e-Faisal, Karachi, Pakistan\n📞 Direct Phone / WhatsApp: +92 335 5556290\n✉️ Email: info@softnexasolution.com\n\nWould you prefer an in-person meeting or a 10-minute discovery call?";
         }
     } elseif ($isERP) {
         if ($lang === 'ro') {
@@ -451,7 +562,7 @@ try {
 $sendRes = send_meta_whatsapp_message($senderPhone, $aiReply, $recipientPhoneId);
 
 if ($isMusaMessage) {
-    send_meta_whatsapp_message('923152989922', "🚗 *NEW MUSA PICK & DROP INQUIRY!*\n━━━━━━━━━━━━━━━━━━━━━\n📱 *Musa Line:* +92 305 2148006\n👤 *Passenger:* {$senderName} (+{$senderPhone})\n💬 *Message:* {$msgText}\n\n🤖 *Sarah AI Responded:* AC Alto | North-Numaish-Clifton-DHA | Rs. 22k-25k\n━━━━━━━━━━━━━━━━━━━━━");
+    send_meta_whatsapp_message('923355556290', "🚗 *NEW MUSA PICK & DROP INQUIRY!*\n━━━━━━━━━━━━━━━━━━━━━\n📱 *Musa Line:* +92 305 2148006\n👤 *Passenger:* {$senderName} (+{$senderPhone})\n💬 *Message:* {$msgText}\n\n🤖 *Sarah AI Responded:* AC Alto | North-Numaish-Clifton-DHA | Rs. 22k-25k\n━━━━━━━━━━━━━━━━━━━━━");
 }
 
 if ($isGateway) {

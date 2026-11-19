@@ -40,7 +40,7 @@ $calDetails = "SoftNexa Discovery Call with Senior Engineering Architects.\n\n"
     . "Client: " . $name . " (" . ($company ?: 'Enterprise') . ")\n"
     . "Topic: " . $topic . "\n"
     . "Google Meet Link: " . $meetLink . "\n\n"
-    . "Official WhatsApp Support: +92 315 2989922\n"
+    . "Official WhatsApp Support: +92 335 5556290\n"
     . "SoftNexa Solutions — https://softnexasolution.com";
 
 $calUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE"
@@ -78,8 +78,8 @@ try {
     error_log("Database error saving scheduled meeting: " . $e->getMessage());
 }
 
-// 2. Dispatch Instant WhatsApp Alert to Business Owner (+92 315 2989922)
-$adminPhone = '923152989922';
+// 2. Dispatch Instant WhatsApp Alert to Business Owner (+92 335 5556290)
+$adminPhone = '923355556290';
 $ownerAlert = "📅 *NEW GOOGLE MEET SCHEDULED!*\n"
     . "━━━━━━━━━━━━━━━━━━━━━\n"
     . "👤 *Client:* " . $name . "\n"
