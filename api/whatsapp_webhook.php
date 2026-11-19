@@ -199,7 +199,59 @@ try {
 /* ------------------------------------------------------------
    4. DETECT LANGUAGE & INTENTS
    ------------------------------------------------------------ */
-$msgLower = mb_strtolower($msgText);
+$msgLower = mb_strtolower(trim($msgText));
+
+// Detect Roman Urdu quick check for instant polite exits
+$quickIsRomanUrdu = (bool)preg_match('/\b(nahi|nhe|nhi|chahiye|shukriya|theek|thik|bhai|ji|karo|mat|band|zaroorat|ap|aap|hum|mera|meri)\b/i', $msgLower);
+
+// 4A. REJECTION / OPT-OUT GUARD ("Not interested", "No thanks", "Nahi chahiye", "Stop")
+// Reply politely ONCE like a human and AUTO-PAUSE AI for this number forever!
+$isRejection = (bool)preg_match('/\b(not interested|no thanks|no thank you|nahi chahiye|nhe chahiye|nhi chahiye|no need|not needed|don\'t message|dont message|do not message|stop messaging|unsubscribe|mat bhejo|band karo|wrong number|already have|not looking|no required|not required|stop|block|spam)\b/i', $msgLower);
+if ($isRejection) {
+    if (!in_array($senderPhone, $pausedPhones)) {
+        $pausedPhones[] = $senderPhone;
+        set_setting('wa_paused_phones', json_encode(array_values($pausedPhones)));
+    }
+    $byeMsg = $quickIsRomanUrdu
+        ? "Koi masla nahi hai, aapke waqt ka boht shukriya! Allah aapke business mein barkat de. Future mein kabhi zaroorat ho to hum hazir hain. 🙏"
+        : "No problem at all, thank you for your time! Wishing you great success with your business. Feel free to reach out anytime in the future. Have a wonderful day! 🙏";
+    send_meta_whatsapp_message($senderPhone, $byeMsg, $recipientPhoneId);
+    http_response_code(200);
+    echo json_encode(['status' => 'opt_out_paused_politely']);
+    exit;
+}
+
+// 4B. OTHER BUSINESS AUTO-GREETING / MENU GUARD (Prevent Bot-to-Bot loops!)
+// e.g. Salon/Restaurant auto-replies with "Thank you for contacting...", "How can we help you?", "15000/-", "Call us:"
+$isOtherBusinessBot = (bool)preg_match('/(thank you for contacting|thanks for contacting|how can we help you|please let us know how we can help|welcome to .*(salon|spa|restaurant|clinic|store)|our timings|for booking call|call us:|\/-\s*\n|15000\/-|10000\/-)/i', $msgText);
+if ($isOtherBusinessBot) {
+    // Log silently in dashboard without triggering an embarrassing bot-to-bot reply
+    http_response_code(200);
+    echo json_encode(['status' => 'ignored_other_business_auto_reply']);
+    exit;
+}
+
+// 4C. SHORT HUMAN ACKNOWLEDGMENT GUARD ("ok", "thanks", "shukriya", "theek hai", "👍")
+$isShortAck = (bool)preg_match('/^(ok|okay|k|kk|thanks|thank you|thx|ty|shukriya|jazakallah|theek hai|thik hai|alright|noted|fine|hmm|hmmm|sure|done|👍|👌|🙏)+[\.\!\s]*$/iu', $msgLower);
+if ($isShortAck) {
+    // Check if we already sent a closing thank-you recently — if so, stay silent like a human!
+    $lastOutMsg = '';
+    foreach (array_reverse($recentHistory) as $rh) {
+        if ($rh['role'] === 'model') { $lastOutMsg = mb_strtolower($rh['content']); break; }
+    }
+    if (strpos($lastOutMsg, 'most welcome') !== false || strpos($lastOutMsg, 'shukriya') !== false || strpos($lastOutMsg, 'wonderful day') !== false) {
+        http_response_code(200);
+        echo json_encode(['status' => 'ack_silent_complete']);
+        exit;
+    }
+    $ackReply = $quickIsRomanUrdu
+        ? "Aapka boht shukriya! 😊 Kabhi bhi koi sawal ho to bila jhijhak message kar dein."
+        : "You're most welcome! 😊 Feel free to reach out anytime if you have any questions.";
+    send_meta_whatsapp_message($senderPhone, $ackReply, $recipientPhoneId);
+    http_response_code(200);
+    echo json_encode(['status' => 'short_ack_replied']);
+    exit;
+}
 
 // Detect if client requested human handover
 $isHumanRequest = (bool)preg_match('/\b(insaan|human|agent|representative|call me|phone pe baat|kisi se baat|direct call|baat karni hai|owner se|adnan se)\b/i', $msgLower);
@@ -575,8 +627,22 @@ try {
 }
 
 /* ------------------------------------------------------------
-   8. DISPATCH OUTBOUND MESSAGE VIA META CLOUD API
+   8. DISPATCH OUTBOUND MESSAGE VIA META CLOUD API (WITH ANTI-DUPLICATE GUARD)
    ------------------------------------------------------------ */
+$lastOutText = '';
+foreach (array_reverse($recentHistory) as $rh) {
+    if ($rh['role'] === 'model') {
+        $lastOutText = trim((string)$rh['content']);
+        break;
+    }
+}
+if ($lastOutText !== '' && $lastOutText === trim((string)$aiReply)) {
+    // Prevent sending the exact same message twice in a row!
+    http_response_code(200);
+    echo json_encode(['status' => 'suppressed_duplicate_reply']);
+    exit;
+}
+
 $sendRes = send_meta_whatsapp_message($senderPhone, $aiReply, $recipientPhoneId);
 
 if ($isMusaMessage) {
