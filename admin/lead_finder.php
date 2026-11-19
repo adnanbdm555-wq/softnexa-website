@@ -580,8 +580,137 @@ $SECTORS = [
         'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum fashion brands ke liye 1-Click JazzCash/COD checkout aur automated courier tracking store banate hain: https://softnexasolution.com/#/demos",
         'query'    => 'Clothing Store Apparel Fashion Brand',
         'hook'     => '1-Click local payment checkout + automated courier dispatch.'
+    ],
+    'salons_spa' => [
+        'name'     => 'Beauty Salons, Parlours & Spas',
+        'icon'     => '💅',
+        'market'   => 'pk',
+        'service'  => 'Online Salon Booking Website & 24/7 WhatsApp Appointment Bot',
+        'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build modern online booking websites and 24/7 WhatsApp appointment bots specifically for beauty salons and spas. Your clients can browse bridal/hair/skin packages, book slots automatically, and receive WhatsApp appointment reminders so no-shows drop by 70%. Live demos: https://softnexasolution.com/#/demos — Would you like a quick 10-minute demo? Schedule here: https://softnexasolution.com/#/schedule",
+        'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum beauty salons aur parlours ke liye modern booking website aur 24/7 WhatsApp Appointment Bot banate hain — jisme aapke clients bridal, hair aur skin packages dekh kar khud appointment book kar sakte hain aur unhe automatic WhatsApp reminders milte hain. Live demos: https://softnexasolution.com/#/demos",
+        'query'    => 'Beauty Salon Parlour Spa Makeup Studio',
+        'hook'     => '24/7 automated WhatsApp appointment booking, bridal package menu & reminder alerts.'
+    ],
+    'restaurants_fb' => [
+        'name'     => 'Restaurants, Cafes & Bakeries',
+        'icon'     => '🍽️',
+        'market'   => 'pk',
+        'service'  => 'Commission-Free Direct Ordering Website & WhatsApp Menu Bot',
+        'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build commission-free online food ordering websites and 24/7 WhatsApp ordering bots for restaurants and cafes — helping you save 25-30% on delivery app commissions and turn repeat diners into direct loyal customers. Live demos: https://softnexasolution.com/#/demos — Schedule a quick 10-min walkthrough: https://softnexasolution.com/#/schedule",
+        'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum restaurants aur cafes ke liye direct online ordering website aur WhatsApp Menu Bot banate hain — jis se aap 25-30% delivery app commissions bacha kar direct orders aur table bookings le sakte hain. Live demos: https://softnexasolution.com/#/demos",
+        'query'    => 'Restaurant Cafe Bakery Fast Food',
+        'hook'     => 'Zero-commission direct online ordering, digital QR menu & WhatsApp order alerts.'
     ]
 ];
+
+// Smart Profession / Category Auto-Pitch Detector (Ensures every business gets a 100% relevant message!)
+function get_smart_pitch_for_lead($p, $currSector, $customQuery = '') {
+    $company = trim((string)($p['company'] ?? ''));
+    $name    = trim((string)($p['name'] ?? '')) ?: $company;
+    $text    = strtolower($company . ' ' . $name . ' ' . ($p['address'] ?? '') . ' ' . $customQuery);
+
+    $profiles = [
+        [
+            'pattern'  => '/\b(salon|saloon|parlor|parlour|beauty|spa|makeup|bridal|hair|nails|lash|brow|barber|grooming|aesthetic studio)\b/i',
+            'label'    => 'Beauty Salon & Spa',
+            'service'  => 'Online Salon Booking Website & 24/7 WhatsApp Appointment Bot',
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build modern booking websites and 24/7 WhatsApp appointment bots specifically for beauty salons and spas. Your clients can view your bridal, hair & skincare packages, book time slots automatically, and get WhatsApp reminders (reducing no-shows by 70%). Review live demos: https://softnexasolution.com/#/demos — Would you be open to a quick 10-minute demo this week? Schedule here: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum beauty salons aur parlours ke liye modern booking website aur 24/7 WhatsApp Appointment Bot banate hain — jisme clients aapke bridal, hair aur skincare packages dekh kar khud slot book kar sakte hain aur automatic WhatsApp reminders jate hain. Live demos: https://softnexasolution.com/#/demos — Kya main aapko 2 minute ka quick demo share kar sakta hoon?"
+        ],
+        [
+            'pattern'  => '/\b(restaurant|cafe|coffee|bakery|pizza|burger|biryani|bbq|kitchen|catering|food|grill|bistro|eatery|sweets|halwa|diner)\b/i',
+            'label'    => 'Restaurant & Food',
+            'service'  => 'Commission-Free Online Ordering Website & WhatsApp Menu Bot',
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build commission-free direct food ordering websites and 24/7 WhatsApp ordering bots for restaurants and cafes — helping you save 25-30% on third-party delivery app commissions and receive instant WhatsApp order alerts. Live demos: https://softnexasolution.com/#/demos — Book a 10-minute demo: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum restaurants aur cafes ke liye commission-free direct online ordering website aur WhatsApp Menu Bot banate hain — jis se aap delivery apps ka 25-30% commission bacha kar direct orders aur table bookings le sakte hain. Live demos: https://softnexasolution.com/#/demos"
+        ],
+        [
+            'pattern'  => '/\b(clinic|dental|dentist|doctor|dr\.|hospital|medical|derma|skin|health|pharma|orthodont|implant|physio|lab|diagnostic)\b/i',
+            'label'    => 'Clinic & Healthcare',
+            'service'  => 'Smart Clinic Booking Portal & WhatsApp Patient Reminder Bot',
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build online patient appointment portals and 24/7 WhatsApp reminder bots for medical and dental clinics — cutting missed appointments (no-shows) by 70% and organizing digital patient history. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute walkthrough: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum clinics aur doctors ke liye online appointment booking portal aur automated WhatsApp patient reminder bot banate hain jo missed appointments (no-shows) ko 70% kam karta hai. Live demos: https://softnexasolution.com/#/demos"
+        ],
+        [
+            'pattern'  => '/\b(real estate|property|properties|realty|builder|builders|developer|developers|estate|housing|brokerage|realtor)\b/i',
+            'label'    => 'Real Estate',
+            'service'  => 'EstateFlow CRM & 24/7 WhatsApp Property Bot',
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build custom 24/7 WhatsApp property automation bots and agent lead vault CRMs for real estate brokerages. It auto-delivers project PDF brochures within 30 seconds and books viewing appointments automatically. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute demo: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum real estate agencies aur builders ke liye automated WhatsApp property bot aur agent lead CRM banate hain jo clients ko 30 seconds mein project brochures bhej kar site visit book karta hai. Live demos: https://softnexasolution.com/#/demos"
+        ],
+        [
+            'pattern'  => '/\b(clothing|fashion|garment|garments|abaya|boutique|perfume|oud|fragrance|jewelry|jewellery|shoes|footwear|leather|bags|cosmetics|watches|apparel|textile|mart|store|shop)\b/i',
+            'label'    => 'E-Commerce & Retail',
+            'service'  => 'High-Converting E-Commerce Store & WhatsApp Order Bot',
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We engineer ultra-fast mobile e-commerce stores with 1-click checkout (Cards, COD, Local Wallets/Tabby) and automated WhatsApp order confirmation & cart recovery bots for retail brands. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute demo: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum retail aur fashion brands ke liye fast mobile E-Commerce Store (Cards/JazzCash/COD checkout) aur automated WhatsApp order confirmation bot banate hain jo aapki online sales ko double karta hai. Live demos: https://softnexasolution.com/#/demos"
+        ],
+        [
+            'pattern'  => '/\b(gym|fitness|crossfit|yoga|pilates|workout|athletic|training club|health club)\b/i',
+            'label'    => 'Gym & Fitness',
+            'service'  => 'Gym Membership Portal & Automated WhatsApp Fee Reminder Bot',
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build smart gym membership management systems with automated WhatsApp monthly fee reminders, attendance tracking, and online trainer bookings. Live demos: https://softnexasolution.com/#/demos — Book a quick 10-min demo: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum gyms aur fitness clubs ke liye smart membership software aur automated WhatsApp monthly fee reminder bot banate hain jo member renewals aur attendance 100% auto-manage karta hai. Live demos: https://softnexasolution.com/#/demos"
+        ],
+        [
+            'pattern'  => '/\b(school|academy|institute|college|university|coaching|tuition|education|montessori|training center)\b/i',
+            'label'    => 'Education & Academy',
+            'service'  => 'Smart School/Academy Portal & Parent WhatsApp Alert System',
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build modern school & academy management portals with automated WhatsApp fee challan reminders, student attendance alerts, and online admissions. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute demo: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum schools aur academies ke liye complete management portal aur Parents WhatsApp Alert System (fee reminders, attendance, online admission) banate hain. Live demos: https://softnexasolution.com/#/demos"
+        ],
+        [
+            'pattern'  => '/\b(logistics|cargo|freight|transport|courier|shipping|fleet|movers|packer|forwarding)\b/i',
+            'label'    => 'Logistics & Fleet',
+            'service'  => 'FleetTrack ERP & Automated WhatsApp Delivery Tracking',
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build custom fleet tracking ERPs and driver mobile apps for logistics companies — eliminating paper challans and sending real-time WhatsApp shipment tracking to clients. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute demo: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum logistics aur cargo companies ke liye custom fleet tracking ERP aur driver mobile app banate hain jo customers ko live WhatsApp delivery status deta hai. Live demos: https://softnexasolution.com/#/demos"
+        ],
+        [
+            'pattern'  => '/\b(contract|construction|fitout|fit-out|interior|architect|mep|engineering|renovation|decor)\b/i',
+            'label'    => 'Contracting & Interior',
+            'service'  => 'BuildPro Project Costing, BOQ & Client Portal ERP',
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build custom project costing, BOQ tracking, and client portfolio websites for contracting and interior fit-out companies. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute demo: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum contracting aur interior design companies ke liye project costing ERP aur modern portfolio website banate hain. Live demos: https://softnexasolution.com/#/demos"
+        ],
+        [
+            'pattern'  => '/\b(car|auto|motors|garage|workshop|detailing|rent a car|car rental|tyre|showroom)\b/i',
+            'label'    => 'Automotive & Motors',
+            'service'  => 'Auto Booking Portal & 24/7 WhatsApp Inquiry Bot',
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build custom car showroom / rental / workshop booking websites and 24/7 WhatsApp AI inquiry bots that auto-share availability, pricing, and book appointments instantly. Live demos: https://softnexasolution.com/#/demos — Schedule a demo: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum auto showrooms, workshops aur car rentals ke liye booking website aur 24/7 WhatsApp inquiry bot banate hain jo clients ko foran rates aur booking slots deta hai. Live demos: https://softnexasolution.com/#/demos"
+        ]
+    ];
+
+    foreach ($profiles as $pr) {
+        if (preg_match($pr['pattern'], $text)) {
+            return [
+                'label'    => $pr['label'],
+                'service'  => $pr['service'],
+                'pitch_en' => str_replace('[Name]', $name, $pr['pitch_en']),
+                'pitch_ro' => str_replace('[Name]', $name, $pr['pitch_ro'])
+            ];
+        }
+    }
+
+    // If custom query was searched and doesn't match the default sector tab, use universal business pitch
+    if (!empty($customQuery) && stripos($currSector['query'], $customQuery) === false) {
+        $ind = ucwords($customQuery);
+        return [
+            'label'    => $ind,
+            'service'  => "Custom Website, 24/7 WhatsApp AI Bot & Automation for {$ind}",
+            'pitch_en' => "Hello {$name}, this is Adnan from SoftNexa (softnexasolution.com). We build modern high-converting websites, 24/7 WhatsApp AI customer booking bots, and custom business automation under a 100% Fixed-Price Guarantee. Review our live interactive demos: https://softnexasolution.com/#/demos — Would you be open to a quick 10-minute Google Meet discovery call? Schedule here: https://softnexasolution.com/#/schedule",
+            'pitch_ro' => "Assalam o Alaikum {$name}, SoftNexa se Adnan baat kar raha hoon. Hum businesses ke liye modern website, 24/7 WhatsApp AI booking bot aur custom automation software 100% Fixed-Price Guarantee par banate hain. Live demos: https://softnexasolution.com/#/demos — Kya hum 10-minute ka quick demo share kar sakte hain?"
+        ];
+    }
+
+    return [
+        'label'    => $currSector['name'],
+        'service'  => $currSector['service'],
+        'pitch_en' => str_replace('[Name]', $name, $currSector['pitch_en'] ?? $currSector['pitch']),
+        'pitch_ro' => str_replace('[Name]', $name, $currSector['pitch_ro'] ?? $currSector['pitch'])
+    ];
+}
 
 // Current Selection
 $selectedSectorKey = $_GET['sector'] ?? 'realestate_uae';
@@ -870,12 +999,16 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
     $srcType    = $p['source_type'] ?? '';
     $liUrl      = $p['linkedin_url'] ?? '';
     
-    // English Pitch (Default for International)
-    $waTextEn = str_replace('[Name]', $clientName, $currSector['pitch_en'] ?? $currSector['pitch']);
+    // Smart Profession / Category Pitch Detection
+    $smartPitch = get_smart_pitch_for_lead($p, $currSector, $customQuery);
+    $leadService = $smartPitch['service'];
+
+    // English Pitch (Profession-matched!)
+    $waTextEn = $smartPitch['pitch_en'];
     $waUrlEn = $waNum ? ('https://wa.me/' . $waNum . '?text=' . rawurlencode($waTextEn)) : '';
 
-    // Roman Urdu Pitch
-    $waTextRo = str_replace('[Name]', $clientName, $currSector['pitch_ro'] ?? $currSector['pitch']);
+    // Roman Urdu Pitch (Profession-matched!)
+    $waTextRo = $smartPitch['pitch_ro'];
     $waUrlRo = $waNum ? ('https://wa.me/' . $waNum . '?text=' . rawurlencode($waTextRo)) : '';
 
     // Direct Short Proposal Trigger Link
@@ -883,17 +1016,17 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
         . "&company=" . urlencode($p['company'] ?? '') 
         . "&email=" . urlencode($p['email'] ?? '') 
         . "&phone=" . urlencode($p['phone'] ?? '') 
-        . "&service=" . urlencode($currSector['service']) 
+        . "&service=" . urlencode($leadService) 
         . "&lang=" . (($p['country'] ?? '') === 'PK' ? 'ro' : 'en');
 
     // AI Cold Outreach Agent Prefill Link
-    $aiPrefill = "Target Company: " . ($p['company'] ?? '') . " (" . ($p['address'] ?? '') . "). Decision Maker: " . $clientName . ". Website: " . (($p['website'] ?? '') ?: 'None') . ". Pitch our " . $currSector['service'] . ".";
+    $aiPrefill = "Target Company: " . ($p['company'] ?? '') . " (" . ($p['address'] ?? '') . "). Industry: " . $smartPitch['label'] . ". Decision Maker: " . $clientName . ". Website: " . (($p['website'] ?? '') ?: 'None') . ". Pitch our " . $leadService . ".";
     $aiPitchUrl = "agency_agents.php?agent=outreach&phone=" . urlencode($waNum) . "&prefill=" . urlencode($aiPrefill);
 
     // Google Calendar / Meet Scheduling URL
     $calPrefill = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" 
         . urlencode("SoftNexa Discovery Call: " . ($p['company'] ?? '') . " & SoftNexa")
-        . "&details=" . urlencode("30-Minute Google Meet Discovery Call regarding " . $currSector['service'] . ".\nClient: " . $clientName . "\nPhone: " . ($p['phone'] ?? '') . "\nWebsite: https://softnexasolution.com")
+        . "&details=" . urlencode("30-Minute Google Meet Discovery Call regarding " . $leadService . ".\nClient: " . $clientName . "\nPhone: " . ($p['phone'] ?? '') . "\nWebsite: https://softnexasolution.com")
         . "&location=" . urlencode("https://meet.google.com/new");
   ?>
     <div class="prospect-card" style="<?= $srcType ? 'border-color:rgba(110,75,255,.35)' : '' ?>">
@@ -919,6 +1052,11 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
         </div>
 
         <div class="prospect-body">
+          <div style="margin-bottom:4px">
+            <span style="display:inline-block;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(110,75,255,.1);color:var(--iris)">
+              🎯 Auto-Pitch: <?= e($smartPitch['label']) ?>
+            </span>
+          </div>
           <?php if (!empty($p['phone'])): ?>
             <div>📱 <b>Phone / WhatsApp:</b> <?= e($p['phone']) ?></div>
           <?php endif; ?>
@@ -957,7 +1095,7 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
               <input type="hidden" name="email" value="<?= e($p['email']) ?>">
               <input type="hidden" name="name" value="<?= e($clientName) ?>">
               <input type="hidden" name="company" value="<?= e($p['company'] ?? '') ?>">
-              <input type="hidden" name="service" value="<?= e($currSector['service']) ?>">
+              <input type="hidden" name="service" value="<?= e($leadService) ?>">
               <input type="hidden" name="pitch" value="<?= e($waTextEn) ?>">
               <button type="submit" class="btn-meet" style="background:linear-gradient(120deg,#0284C7,#0369A1)" title="Send Personalized Cold Email directly from marketing@softnexasolution.com">
                 <span>✉️</span> <span>Auto-Email</span>
@@ -983,8 +1121,8 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
             <input type="hidden" name="company" value="<?= e($p['company'] ?? '') ?>">
             <input type="hidden" name="phone" value="<?= e($p['phone']) ?>">
             <input type="hidden" name="email" value="<?= e($p['email']) ?>">
-            <input type="hidden" name="service" value="<?= e($currSector['service']) ?>">
-            <input type="hidden" name="industry" value="<?= e($currSector['name']) ?>">
+            <input type="hidden" name="service" value="<?= e($leadService) ?>">
+            <input type="hidden" name="industry" value="<?= e($smartPitch['label']) ?>">
             <input type="hidden" name="website" value="<?= e($p['website']) ?>">
             <input type="hidden" name="region" value="<?= e($p['country'] === 'PK' ? 'Pakistan' : 'Middle East (' . $p['country'] . ')') ?>">
             <input type="hidden" name="notes" value="Scouted via Middle East Lead Scout. Address: <?= e($p['address']) ?>. Rating: <?= e($p['rating']) ?>">
