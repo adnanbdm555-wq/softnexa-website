@@ -152,10 +152,22 @@ function run_serper_scrape($apiKey, $mode, $query, $city) {
 
 // Helper: Live Scrape via SerpApi.com (Google Maps + LinkedIn X-Ray — Works Globally)
 function run_serpapi_scrape($apiKey, $mode, $query, $city) {
-    $countryCode = 'GCC';
-    if (in_array($city, ['Dubai', 'Abu Dhabi', 'Sharjah'])) $countryCode = 'UAE';
-    elseif (in_array($city, ['Riyadh', 'Jeddah'])) $countryCode = 'KSA';
-    elseif (in_array($city, ['Karachi', 'Lahore', 'Islamabad'])) $countryCode = 'PK';
+    $countryCode = 'INTL';
+    if (stripos($city, 'United Arab Emirates') !== false || stripos($city, 'Dubai') !== false || stripos($city, 'Abu Dhabi') !== false || stripos($city, 'Sharjah') !== false) $countryCode = 'UAE';
+    elseif (stripos($city, 'Saudi Arabia') !== false || stripos($city, 'Riyadh') !== false || stripos($city, 'Jeddah') !== false) $countryCode = 'KSA';
+    elseif (stripos($city, 'Pakistan') !== false || stripos($city, 'Karachi') !== false || stripos($city, 'Lahore') !== false || stripos($city, 'Islamabad') !== false) $countryCode = 'PK';
+    elseif (stripos($city, 'United Kingdom') !== false || stripos($city, 'London') !== false) $countryCode = 'UK';
+    elseif (stripos($city, 'United States') !== false || stripos($city, 'New York') !== false) $countryCode = 'USA';
+    elseif (stripos($city, 'Canada') !== false || stripos($city, 'Toronto') !== false) $countryCode = 'CA';
+    elseif (stripos($city, 'Australia') !== false || stripos($city, 'Sydney') !== false) $countryCode = 'AU';
+    elseif (stripos($city, 'Qatar') !== false || stripos($city, 'Doha') !== false) $countryCode = 'QA';
+    elseif (stripos($city, 'Kuwait') !== false) $countryCode = 'KW';
+    elseif (stripos($city, 'Oman') !== false || stripos($city, 'Muscat') !== false) $countryCode = 'OM';
+    elseif (stripos($city, 'Bahrain') !== false) $countryCode = 'BH';
+    elseif (stripos($city, 'Germany') !== false) $countryCode = 'DE';
+    elseif (stripos($city, 'Turkey') !== false) $countryCode = 'TR';
+    elseif (stripos($city, 'Malaysia') !== false) $countryCode = 'MY';
+    elseif (stripos($city, 'Singapore') !== false) $countryCode = 'SG';
 
     if ($mode === 'linkedin') {
         $q = 'site:linkedin.com/in/ ("CEO" OR "Founder" OR "Managing Director" OR "Owner") "' . $query . '" "' . $city . '"';
@@ -712,15 +724,37 @@ function get_smart_pitch_for_lead($p, $currSector, $customQuery = '') {
     ];
 }
 
+// Global Country -> Cities Directory
+$COUNTRIES_CITIES = [
+    'Pakistan'             => ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Sialkot', 'Gujranwala', 'Hyderabad'],
+    'United Arab Emirates' => ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah', 'Al Ain'],
+    'Saudi Arabia'         => ['Riyadh', 'Jeddah', 'Dammam', 'Khobar', 'Makkah', 'Madinah', 'Tabuk'],
+    'Qatar'                => ['Doha', 'Al Wakrah', 'Lusail', 'Al Rayyan'],
+    'Kuwait'               => ['Kuwait City', 'Hawalli', 'Salmiya', 'Farwaniya'],
+    'Oman'                 => ['Muscat', 'Salalah', 'Sohar', 'Nizwa'],
+    'Bahrain'              => ['Manama', 'Riffa', 'Muharraq'],
+    'United Kingdom'       => ['London', 'Manchester', 'Birmingham', 'Leeds', 'Glasgow', 'Bradford', 'Liverpool'],
+    'United States'        => ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Dallas', 'Miami', 'Austin', 'San Francisco', 'Atlanta'],
+    'Canada'               => ['Toronto', 'Vancouver', 'Calgary', 'Montreal', 'Ottawa', 'Mississauga', 'Edmonton'],
+    'Australia'            => ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide'],
+    'Germany'              => ['Berlin', 'Munich', 'Frankfurt', 'Hamburg', 'Cologne'],
+    'Turkey'               => ['Istanbul', 'Ankara', 'Izmir', 'Antalya', 'Bursa'],
+    'Malaysia'             => ['Kuala Lumpur', 'Penang', 'Johor Bahru', 'Shah Alam'],
+    'Singapore'            => ['Singapore']
+];
+
 // Current Selection
 $selectedSectorKey = $_GET['sector'] ?? 'realestate_uae';
 if (!isset($SECTORS[$selectedSectorKey])) $selectedSectorKey = 'realestate_uae';
 $currSector = $SECTORS[$selectedSectorKey];
 
-$selectedCity = trim($_GET['city'] ?? 'Dubai');
+$selectedCountry = trim($_GET['country'] ?? 'United Arab Emirates');
+if (!isset($COUNTRIES_CITIES[$selectedCountry])) $selectedCountry = 'United Arab Emirates';
+$selectedCity = trim($_GET['city'] ?? $COUNTRIES_CITIES[$selectedCountry][0]);
 $customQuery  = trim($_GET['q'] ?? '');
 
-$searchQuery = $customQuery !== '' ? $customQuery : ($currSector['query'] . ' in ' . $selectedCity);
+$fullLocation = $selectedCity . ', ' . $selectedCountry;
+$searchQuery  = ($customQuery !== '' ? $customQuery : $currSector['query']) . ' in ' . $fullLocation;
 
 // Built-in Curated Verified B2B Prospects Dataset for UAE, KSA, and Pakistan
 $SAMPLE_DIRECTORY = [
@@ -898,7 +932,7 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 <!-- Sector Selector Tabs -->
 <div class="scout-tabs">
   <?php foreach ($SECTORS as $k => $s): ?>
-    <a href="?sector=<?= $k ?>&city=<?= urlencode($selectedCity) ?>" class="scout-tab <?= $selectedSectorKey === $k ? 'active' : '' ?>">
+    <a href="?sector=<?= $k ?>&country=<?= urlencode($selectedCountry) ?>&city=<?= urlencode($selectedCity) ?>" class="scout-tab <?= $selectedSectorKey === $k ? 'active' : '' ?>">
       <span><?= $s['icon'] ?></span>
       <span><?= e($s['name']) ?></span>
     </a>
@@ -907,30 +941,33 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 
 <!-- Search Controls Box -->
 <div class="scout-search-bar">
-  <form method="get" action="lead_finder.php" style="display:grid;grid-template-columns:2fr 1.5fr 1fr auto;gap:12px;align-items:end">
+  <form method="get" action="lead_finder.php" style="display:grid;grid-template-columns:2fr 1.2fr 1.2fr auto auto;gap:12px;align-items:end">
     <input type="hidden" name="sector" value="<?= e($selectedSectorKey) ?>">
     <div>
       <label style="display:block;font-size:.8rem;color:var(--mut);margin-bottom:6px">Target Business / Industry</label>
-      <input type="text" name="q" value="<?= e($customQuery ?: $currSector['query']) ?>" class="field" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.04);color:var(--ink)" placeholder="e.g. Real Estate, Logistics, Contracting">
+      <input type="text" id="scout-q-input" name="q" value="<?= e($customQuery ?: $currSector['query']) ?>" oninput="syncScrapeInputs()" class="field" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.04);color:var(--ink)" placeholder="e.g. Beauty Salon, Real Estate, Dental Clinic">
     </div>
     <div>
-      <label style="display:block;font-size:.8rem;color:var(--mut);margin-bottom:6px">City / Gulf Location</label>
-      <select name="city" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line2);background:var(--panel2);color:var(--ink)">
-        <option value="Dubai" <?= $selectedCity === 'Dubai' ? 'selected' : '' ?>>Dubai, UAE (Business Bay, Downtown, Marina)</option>
-        <option value="Abu Dhabi" <?= $selectedCity === 'Abu Dhabi' ? 'selected' : '' ?>>Abu Dhabi, UAE (Corniche, Al Reem)</option>
-        <option value="Riyadh" <?= $selectedCity === 'Riyadh' ? 'selected' : '' ?>>Riyadh, KSA (Al Olaya, KAFD, Al Malaz)</option>
-        <option value="Jeddah" <?= $selectedCity === 'Jeddah' ? 'selected' : '' ?>>Jeddah, KSA (Al Rawdah, Al Andalus)</option>
-        <option value="Sharjah" <?= $selectedCity === 'Sharjah' ? 'selected' : '' ?>>Sharjah, UAE (Industrial & Freezone)</option>
-        <option value="Karachi" <?= $selectedCity === 'Karachi' ? 'selected' : '' ?>>Karachi, Pakistan (Clifton, DHA)</option>
-        <option value="Lahore" <?= $selectedCity === 'Lahore' ? 'selected' : '' ?>>Lahore, Pakistan (Gulberg, DHA)</option>
-        <option value="Islamabad" <?= $selectedCity === 'Islamabad' ? 'selected' : '' ?>>Islamabad, Pakistan (Blue Area)</option>
+      <label style="display:block;font-size:.8rem;color:var(--mut);margin-bottom:6px">Country</label>
+      <select id="scout-country-select" name="country" onchange="updateCityDropdown()" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line2);background:var(--panel2);color:var(--ink)">
+        <?php foreach ($COUNTRIES_CITIES as $cName => $cList): ?>
+          <option value="<?= e($cName) ?>" <?= $selectedCountry === $cName ? 'selected' : '' ?>><?= e($cName) ?></option>
+        <?php endforeach; ?>
       </select>
     </div>
     <div>
-      <button type="submit" class="btn p" style="width:100%;justify-content:center;padding:11px">🔍 Scout Leads</button>
+      <label style="display:block;font-size:.8rem;color:var(--mut);margin-bottom:6px">City</label>
+      <select id="scout-city-select" name="city" onchange="syncScrapeInputs()" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line2);background:var(--panel2);color:var(--ink)">
+        <?php foreach ($COUNTRIES_CITIES[$selectedCountry] as $ct): ?>
+          <option value="<?= e($ct) ?>" <?= $selectedCity === $ct ? 'selected' : '' ?>><?= e($ct) ?></option>
+        <?php endforeach; ?>
+      </select>
     </div>
     <div>
-      <a href="https://www.google.com/maps/search/<?= urlencode($searchQuery) ?>" target="_blank" rel="noopener" class="btn" style="padding:11px 16px;white-space:nowrap" title="Open live interactive Google Maps search in new tab">
+      <button type="submit" class="btn p" style="width:100%;justify-content:center;padding:11px 16px;white-space:nowrap">🔍 Scout Leads</button>
+    </div>
+    <div>
+      <a href="https://www.google.com/maps/search/<?= urlencode($searchQuery) ?>" target="_blank" rel="noopener" class="btn" style="padding:11px 14px;white-space:nowrap" title="Open live interactive Google Maps search in new tab">
         🗺️ Live Map
       </a>
     </div>
@@ -941,15 +978,15 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
     <div>
       <span style="font-size:.82rem;color:var(--cyan);font-weight:700">LIVE SCRAPER ENGINE:</span>
       <b style="font-size:.92rem;color:var(--ink);margin-left:6px"><?= e($currSector['service']) ?></b>
-      <span style="display:block;font-size:.78rem;color:var(--mut);margin-top:2px">Query: <code><?= e($customQuery ?: $currSector['query']) ?></code> in <b><?= e($selectedCity) ?></b></span>
+      <span style="display:block;font-size:.78rem;color:var(--mut);margin-top:2px">Query: <code id="live-q-preview"><?= e($customQuery ?: $currSector['query']) ?></code> in <b id="live-loc-preview"><?= e($fullLocation) ?></b></span>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <form method="post" style="margin:0;display:inline-block">
         <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
         <input type="hidden" name="action" value="live_scrape">
         <input type="hidden" name="scrape_mode" value="google_maps">
-        <input type="hidden" name="scrape_query" value="<?= e($customQuery ?: $currSector['query']) ?>">
-        <input type="hidden" name="scrape_city" value="<?= e($selectedCity) ?>">
+        <input type="hidden" class="js-scrape-q" name="scrape_query" value="<?= e($customQuery ?: $currSector['query']) ?>">
+        <input type="hidden" class="js-scrape-city" name="scrape_city" value="<?= e($fullLocation) ?>">
         <input type="hidden" name="scrape_sector" value="<?= e($selectedSectorKey) ?>">
         <button type="submit" class="btn p" style="padding:8px 14px;font-size:.82rem;background:linear-gradient(120deg,#059669,#0284C7);border:0">
           🌐 Scrape Google Maps Live
@@ -959,8 +996,8 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
         <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
         <input type="hidden" name="action" value="live_scrape">
         <input type="hidden" name="scrape_mode" value="linkedin">
-        <input type="hidden" name="scrape_query" value="<?= e($customQuery ?: $currSector['query']) ?>">
-        <input type="hidden" name="scrape_city" value="<?= e($selectedCity) ?>">
+        <input type="hidden" class="js-scrape-q" name="scrape_query" value="<?= e($customQuery ?: $currSector['query']) ?>">
+        <input type="hidden" class="js-scrape-city" name="scrape_city" value="<?= e($fullLocation) ?>">
         <input type="hidden" name="scrape_sector" value="<?= e($selectedSectorKey) ?>">
         <button type="submit" class="btn" style="padding:8px 14px;font-size:.82rem;background:rgba(10,102,194,.18);border:1px solid #0A66C2;color:#60A5FA;font-weight:700">
           💼 Scrape LinkedIn Live
@@ -976,6 +1013,36 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
     </div>
   </div>
 </div>
+
+<script>
+const COUNTRIES_CITIES = <?= json_encode($COUNTRIES_CITIES) ?>;
+function updateCityDropdown() {
+  var cSel = document.getElementById('scout-country-select');
+  var ctSel = document.getElementById('scout-city-select');
+  if (!cSel || !ctSel) return;
+  var cities = COUNTRIES_CITIES[cSel.value] || [];
+  ctSel.innerHTML = '';
+  cities.forEach(function(city) {
+    var opt = document.createElement('option');
+    opt.value = city;
+    opt.textContent = city;
+    ctSel.appendChild(opt);
+  });
+  syncScrapeInputs();
+}
+function syncScrapeInputs() {
+  var qVal = (document.getElementById('scout-q-input') || {}).value || '';
+  var cVal = (document.getElementById('scout-country-select') || {}).value || '';
+  var ctVal = (document.getElementById('scout-city-select') || {}).value || '';
+  var fullLoc = ctVal ? (ctVal + ', ' + cVal) : cVal;
+  document.querySelectorAll('.js-scrape-q').forEach(function(el){ el.value = qVal; });
+  document.querySelectorAll('.js-scrape-city').forEach(function(el){ el.value = fullLoc; });
+  var qp = document.getElementById('live-q-preview');
+  var lp = document.getElementById('live-loc-preview');
+  if (qp) qp.textContent = qVal;
+  if (lp) lp.textContent = fullLoc;
+}
+</script>
 
 <!-- Scouted Leads Results Grid -->
 <h2 style="margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
