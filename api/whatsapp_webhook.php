@@ -425,26 +425,41 @@ if ($geminiKey) {
 }
 
 /* ------------------------------------------------------------
-   6. SMART HUMAN CONSULTANT CONVERSATIONAL ENGINE (FALLBACK / CORE)
+   6. SMART HUMAN CONSULTANT CONVERSATIONAL ENGINE (CATEGORY & MULTI-TURN TRAINED)
    ------------------------------------------------------------ */
 if (!$llmSucceeded || empty($aiReply)) {
-    // Intent flags
+    // Combine recent history text to remember which category we are discussing
+    $historyContext = '';
+    foreach ($recentHistory as $rh) {
+        $historyContext .= ' ' . mb_strtolower((string)$rh['content']);
+    }
+
+    // Core Intent & Category Flags
+    $isInterested       = (bool)preg_match('/\b(interested|yes|yeah|yep|sure|tell me more|details|detail|batao|batayein|bataein|ji|haan|han|hanji|share|send|info|information|how it works|kaise kaam|kese kam)\b/i', $msgLower);
+    $isCallReady        = (bool)preg_match('/\b(schedule|meeting|google meet|zoom|call me|let\'s talk|lets talk|tomorrow|today|kal|aaj|book a call|time slot|available at|pm|am)\b/i', $msgLower);
+    $isBranchOrCount    = (bool)preg_match('/\b(single|one|two|three|multi|multiple|branch|branches|location|locations|products|items|skus|users|staff|doctors|vehicles|students)\b|\b\d{1,5}\b/i', $msgLower);
     $isObjection        = (bool)preg_match('/\b(mehnga|mehenga|zyada hai|ziada hai|sasta|discount|kam karo|kam kar|soch kar|soch ke|baad mein|bad mein|aglay maheenay|next month|too expensive|expensive|high price|budget nahi|budget issue|cheaper)\b/i', $msgLower);
     $isFollowUp         = (bool)preg_match('/\b(are you there|active ho|reply karo|sun rahe ho|kahan ho|sun rha|hello\?|koi hai|response do|jawab do)\b/i', $msgLower);
     $isTimeline         = (bool)preg_match('/\b(kitne din|kitnay din|din|timeline|kab tak|kitna time|duration|delivery time|urgent|kab live|kab milega|kab milegi)\b/i', $msgLower);
-    $isPrice            = (bool)preg_match('/\b(price|cost|charges|rate|kharcha|kitna|pese|paise|fees|budget|quote|estimate)\b/i', $msgLower);
-    $isProductBusiness  = (bool)preg_match('/\b(leather|clothing|clothes|shoes|jewelry|bags|cosmetics|watches|perfumes|fashion|garments|food|products|items|saman|bechna|sell|selling|brand)\b/i', $msgLower);
+    $isPrice            = (bool)preg_match('/\b(price|cost|charges|rate|kharcha|kitna|pese|paise|fees|budget|quote|estimate|package|packages)\b/i', $msgLower);
+    $isAiBot            = (bool)preg_match('/\b(whatsapp bot|ai bot|chatbot|chat bot|automation|auto reply|ai agent|whatsapp automation)\b/i', $msgLower);
+    $isSalonGym         = (bool)preg_match('/\b(salon|saloon|parlor|parlour|spa|beauty|makeup|bridal|hair|gym|fitness|workout)\b/i', $msgLower);
+    $isRestaurant       = (bool)preg_match('/\b(restaurant|cafe|coffee|bakery|pizza|burger|biryani|kitchen|catering|food delivery|menu)\b/i', $msgLower);
+    $isDoctorClinic     = (bool)preg_match('/\b(clinic|doctor|dental|dentist|teeth|hospital|patient|medical|health|pharma|derma)\b/i', $msgLower);
+    $isRealEstate       = (bool)preg_match('/\b(real estate|property|plots|plot|builder|housing|flats|apartments|brokerage)\b/i', $msgLower);
+    $isSchool           = (bool)preg_match('/\b(school|academy|institute|college|coaching|tuition|education|students|campus)\b/i', $msgLower);
+    $isLogistics        = (bool)preg_match('/\b(logistics|cargo|freight|transport|courier|shipping|fleet|delivery tracking)\b/i', $msgLower);
+    $isAuto             = (bool)preg_match('/\b(car rental|rent a car|showroom|motors|garage|workshop|automotive)\b/i', $msgLower);
+    $isProductBusiness  = (bool)preg_match('/\b(leather|clothing|clothes|shoes|jewelry|bags|cosmetics|watches|perfumes|fashion|garments|products|items|saman|bechna|sell|selling|brand|abaya)\b/i', $msgLower);
     $isEcommerce        = (bool)preg_match('/\b(ecommerce|e-commerce|online store|online shop|daraz|shopify|store|cart)\b/i', $msgLower);
     $isDigitalMarketing = (bool)preg_match('/\b(marketing|digital marketing|social media|facebook ads|meta ads|instagram|tiktok|seo|ad campaign|leads|run ads|promotion|smm)\b/i', $msgLower);
-    $isWebsite          = (bool)preg_match('/\b(website|web site|site|webpage|web page|landing page|wordpress|web portal|web dev)\b/i', $msgLower);
-    $isDoctorClinic     = (bool)preg_match('/\b(clinic|doctor|dental|dentist|teeth|hospital|patient|medical|health|pharma)\b/i', $msgLower);
-    $isRealEstate       = (bool)preg_match('/\b(real estate|property|plots|plot|builder|housing|flats|apartments)\b/i', $msgLower);
-    $isSalonGym         = (bool)preg_match('/\b(salon|parlor|parlour|spa|beauty|gym|fitness|workout)\b/i', $msgLower);
-    $isOfficeContact    = (bool)preg_match('/\b(office|address|kahan|location|call|phone|number|milna|visit|shahrah|karachi|rabta)\b/i', $msgLower);
     $isERP              = (bool)preg_match('/\b(erp|pos|inventory|crm|warehouse|stock|accounting|billing|invoicing|distribution)\b/i', $msgLower);
     $isApp              = (bool)preg_match('/\b(app|mobile|android|ios|flutter|playstore|apk)\b/i', $msgLower);
+    $isWebsite          = (bool)preg_match('/\b(website|web site|site|webpage|web page|landing page|wordpress|web portal|web dev)\b/i', $msgLower);
+    $isOfficeContact    = (bool)preg_match('/\b(office|address|kahan|location|call|phone|number|milna|visit|shahrah|karachi|rabta)\b/i', $msgLower);
     $isDemo             = (bool)preg_match('/\b(demo|sample|portfolio|previous work|link|check|live)\b/i', $msgLower);
     $isGreeting         = (bool)preg_match('/\b(hi|hello|hey|assalam|salam|aoa|kese ho|kaise ho|keise|kaisa|kese hain)\b/i', $msgLower);
+    $isServicesAsk      = (bool)preg_match('/\b(services|service|kya karte|kia kartay|kya kaam|what do you do|offer)\b/i', $msgLower);
 
     // 0. Auto-Deal Closer (Objection / Price Hesitation Handler)
     if ($isObjection) {
@@ -456,132 +471,157 @@ if (!$llmSucceeded || empty($aiReply)) {
             $aiReply = "I completely respect keeping a close eye on budget! 💼✨\n\nCheap templates often end up costing 3x more in bugs, slow checkout speeds, and rewrites. At SoftNexa, we de-risk your investment completely:\n✅ 100% Fixed-Price Guarantee (zero hidden hourly bills)\n✅ Milestone-Gated Delivery (you only pay as you verify working modules)\n✅ Complimentary 48-Hour Scope Blueprint\n\nWould you be open to a quick 10-minute call tomorrow to structure a phased plan that fits your goals?";
         }
     }
-    // 1. Timeline Question (kitnay din mein milegi)
-    elseif ($isTimeline) {
+    // 1. Follow-up Check ("Are you there?")
+    elseif ($isFollowUp) {
         if ($lang === 'ro') {
-            $aiReply = "SoftNexa par project delivery guaranteed on-time hoti hai:\n\n🛍️ E-Commerce Online Store: 2 se 3 weeks mein complete payment gateways, product catalog aur WhatsApp order alerts ke sath live ho jata hai.\n⚡ Corporate / Business Website: 5 se 7 working days.\n📱 Mobile App / Custom ERP: 3 se 6 weeks (weekly milestone demos ke sath).\n\nAapko kab tak store launch karna hai? Hum timeline ko fast-track bhi kar sakte hain!";
-        } elseif ($lang === 'ur') {
-            $aiReply = "سافٹ نیکسا پر پراجیکٹ ڈیلیوری مقررہ وقت پر مکمل کی جاتی ہے:\n\n🛍️ ای کامرس آن لائن اسٹور: 2 سے 3 ہفتے (پیمنٹ گیٹ وے اور واٹس ایپ نوٹیفکیشن کے ساتھ)\n⚡ کاروباری ویب سائٹ: 5 سے 7 ورکنگ ڈیز\n📱 موبائل ایپ یا کسٹم سافٹ ویئر: 3 سے 6 ہفتے\n\nآپ کا ہدف کب تک لائیو کرنے کا ہے؟";
+            $aiReply = "Ji bilkul, main yahan mojood hoon aur aapki baat sun raha hoon! 😊 Batayein aap apne business ke liye kis cheez par kaam karwana chahte hain?";
         } else {
-            $aiReply = "Our delivery timelines:\n🛍️ E-Commerce Stores: 2-3 weeks (fully integrated with payments & order alerts)\n⚡ Corporate Websites: 5-7 working days\n📱 Mobile Apps & Custom ERPs: 3-6 weeks with weekly milestone demos.\n\nWhat is your target launch deadline?";
+            $aiReply = "Yes, I'm right here and ready to help! 😊 Tell me what you'd like to build or automate for your business.";
         }
     }
-    // 2. Pricing Question
+    // 2. Client Ready for Call / Meeting Scheduling
+    elseif ($isCallReady) {
+        if ($lang === 'ro') {
+            $aiReply = "Zabardast! Aap apni marzi ka 10-minute Google Meet slot seedha yahan select kar sakte hain (foran confirmation mil jayegi):\n📅 https://softnexasolution.com/#/schedule\n\nYa agar aap chahein to mujhe yahin apna suitable time bata dein, main Adnan ke sath aapki call confirm kar deta hoon! 🤝";
+        } else {
+            $aiReply = "Wonderful! You can pick your preferred 10-minute Google Meet slot directly here for instant confirmation:\n📅 https://softnexasolution.com/#/schedule\n\nOr simply reply with your preferred time right here and I'll lock it in with our senior solutions architect! 🤝";
+        }
+    }
+    // 3. Pricing Question (Tailored & Non-Generic)
     elseif ($isPrice) {
         if ($lang === 'ro') {
-            $aiReply = "SoftNexa 100% Fixed-Price Guarantee par kaam karta hai (zero hidden hourly charges ya unexpected bills!). 💼✨\n\nChunkay hamara har online store, website ya mobile app client ke business scale aur features ke mutabiq bespoke develop hota hai, is liye hum generic rates quote nahi karte. Hum pehle aapke required features ko samajh kar ek tailored Scope Blueprint aur fixed-price quotation provide karte hain.\n\nAapke store mein kitne products honge aur kya online payment gateway (Cards/JazzCash/Easypaisa) chahiye?";
+            $aiReply = "SoftNexa **100% Fixed-Price Guarantee** par kaam karta hai (zero hidden charges ya hourly billing!). 💼✨\n\nChunkay har system aapke business ke exact features aur scale ke mutabiq custom build hota hai, hum pehle aapki requirements samajh kar ek **Free 48-Hour Scope Blueprint** aur clear fixed-price milestone quote dete hain.\n\nAap bas 2 cheezein bata dein:\n1️⃣ Aapka business kis category ka hai (ya kitni branches/products hain)?\n2️⃣ Kya aapko sirf Website chahiye ya sath 24/7 WhatsApp AI Bot bhi?";
         } elseif ($lang === 'ur') {
-            $aiReply = "سافٹ نیکسا 100% فکسڈ پرائس گارنٹی پر کام کرتا ہے (کوئی غیر متوقع اخراجات نہیں)۔ 💼✨\n\nچونکہ ہر پراجیکٹ کلائنٹ کی ضروریات کے مطابق تیار ہوتا ہے، ہم آپ کے فیچرز دیکھ کر کسٹم اسکوپ بلیو پرنٹ اور فکسڈ کوٹیشن فراہم کرتے ہیں۔\n\nآپ کے مطلوبہ اہم فیچرز کیا ہیں؟";
+            $aiReply = "سافٹ نیکسا 100% فکسڈ پرائس گارنٹی پر کام کرتا ہے (کوئی پوشیدہ اخراجات نہیں)۔ 💼✨\n\nہم آپ کی ضروریات کے مطابق کسٹم اسکوپ بلیو پرنٹ اور فکسڈ کوٹیشن فراہم کرتے ہیں۔ براہ کرم اپنے کاروبار کی نوعیت اور مطلوبہ فیچرز بتا دیں۔";
         } else {
-            $aiReply = "SoftNexa operates under a strict 100% Fixed-Price Guarantee with milestone delivery (no runaway hourly fees). 💼✨\n\nBecause every system is custom-tailored to your business workflows, we prepare a tailored Scope Blueprint and milestone breakdown based on your required features.\n\nCould you share the key features or payment gateways you need?";
+            $aiReply = "SoftNexa operates under a strict **100% Fixed-Price Guarantee** with milestone delivery (zero surprise hourly fees). 💼✨\n\nBecause every platform is custom-tailored to your workflows, we prepare a complimentary **48-Hour Scope Blueprint** with an exact fixed quote.\n\nTo put that together quickly: how many branches/products do you operate, and would you also like our 24/7 WhatsApp AI Bot included?";
         }
     }
-    // 3. Product / Business Type Details (e.g. Leather products, clothing, etc.)
-    elseif ($isProductBusiness) {
+    // 4. Timeline Question
+    elseif ($isTimeline) {
         if ($lang === 'ro') {
-            $aiReply = "Boht zabardast! Aapke business ke liye hum modern, fast aur high-converting E-Commerce Online Store build kar sakte hain. 🛍️✨\n\nIsme yeh key features shamil honge:\n\n✅ Beautiful Product Catalog, High-Res Images & Filter options\n💳 Online Payment (Credit/Debit Cards, JazzCash, Easypaisa) + Cash on Delivery (COD)\n📦 Automatic WhatsApp Order Alerts (client aur aap dono ke liye)\n⚡ 100% Mobile Optimized Experience\n\nAapke paas taqreeban kitne products honge list karne ke liye?";
-        } elseif ($lang === 'ur') {
-            $aiReply = "بہت شاندار! آپ کے کاروبار کے لیے ہم جدید اور تیز رفتار ای کامرس اسٹور تیار کر سکتے ہیں۔ 🛍️✨\n\nاس میں پروڈکٹ کیٹلاگ، آن لائن پیمنٹس (کارڈز/جاز کیش/ایزی پیسہ/سی او ڈی) اور واٹس ایپ آرڈر الرٹس شامل ہوں گے۔\n\nآپ کے پاس تقریباً کتنی پراڈکٹس ہوں گی؟";
+            $aiReply = "SoftNexa par delivery guaranteed on-time hoti hai:\n\n⚡ Business / Booking Website: **5 se 7 working days**\n🤖 24/7 AI WhatsApp Sales Bot: **3 se 5 working days**\n🛍️ E-Commerce Online Store: **2 se 3 weeks**\n📊 Custom ERP / Mobile App: **3 se 6 weeks** (weekly live demos ke sath)\n\nAapka target launch kab tak ka hai? Hum timeline fast-track bhi kar sakte hain!";
         } else {
-            $aiReply = "Excellent! We can architect a high-converting, modern E-Commerce store for your product line with smooth product filtering, payment integrations (Card/COD), and automated WhatsApp order notifications. How many products are in your initial catalog?";
+            $aiReply = "Our guaranteed delivery timelines:\n⚡ Business / Booking Websites: **5–7 working days**\n🤖 24/7 AI WhatsApp Bot: **3–5 working days**\n🛍️ E-Commerce Stores: **2–3 weeks**\n📊 Custom ERPs & Mobile Apps: **3–6 weeks** (with weekly staging demos)\n\nWhat target launch date are you aiming for?";
         }
     }
-    // 4. E-Commerce Specific
-    elseif ($isEcommerce) {
+    // 5. Category-Specific Handlers (10 Industries + 4 Core Services)
+    elseif ($isAiBot) {
         if ($lang === 'ro') {
-            $aiReply = "E-Commerce ke liye hum ultra-fast online shopping stores banate hain:\n\n🛍️ Smooth Product Catalog & Filtering\n💳 Payment Gateways (Credit Card, JazzCash, Easypaisa, COD)\n📦 Automated WhatsApp Order Confirmation & Tracking\n⚡ 100% Mobile Optimized Experience\n\nAapke store mein taqreeban kitne products honge aur kya aapko mobile app bhi chahiye?";
+            $aiReply = "Zabardast choice! 🤖✨ Hamara **24/7 AI WhatsApp Sales & Booking Agent** bilkul ek smart human representative ki tarah aapke clients ko Roman Urdu, Urdu aur English mein instant reply karta hai:\n\n✅ 2-Second Instant Lead Response (raat 2 baje bhi)\n✅ Automatic Appointment / Order Booking\n✅ Live Admin Dashboard + 1-Click Human Takeover\n\nAap kis business ke liye yeh WhatsApp AI Bot lagwana chahte hain?";
         } else {
-            $aiReply = "We engineer high-performance E-Commerce stores with catalog search, payment gateway integrations, and automated WhatsApp order alerts. How many products are you looking to launch?";
-        }
-    }
-
-    if ($isFollowUp) {
-        if ($lang === 'ro') {
-            $aiReply = "Ji bilkul, main yahan mojood hoon aur aapki baat sun raha hoon! 😊\n\nSoftNexa ki taraf se batayein, aap kis service ya project (Website, Mobile App, ya ERP Software) ke baare mein maloomat lena chahte hain?";
-        } elseif ($lang === 'ur') {
-            $aiReply = "جی بالکل، میں یہاں موجود ہوں اور آپ کی مدد کے لیے دستیاب ہوں! 😊\n\nبتائیں، آپ کس پروجیکٹ (ویب سائٹ، موبائل ایپ، یا سافٹ ویئر) کے حوالے سے رہنمائی چاہتے ہیں؟";
-        } else {
-            $aiReply = "Yes, I am right here and ready to help! 😊\n\nPlease let me know what software, website, or mobile application project you would like to discuss.";
-        }
-    } elseif ($isDigitalMarketing) {
-        if ($lang === 'ro') {
-            $aiReply = "G bilkul! Digital & Social Media Marketing SoftNexa ki core performance service hai. 🚀📈\n\nHum complete 360° marketing campaigns run karte hain:\n\n🎯 Targeted Meta & Google Ads (High-ROAS sales & verified leads)\n🎬 Viral TikTok & Instagram Reels (Script, hook creation & dynamic video editing)\n📅 30-Day Social Media Management (Creative graphics, copy & scheduled daily posting)\n🔍 SEO & Google Local Search Ranking\n\nAap apne kis business ya brand ke liye marketing karwana chahte hain?";
-        } elseif ($lang === 'ur') {
-            $aiReply = "جی بالکل! ڈیجیٹل مارکیٹنگ اور سوشل میڈیا مارکیٹنگ سافٹ نیکسا کی بنیادی پرفارمنس سروس ہے۔ 🚀📈\n\nہم مکمل مارکیٹنگ ہینڈل کرتے ہیں:\n🎯 فیس بک، انسٹاگرام اور گوگل ایڈز\n🎬 ٹک ٹاک اور انسٹاگرام وائرل ریلز ویڈیو پروڈکشن\n📅 30 دن کی سوشل میڈیا پوسٹس اور مینجمنٹ\n🔍 ایس ای او اور رینکنگ\n\nآپ اپنے کس کاروبار کی مارکیٹنگ کروانا چاہتے ہیں؟";
-        } else {
-            $aiReply = "Absolutely! Digital & Social Media Marketing is our core performance service at SoftNexa. 🚀📈\n\n🎯 Targeted Meta & Google Ads (High-ROAS lead generation & sales)\n🎬 Viral TikTok & Instagram Reels Video Production\n📅 30-Day Social Media Management & Creative Graphics\n🔍 SEO & Top Google Search Ranking\n\nWhat type of business are you scaling, and what is your primary objective (Leads or Direct Sales)?";
-        }
-    } elseif ($isWebsite) {
-        if ($lang === 'ro') {
-            $aiReply = "G bilkul! Website development SoftNexa ki core specialization hai. 💻✨\n\nHum high-speed, mobile-responsive aur modern UI/UX wali websites banate hain. Aapko kis type ki website chahiye:\n\n1️⃣ Business / Corporate Portfolio (Services, Company Profile, Lead Forms)\n2️⃣ E-Commerce Online Store (Product Catalog, Cart, Payment/COD)\n3️⃣ Custom Web Portal (Booking System, Client Dashboard)\n\nAapka business kis type ka hai taake main relevant live demos share kar sakoon?";
-        } elseif ($lang === 'ur') {
-            $aiReply = "جی بالکل! ویب سائٹ ڈیولپمنٹ سافٹ نیکسا کی بنیادی مہارت ہے۔ 💻✨\n\nہم تیز رفتار، موبائل فرینڈلی اور جدید ڈیزائن والی ویب سائٹس بناتے ہیں:\n1️⃣ کاروباری پورٹ فولیو ویب سائٹ\n2️⃣ آن لائن ای کامرس اسٹور (پراڈکٹس اور آرڈرز)\n3️⃣ کسٹم ویب پورٹل یا بکنگ سسٹم\n\nآپ کا بزنس کس نوعیت کا ہے تاکہ ہم بہترین ڈیمو شیئر کر سکیں؟";
-        } else {
-            $aiReply = "Absolutely! Custom website development is our core expertise at SoftNexa. 💻✨\n\nWe build high-converting, mobile-responsive, and modern web platforms:\n1️⃣ Corporate Portfolio Website\n2️⃣ E-Commerce Online Store\n3️⃣ Custom Web Portal or SaaS Platform\n\nCould you share a bit about your business and key features you need?";
-        }
-    } elseif ($isDoctorClinic) {
-        if ($lang === 'ro') {
-            $aiReply = "Zabardast! Clinics aur Healthcare ke liye hum complete digital system provide karte hain:\n\n🩺 Online Patient Appointment Booking\n📋 Doctors & Treatments Profile\n🔔 Automated WhatsApp Reminders & Follow-ups\n💳 Billing & Patient History Records\n\nHumara live clinic prototype dekhna chahenge? https://softnexasolution.com/#/demos";
-        } else {
-            $aiReply = "We specialize in digital healthcare solutions for clinics and hospitals:\n🩺 Online Patient Appointments\n📋 Doctor & Treatment Profiles\n🔔 Automated WhatsApp Booking Reminders\n\nReview our live healthcare prototypes: https://softnexasolution.com/#/demos";
-        }
-    } elseif ($isRealEstate) {
-        if ($lang === 'ro') {
-            $aiReply = "Real Estate aur Construction ke liye hum premium lead-generation portals banate hain:\n\n🏢 Property Listings & Video Tours\n📍 Interactive Location Maps & Amenities\n📲 Direct WhatsApp Inquiries to Agents\n📊 CRM Lead Tracking Dashboard\n\nKya aapko multi-property agency portal chahiye ya kisi specific project/society ki website?";
-        } else {
-            $aiReply = "For Real Estate and Builders, we build high-converting property portals with interactive listings, location maps, and instant WhatsApp lead capture. Would you like to see a live prototype?";
+            $aiReply = "Great choice! 🤖✨ Our **24/7 AI WhatsApp Sales & Booking Agent** handles customer inquiries in 2 seconds across English, Urdu & Arabic — qualifying leads, booking appointments, and syncing directly to your CRM with 1-click human takeover.\n\nWhat type of business would you like to deploy this bot for?";
         }
     } elseif ($isSalonGym) {
         if ($lang === 'ro') {
-            $aiReply = "Salons, Spas aur Fitness Gyms ke liye hum stylish, fast websites aur booking systems banate hain:\n\n💇‍♀️ Services Menu & Pricing Packages\n📅 Date & Time Slot Booking\n📸 Instagram Gallery & Reviews Showcase\n🔔 WhatsApp Booking Confirmations\n\nAapka setup single branch hai ya multi-branch?";
+            $aiReply = "Boht zabardast! Salons, Spas aur Fitness studios ke liye hum stylish booking websites aur **24/7 WhatsApp Appointment Bot** banate hain: 💅✨\n\n✅ Bridal, Hair & Skincare Packages Menu\n📅 Automatic Date & Time Slot Booking\n🔔 Automated WhatsApp Reminders (no-shows 70% kam)\n\nAapki single branch hai ya multiple branches? Taake main aapke liye tailored Scope Blueprint tayyar kar sakoon!";
         } else {
-            $aiReply = "We craft beautiful, high-converting booking websites for Salons, Spas, and Gyms with slot booking and automated WhatsApp alerts. How many locations does your brand operate?";
+            $aiReply = "We build sleek booking websites and **24/7 WhatsApp Appointment Bots** specifically for Salons, Spas & Gyms: 💅✨\n\n✅ Interactive Service & Bridal Packages Menu\n📅 Automated Slot Booking & WhatsApp Reminders (70% fewer no-shows)\n\nDo you operate a single location or multiple branches?";
         }
-    } elseif ($isEcommerce) {
+    } elseif ($isRestaurant) {
         if ($lang === 'ro') {
-            $aiReply = "E-Commerce ke liye hum ultra-fast online shopping stores banate hain:\n\n🛍️ Smooth Product Catalog & Filtering\n💳 Payment Gateways (Credit Card, JazzCash, Easypaisa, COD)\n📦 Automated WhatsApp Order Confirmation & Tracking\n⚡ 100% Mobile Optimized Experience\n\nAapke store mein taqreeban kitne products honge?";
+            $aiReply = "Zabardast! Restaurants aur Cafes ke liye hum **Commission-Free Direct Ordering Website + WhatsApp Menu Bot** banate hain: 🍽️✨\n\n✅ Delivery apps ka 25–30% commission bachayein\n✅ Digital QR Menu + Direct Online Ordering & Table Booking\n✅ Instant WhatsApp Order Alerts (kitchen aur customer dono ko)\n\nAapki kitni branches hain aur kya aap apni khud ki delivery handle karte hain?";
         } else {
-            $aiReply = "We engineer high-performance E-Commerce stores with lightning-fast catalog search, payment gateway integrations, and automated WhatsApp order alerts. What product lines are you selling?";
+            $aiReply = "For Restaurants & Cafes, we build **Commission-Free Direct Ordering Websites + WhatsApp Menu Bots** so you save 25–30% on delivery app commissions and receive instant WhatsApp order alerts. 🍽️✨\n\nHow many branches do you operate, and do you handle in-house delivery?";
         }
-    } elseif ($isPrice) {
+    } elseif ($isDoctorClinic) {
         if ($lang === 'ro') {
-            $aiReply = "SoftNexa 100% Fixed-Price Guarantee par kaam karta hai (zero hourly charges ya unexpected surprises!). 💼✨\n\nChunkay hamari har website, mobile app ya ERP system client ki exact business requirements aur workflow ke mutabiq bespoke develop hota hai, is liye hum generic rates quote nahi karte. Hum pehle aapke required features ko samajh kar ek tailored Scope Blueprint aur fixed-price milestone roadmap provide karte hain.\n\nAapke project mein kin key features ya modules ki zaroorat hai? Ya kya hum ek short 10-minute discovery call arrange karein?";
-        } elseif ($lang === 'ur') {
-            $aiReply = "سافٹ نیکسا 100% فکسڈ پرائس گارنٹی پر کام کرتا ہے (کوئی پوشیدہ اخراجات یا اوورلی بلنگ نہیں)۔ 💼✨\n\nچونکہ ہمارا ہر پروجیکٹ کلائنٹ کے بزنس اسکیل کے مطابق کسٹم تیار کیا جاتا ہے، اس لیے ہم عمومی قیمت کوٹ نہیں کرتے۔ ہم آپ کے مطلوبہ فیچرز کے مطابق کسٹم اسکوپ بلیو پرنٹ اور شفاف مائل اسٹون فکسڈ کوٹیشن فراہم کرتے ہیں۔\n\nآپ اپنے پروجیکٹ کے درکار فیچرز بتا سکتے ہیں یا کیا ہم ایک مختصر 10 منٹ کی مشاورتی کال شیڈول کریں؟";
+            $aiReply = "Zabardast! Clinics aur Doctors ke liye hum complete **Smart Clinic Booking Portal + WhatsApp Patient Reminder Bot** banate hain: 🩺✨\n\n✅ Online Doctor Appointment & Slot Booking\n🔔 Automated WhatsApp Patient Reminders (missed appointments 70% kam)\n📋 Digital Patient History & Billing Records\n\nAapke clinic mein kitne doctors hain aur kya multi-branch setup hai?";
         } else {
-            $aiReply = "SoftNexa operates under a strict 100% Fixed-Price Guarantee with transparent milestone delivery (zero hidden hourly surprises). 💼✨\n\nBecause every software platform, mobile app, and portal we engineer is 100% bespoke to your exact operational workflows, we do not quote generic prices. Our solution architects prepare a tailored Scope Blueprint and milestone breakdown based on your required features.\n\nCould you share the key features you need, or would you like to schedule a quick 10-minute discovery call?";
+            $aiReply = "We engineer **Smart Clinic Booking Portals & WhatsApp Patient Reminder Bots** for medical and dental clinics — cutting no-shows by 70% and organizing digital patient records. 🩺✨\n\nHow many doctors or branches does your clinic operate?";
         }
-    } elseif ($isTimeline) {
+    } elseif ($isRealEstate) {
         if ($lang === 'ro') {
-            $aiReply = "Delivery timeline project ke scope par depend karti hai:\n\n⚡ Business Website: 5 se 7 working days mein live ho jati hai.\n🛍️ E-Commerce Online Store: 2 se 3 weeks.\n🏢 Custom ERP / Mobile App: 3 se 6 weeks (milestone delivery ke sath).\n\nHum guaranteed on-time delivery dete hain. Aapko kab tak project live chahiye?";
+            $aiReply = "Real Estate agencies aur builders ke liye hum **EstateFlow CRM + 24/7 WhatsApp Property Bot** banate hain: 🏢✨\n\n✅ Clients ko 30 seconds mein project PDF brochures & floor plans auto-deliver\n✅ Automatic site visit / viewing booking\n✅ Agent Lead Lock Vault CRM (koi lead leak nahi hoti)\n\nKya aapko apni brokerage agency ke liye portal chahiye ya kisi specific housing project ke liye?";
         } else {
-            $aiReply = "Our delivery timelines:\n⚡ Corporate Websites: 5-7 working days\n🛍️ E-Commerce Stores: 2-3 weeks\n🏢 Custom Systems/Apps: 3-6 weeks with weekly milestone demos.\nWhat is your target launch deadline?";
+            $aiReply = "For Real Estate brokerages & developers, we build **EstateFlow CRM & 24/7 WhatsApp Property Bots** that auto-deliver off-plan PDF brochures within 30 seconds and book viewing slots automatically. 🏢✨\n\nAre you looking for an agency-wide CRM or a dedicated project showcase portal?";
         }
-    } elseif ($isOfficeContact) {
+    } elseif ($isSchool) {
         if ($lang === 'ro') {
-            $aiReply = "Aap hamari senior technical team se direct connect kar sakte hain:\n\n🏢 Office: Shahrah-e-Faisal, Karachi, Pakistan\n📞 Direct Call / WhatsApp: +92 335 5556290\n✉️ Email: info@softnexasolution.com\n🌐 Website: https://softnexasolution.com\n\nAap chahein to office visit kar sakte hain ya hum ek 10-minute discovery call arrange kar dein?";
+            $aiReply = "Schools aur Academies ke liye hum **Complete Management Portal + Parents WhatsApp Alert System** banate hain: 🏫✨\n\n✅ Automated WhatsApp Fee Challan Reminders\n✅ Daily Student Attendance & Result Alerts\n✅ Online Admission Forms & Teacher Dashboard\n\nAapke institute mein taqreeban kitne students hain?";
         } else {
-            $aiReply = "You can connect directly with our technical leadership:\n🏢 Office: Shahrah-e-Faisal, Karachi, Pakistan\n📞 Direct Phone / WhatsApp: +92 335 5556290\n✉️ Email: info@softnexasolution.com\n\nWould you prefer an in-person meeting or a 10-minute discovery call?";
+            $aiReply = "For Schools & Academies, we build modern management portals with **Automated WhatsApp Fee Reminders, Attendance Alerts & Online Admissions**. 🏫✨\n\nRoughly how many students or campuses do you manage?";
+        }
+    } elseif ($isLogistics) {
+        if ($lang === 'ro') {
+            $aiReply = "Logistics aur Cargo companies ke liye hum **FleetTrack ERP & Driver Mobile App** banate hain: 🚚✨\n\n✅ Paper challans 100% digital (Digital POD)\n✅ Live GPS Driver Tracking & Dispatch Dashboard\n✅ Customers ko automated WhatsApp shipment status alerts\n\nAapki fleet mein taqreeban kitni vehicles hain?";
+        } else {
+            $aiReply = "For Logistics & Freight companies, we engineer **FleetTrack ERPs & Driver Mobile Apps** with digital POD and real-time WhatsApp shipment tracking for clients. 🚚✨\n\nHow many vehicles or hubs are in your fleet?";
+        }
+    } elseif ($isAuto) {
+        if ($lang === 'ro') {
+            $aiReply = "Auto Showrooms, Workshops aur Car Rentals ke liye hum **Online Booking Portal + 24/7 WhatsApp Inquiry Bot** banate hain jo clients ko foran vehicle availability, rates aur booking slots deta hai. 🚗✨\n\nKya aapko car rental booking chahiye ya showroom/workshop management system?";
+        } else {
+            $aiReply = "For Automotive Showrooms, Workshops & Car Rentals, we build online booking portals and **24/7 WhatsApp AI Inquiry Bots** that auto-share availability and book slots instantly. 🚗✨\n\nIs this for car rentals, a showroom, or workshop bookings?";
+        }
+    } elseif ($isProductBusiness || $isEcommerce) {
+        if ($lang === 'ro') {
+            $aiReply = "Boht zabardast! Aapke brand ke liye hum ultra-fast, high-converting **E-Commerce Online Store** build kar sakte hain: 🛍️✨\n\n✅ Modern Mobile-First Product Catalog & Filters\n💳 1-Click Checkout (Cards, JazzCash, Easypaisa, COD / Tabby)\n📦 Automated WhatsApp Order Confirmation & Tracking Alerts\n\nAapke paas taqreeban kitne products honge aur kya aapko sath WhatsApp AI Sales Bot bhi chahiye?";
+        } else {
+            $aiReply = "Excellent! We engineer ultra-fast, mobile-first **E-Commerce Stores** with 1-click checkout (Cards, COD, Local Wallets/Tabby) and automated WhatsApp order confirmation & cart recovery. 🛍️✨\n\nRoughly how many products are in your catalog?";
+        }
+    } elseif ($isDigitalMarketing) {
+        if ($lang === 'ro') {
+            $aiReply = "G bilkul! Digital & Performance Marketing SoftNexa ki core growth service hai: 🚀📈\n\n🎯 Targeted Meta & Google Ads (High-ROAS sales & verified leads)\n🎬 Viral TikTok & Instagram Reels Production\n📅 Complete Monthly Social Media Management & SEO\n\nAap kis business/brand ke liye leads ya online sales barhana chahte hain?";
+        } else {
+            $aiReply = "Absolutely! Performance Marketing is a core growth service at SoftNexa: 🚀📈\n\n🎯 High-ROAS Meta & Google Ad Campaigns\n🎬 Viral Reels/TikTok Scripts & Creative Management\n🔍 SEO & Local Search Ranking\n\nWhat business are you scaling, and are you targeting leads or direct online sales?";
         }
     } elseif ($isERP) {
         if ($lang === 'ro') {
-            $aiReply = "SoftNexa ka custom ERP aapki multi-branch inventory, accounts, POS billing aur live reporting ko single cloud dashboard par le aata hai. 📊\n\nHum 100% bespoke banate hain, yani aapke business ke mutabiq customize hota hai. Aapki total kitni branches ya active users honge?";
+            $aiReply = "SoftNexa ka custom **ERP / CRM / POS** aapki multi-branch inventory, billing, accounting aur live reporting ko ek single cloud dashboard par le aata hai. 📊✨\n\nAapki total kitni branches ya active staff users honge?";
         } else {
-            $aiReply = "We engineer custom ERP and POS systems covering multi-branch inventory, automated billing, and live management dashboards. How many branches and active operators will use the platform?";
+            $aiReply = "We engineer custom **ERP, CRM & POS platforms** covering multi-branch inventory, automated billing, and live executive dashboards. 📊✨\n\nHow many branches and active users will use the system?";
         }
     } elseif ($isApp) {
         if ($lang === 'ro') {
-            $aiReply = "Hum iOS aur Android ke liye smooth Flutter mobile apps develop karte hain 📱 (with offline sync, push notifications aur online payment integrations).\n\nKya aapke paas app ka concept/wireframe ready hai ya scratch se design karna hai?";
+            $aiReply = "Hum iOS aur Android ke liye high-performance **Flutter Mobile Apps** develop karte hain 📱 (offline support, push notifications aur payment gateways ke sath).\n\nKya aapka app concept/features ready hain ya scratch se prototype design karna hai?";
         } else {
-            $aiReply = "We build high-performance mobile apps for iOS and Android using Flutter with offline support, real-time push alerts, and payment gateways. Do you have wireframes prepared, or should we design the prototype from scratch?";
+            $aiReply = "We build high-performance **iOS & Android Mobile Apps (Flutter)** with push notifications, offline sync, and payment gateways. 📱\n\nDo you have a feature list ready, or should we design the prototype from scratch?";
+        }
+    } elseif ($isWebsite) {
+        if ($lang === 'ro') {
+            $aiReply = "G bilkul! Website development SoftNexa ki core specialization hai. 💻✨\n\nHum 5–7 din mein high-speed, mobile-responsive websites deliver karte hain (Corporate Portfolio, Booking Portal ya E-Commerce Store).\n\nAapka business kis category ka hai taake main uske mutabiq best solution aur live demo suggest kar sakoon?";
+        } else {
+            $aiReply = "Absolutely! Custom high-speed websites are our core expertise at SoftNexa (delivered in 5–7 working days). 💻✨\n\nWhat industry is your business in so I can suggest the best layout and features?";
+        }
+    } elseif ($isOfficeContact) {
+        if ($lang === 'ro') {
+            $aiReply = "Aap hamari senior team se direct connect kar sakte hain:\n\n🏢 Office: Shahrah-e-Faisal, Karachi, Pakistan\n📞 Direct Call / WhatsApp: +92 335 5556290\n✉️ Email: info@softnexasolution.com\n🌐 Website: https://softnexasolution.com\n\nKya aap office visit karna chahenge ya 10-minute Google Meet call schedule kar dein?";
+        } else {
+            $aiReply = "You can connect directly with our senior team:\n🏢 Office: Shahrah-e-Faisal, Karachi, Pakistan\n📞 Direct Call / WhatsApp: +92 335 5556290\n✉️ Email: info@softnexasolution.com\n\nWould you prefer an in-person meeting or a 10-minute Google Meet call?";
         }
     } elseif ($isDemo) {
         if ($lang === 'ro') {
-            $aiReply = "Aap hamare live custom software prototypes yahan directly explore kar sakte hain:\n🌐 https://softnexasolution.com/#/demos\n\nIsme Healthcare Clinics, Retail POS, Logistics aur E-Commerce ke live interactive demos mojood hain. Aapko kis industry ka demo review karna hai?";
+            $aiReply = "Aap hamare live interactive software prototypes yahan khud test kar sakte hain:\n🌐 https://softnexasolution.com/#/demos\n\nInme se jo demo aapke business se match kare wo batayein — hum usay 100% aapke brand ke mutabiq customize kar sakte hain!";
         } else {
-            $aiReply = "You can test our live industry software prototypes here:\n🌐 https://softnexasolution.com/#/demos\n\nCovers Healthcare, Retail POS, Logistics, and E-Commerce. Which vertical would you like to review?";
+            $aiReply = "You can test our live interactive prototypes directly here:\n🌐 https://softnexasolution.com/#/demos\n\nLet me know which demo matches your vision and we can customize it 100% for your brand!";
         }
-    } elseif ($isGreeting || preg_match('/\b(services|service|kya karte|kia kartay|kya kaam|what do you do|offer)\b/i', $msgLower)) {
+    }
+    // 6. Client Replied "Interested" / "Yes" / "Details" (from our Lead Scout pitch!)
+    elseif ($isInterested) {
+        $detectedCat = 'your business';
+        if (strpos($historyContext, 'salon') !== false || strpos($historyContext, 'spa') !== false) $detectedCat = 'your salon';
+        elseif (strpos($historyContext, 'clinic') !== false || strpos($historyContext, 'dental') !== false) $detectedCat = 'your clinic';
+        elseif (strpos($historyContext, 'restaurant') !== false || strpos($historyContext, 'cafe') !== false) $detectedCat = 'your restaurant';
+        elseif (strpos($historyContext, 'real estate') !== false || strpos($historyContext, 'property') !== false) $detectedCat = 'your real estate brokerage';
+        elseif (strpos($historyContext, 'store') !== false || strpos($historyContext, 'commerce') !== false) $detectedCat = 'your online store';
+
+        if ($lang === 'ro') {
+            $aiReply = "Boht shukriya interest show karne ka! 😊✨\n\nHum {$detectedCat} ke liye ek **Free 48-Hour Scope Blueprint** aur fixed-price roadmap tayyar kar sakte hain.\n\nBas 2 choti baatein bata dein:\n1️⃣ Aapki kitni branches/locations hain?\n2️⃣ Kya aap kal 10-minute ki quick Google Meet call par live demo dekhna chahenge, ya details yahin WhatsApp par share kar doon?\n\n📅 Instant Call Slot: https://softnexasolution.com/#/schedule";
+        } else {
+            $aiReply = "Awesome, glad you're interested! 😊✨\n\nWe'd love to put together a complimentary **48-Hour Scope Blueprint** and fixed-price plan tailored specifically for {$detectedCat}.\n\nJust 2 quick questions:\n1️⃣ Do you operate a single location or multiple branches?\n2️⃣ Would you prefer a quick 10-minute Google Meet walkthrough, or should I share the breakdown right here on WhatsApp?\n\n📅 Book 10-Min Call: https://softnexasolution.com/#/schedule";
+        }
+    }
+    // 7. Follow-Up Answer (Client gave branch count / product count / number!)
+    elseif ($isBranchOrCount) {
+        if ($lang === 'ro') {
+            $aiReply = "Perfect, note kar liya! ✅ Is scale ke hisaab se hum aapke liye boht clean aur fast system **100% Fixed-Price Guarantee** par build kar sakte hain.\n\nAglay step ke liye aap 10-minute ka quick Google Meet slot yahan select kar lein taake hamare senior architect aapko live demo aur exact fixed quote de sakein:\n📅 https://softnexasolution.com/#/schedule\n\nYa agar aap chahein to mujhe apna email bata dein, main short proposal bhej deta hoon!";
+        } else {
+            $aiReply = "Got it, noted! ✅ For that scale, we can architect a super clean, fast system under our **100% Fixed-Price Guarantee**.\n\nAs a quick next step, feel free to pick a 10-minute Google Meet slot below so our senior architect can walk you through a tailored blueprint and fixed quote:\n📅 https://softnexasolution.com/#/schedule\n\nOr reply with your email and I'll send over a short tailored proposal!";
+        }
+    }
+    // 8. Greeting or General Services Inquiry -> SoftNexa Top 4 Core Services
+    elseif ($isGreeting || $isServicesAsk) {
         if ($lang === 'ur') {
             $aiReply = "وعلیکم السلام! سافٹ نیکسا میں خوش آمدید۔ 👋\n\nہم 100% فکسڈ پرائس گارنٹی پر کاروبار کے لیے یہ 4 اہم سروسز فراہم کرتے ہیں:\n\n🤖 1. 24/7 AI واٹس ایپ سیلز اور بکنگ بوٹ\n🛍️ 2. جدید ویب سائٹس اور ای کامرس اسٹورز\n📊 3. کسٹم ERP، CRM اور POS سافٹ ویئر\n📱 4. موبائل ایپس (iOS/Android) اور ڈیجیٹل مارکیٹنگ\n\nآپ اپنے کاروبار کے لیے کس چیز پر کام کروانا چاہتے ہیں؟ تفصیل بتائیں تاکہ میں آپ کو بہترین گائیڈ کر سکوں!";
         } elseif ($lang === 'ro') {
@@ -589,11 +629,13 @@ if (!$llmSucceeded || empty($aiReply)) {
         } else {
             $aiReply = "Hello and welcome to SoftNexa Solutions! 👋\n\nWe help businesses scale faster under our **100% Fixed-Price Guarantee** across 4 core solutions:\n\n🤖 **24/7 AI WhatsApp Sales & Booking Bots**\n🛍️ **High-Converting Websites & E-Commerce Stores**\n📊 **Custom ERP, CRM & POS Software**\n📱 **Mobile Apps (iOS/Android) & Performance Marketing**\n\nWhat kind of business or project are you looking to build? Tell me a bit about your requirements so I can tailor the best solution for you!";
         }
-    } else {
+    }
+    // 9. Natural Human Clarification (Never robotic!)
+    else {
         if ($lang === 'ro') {
-            $aiReply = "Boht zabardast! Aapki yeh requirement bilkul clear aur high-impact lag rahi hai. ✨\n\nHum isko aapke exact business workflow ke mutabiq **100% Fixed-Price Guarantee** par custom build kar sakte hain. Isme aap kaunse zaroori features chah rahe hain, aur kya main aapke sath hamare live demos share kar doon?\n\n🌐 https://softnexasolution.com/#/demos";
+            $aiReply = "Shukriya message karne ka! 😊 Taake main aapko bilkul sahi guide kar sakoon — kya aap thora sa bata sakte hain ke aap apne business ke liye Website, E-Commerce Store, WhatsApp AI Bot ya Custom Software mein se kis cheez par kaam karwana chahte hain?";
         } else {
-            $aiReply = "That sounds like a great initiative! ✨ We can custom-build this tailored specifically to your workflow under our **100% Fixed-Price Guarantee**.\n\nWhat are the top 2–3 features you'd like included? You can also preview our live systems here: https://softnexasolution.com/#/demos";
+            $aiReply = "Thanks for reaching out! 😊 So I can guide you accurately — could you share a quick line on what you're looking to build for your business (e.g., Website, E-Commerce Store, 24/7 WhatsApp AI Bot, or Custom Software)?";
         }
     }
 }
