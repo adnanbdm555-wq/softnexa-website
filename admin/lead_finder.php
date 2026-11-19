@@ -150,6 +150,95 @@ function run_serper_scrape($apiKey, $mode, $query, $city) {
     return ['ok' => true, 'leads' => $results];
 }
 
+// Helper: Live Scrape via SerpApi.com (Google Maps + LinkedIn X-Ray — Works Globally)
+function run_serpapi_scrape($apiKey, $mode, $query, $city) {
+    $countryCode = 'GCC';
+    if (in_array($city, ['Dubai', 'Abu Dhabi', 'Sharjah'])) $countryCode = 'UAE';
+    elseif (in_array($city, ['Riyadh', 'Jeddah'])) $countryCode = 'KSA';
+    elseif (in_array($city, ['Karachi', 'Lahore', 'Islamabad'])) $countryCode = 'PK';
+
+    if ($mode === 'linkedin') {
+        $q = 'site:linkedin.com/in/ ("CEO" OR "Founder" OR "Managing Director" OR "Owner") "' . $query . '" "' . $city . '"';
+        $url = 'https://serpapi.com/search.json?engine=google&q=' . urlencode($q) . '&num=15&api_key=' . urlencode($apiKey);
+    } else {
+        $q = $query . ' in ' . $city;
+        $url = 'https://serpapi.com/search.json?engine=google_maps&q=' . urlencode($q) . '&type=search&api_key=' . urlencode($apiKey);
+    }
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 18,
+        CURLOPT_SSL_VERIFYPEER => false
+    ]);
+    $res = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($code !== 200 || !$res) {
+        $errJson = json_decode((string)$res, true);
+        return ['ok' => false, 'error' => $errJson['error'] ?? "SerpApi HTTP $code"];
+    }
+    $data = json_decode($res, true);
+    if (!empty($data['error'])) {
+        return ['ok' => false, 'error' => $data['error']];
+    }
+
+    $results = [];
+    if ($mode === 'linkedin') {
+        foreach (($data['organic_results'] ?? []) as $item) {
+            $title = trim((string)($item['title'] ?? ''));
+            $link  = trim((string)($item['link'] ?? ''));
+            $snip  = trim((string)($item['snippet'] ?? ''));
+            if (empty($link)) continue;
+            $parts = preg_split('/\s*[-–|]\s*/', $title);
+            $personName = trim($parts[0] ?? 'Decision Maker');
+            $companyOrRole = trim($parts[1] ?? $title);
+            $emailFound = '';
+            if (preg_match('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}/', $snip, $em)) {
+                $emailFound = strtolower($em[0]);
+            }
+            $results[] = [
+                'source_type'  => 'linkedin',
+                'name'         => $personName,
+                'company'      => $companyOrRole,
+                'phone'        => '',
+                'email'        => $emailFound,
+                'website'      => '',
+                'linkedin_url' => $link,
+                'address'      => $city . ' · LinkedIn Decision Maker',
+                'rating'       => '💼 LinkedIn Profile',
+                'country'      => $countryCode
+            ];
+        }
+    } else {
+        $count = 0;
+        foreach (($data['local_results'] ?? []) as $pl) {
+            $title   = trim((string)($pl['title'] ?? ''));
+            if (empty($title)) continue;
+            $phone   = trim((string)($pl['phone'] ?? ''));
+            $website = trim((string)($pl['website'] ?? ''));
+            $address = trim((string)($pl['address'] ?? $city));
+            $rating  = isset($pl['rating']) ? ($pl['rating'] . ' ★ (' . ($pl['reviews'] ?? 0) . ' reviews)') : 'Google Maps Business';
+            $email   = ($website && $count < 6) ? extract_email_from_url($website) : '';
+            $count++;
+            $results[] = [
+                'source_type'  => 'google_maps',
+                'name'         => $title,
+                'company'      => $title,
+                'phone'        => $phone,
+                'email'        => $email,
+                'website'      => $website,
+                'linkedin_url' => '',
+                'address'      => $address,
+                'rating'       => $rating,
+                'country'      => $countryCode
+            ];
+        }
+    }
+    return ['ok' => true, 'leads' => $results];
+}
+
 // Helper: 100% Free Zero-Key Live Business Scraper (OpenStreetMap Overpass API)
 function run_free_osm_scrape($query, $city) {
     $cityCoords = [
@@ -287,7 +376,15 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
                 }
             }
         } else {
-            $out = run_serper_scrape($serperKey, $scrapeMode, $sq, $scity);
+            // Auto-detect SerpApi (64 chars) vs Serper (40 chars) with fallback
+            if (strlen($serperKey) >= 50) {
+                $out = run_serpapi_scrape($serperKey, $scrapeMode, $sq, $scity);
+            } else {
+                $out = run_serper_scrape($serperKey, $scrapeMode, $sq, $scity);
+                if (empty($out['ok'])) {
+                    $out = run_serpapi_scrape($serperKey, $scrapeMode, $sq, $scity);
+                }
+            }
             if (!empty($out['ok']) && !empty($out['leads'])) {
                 $inserted = 0;
                 $ins = $pdo->prepare("INSERT INTO scraped_leads (source_type, sector, city, name, company, phone, email, website, linkedin_url, address, rating, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -603,19 +700,19 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
   </div>
 </div>
 
-<!-- Live Scraper API Key Panel (Serper.dev Free 2,500 Searches/Month) -->
+<!-- Live Scraper API Key Panel (SerpApi.com Free OR Zero-Key Built-In Mode) -->
 <div id="serper-panel" class="card" style="display:<?= $serperKey ? 'none' : 'block' ?>;margin-bottom:20px;border:1.5px solid var(--iris);background:rgba(110,75,255,.04)">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-    <h3 style="margin:0;font-size:1rem">🔑 Live Google & LinkedIn Scraper Setup (Serper.dev — 2,500 Free Searches)</h3>
-    <a href="https://serper.dev" target="_blank" rel="noopener" class="btn sm" style="font-size:.78rem">Get Free API Key at serper.dev ↗</a>
+    <h3 style="margin:0;font-size:1rem">🔑 Live Google & LinkedIn Scraper Setup (SerpApi.com Free — Works Globally)</h3>
+    <a href="https://serpapi.com/users/sign_up" target="_blank" rel="noopener" class="btn sm" style="font-size:.78rem">Get Free API Key at serpapi.com ↗</a>
   </div>
   <p style="margin:0 0 10px;font-size:.83rem;color:var(--mut)">
-    Direct server scraping block hoti hai, is liye hum official <b>Serper.dev</b> API use karte hain (free signup, no credit card). Key paste kar ke save karein — phir 1-click mein live Google Maps aur LinkedIn leads email ke sath scrape honge!
+    <b>Zero-Key Mode Active:</b> Bina kisi API key ke bhi neeche <b>🌐 Scrape Google Maps Live</b> button real live businesses pull karega! LinkedIn Live Scraping aur Google Ratings ke liye <b>serpapi.com</b> par free account banayein aur apni API key yahan paste karein.
   </p>
   <form method="post" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
     <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
     <input type="hidden" name="action" value="save_serper_key">
-    <input type="text" name="serper_api_key" value="<?= e($serperKey) ?>" placeholder="Paste your Serper.dev API key here..." style="flex:1;min-width:260px;font-family:monospace;padding:9px 12px">
+    <input type="text" name="serper_api_key" value="<?= e($serperKey) ?>" placeholder="Paste your SerpApi.com (or Serper.dev) API key here..." style="flex:1;min-width:260px;font-family:monospace;padding:9px 12px">
     <button type="submit" class="btn p" style="padding:9px 18px">💾 Save Scraper Key</button>
   </form>
 </div>
