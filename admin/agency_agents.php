@@ -734,6 +734,48 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
             $resultText = $postMessage;
             $resultSource = 'Published / Drafted Content';
         }
+    } elseif ($action === 'publish_fb_photo') {
+        $posterDataUrl = trim((string)($_POST['poster_data_url'] ?? ''));
+        $postCaption   = trim((string)($_POST['post_caption'] ?? ''));
+        if (empty($fbPageId) || empty($fbPageToken)) {
+            $runError = 'Facebook Page ID aur Page Access Token pehle "⚙️ Key & Social Settings" mein save karein.';
+        } elseif (!preg_match('/^data:image\/(png|jpeg|jpg);base64,/', $posterDataUrl)) {
+            $runError = 'Valid poster image generate nahi hui.';
+        } else {
+            $rawB64 = preg_replace('/^data:image\/\w+;base64,/', '', $posterDataUrl);
+            $imgBytes = base64_decode($rawB64);
+            $tmpPath = sys_get_temp_dir() . '/softnexa_poster_' . time() . '.png';
+            if ($imgBytes && @file_put_contents($tmpPath, $imgBytes)) {
+                $ch = curl_init("https://graph.facebook.com/v20.0/" . urlencode($fbPageId) . "/photos");
+                curl_setopt_array($ch, [
+                    CURLOPT_POST           => true,
+                    CURLOPT_POSTFIELDS     => [
+                        'caption'      => $postCaption,
+                        'access_token' => $fbPageToken,
+                        'source'       => new CURLFile($tmpPath, 'image/png', 'softnexa-poster.png')
+                    ],
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_TIMEOUT        => 25,
+                    CURLOPT_SSL_VERIFYPEER => false
+                ]);
+                $fbRes = curl_exec($ch);
+                $fbCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                @unlink($tmpPath);
+                $fbJson = json_decode((string)$fbRes, true);
+                if ($fbCode === 200 && !empty($fbJson['id'])) {
+                    $runNotice = '🎉 SoftNexa HD Poster + Caption aapke Facebook Page par live publish ho gaya! Photo ID: ' . $fbJson['id'];
+                } else {
+                    $runError = 'Facebook Photo Publish Error: ' . ($fbJson['error']['message'] ?? "HTTP $fbCode");
+                }
+            } else {
+                $runError = 'Temporary poster file create nahi ho saki.';
+            }
+            if (!empty($postCaption)) {
+                $resultText = $postCaption;
+                $resultSource = 'Facebook Photo Post';
+            }
+        }
     } elseif ($action === 'send_wa_deliverable') {
         $sendPhone = preg_replace('/[^0-9]/', '', (string)($_POST['target_phone'] ?? ''));
         $sendBody  = trim((string)($_POST['wa_message'] ?? ''));
@@ -1444,6 +1486,88 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
 
 </div>
 
+<!-- BUILT-IN SOFTNEXA HD POSTER & 12-SEC ANIMATED REEL VIDEO STUDIO (100% FREE, NO CANVA NEEDED) -->
+<div class="card" id="visual-studio-card" style="margin-top:24px;border:1.5px solid rgba(110,75,255,.35);background:linear-gradient(135deg,rgba(110,75,255,.04) 0%,rgba(2,132,199,.04) 100%)">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)">
+    <div>
+      <h2 style="margin:0;font-size:1.2rem;display:flex;align-items:center;gap:8px">
+        <span>🎨</span> <span>SoftNexa HD Poster & Animated Reel Video Studio</span>
+      </h2>
+      <span style="font-size:.82rem;color:var(--mut)">100% Free Built-In Generator — 1080×1080 HD Branded Poster (PNG) + 12-Sec Animated Vertical Reel Video + 1-Click Facebook Page Image Publish!</span>
+    </div>
+    <span class="pill s-won" style="font-size:.76rem">✨ Zero Canva / Zero Paid API</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:start">
+    <!-- Left: Controls -->
+    <div style="display:grid;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <label style="font-size:.78rem;font-weight:700;color:var(--mut);display:block;margin-bottom:4px">Brand Theme</label>
+          <select id="vs-theme" onchange="renderSoftNexaPoster()" style="width:100%;padding:8px 10px;font-size:.84rem;font-weight:600">
+            <option value="iris">Midnight Iris Luxury (Purple & Navy)</option>
+            <option value="cyan">Enterprise Ocean (Deep Blue & Cyan)</option>
+            <option value="gold">Executive Slate & Gold</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:.78rem;font-weight:700;color:var(--mut);display:block;margin-bottom:4px">Top Badge</label>
+          <input type="text" id="vs-badge" value="100% FIXED-PRICE GUARANTEE" oninput="renderSoftNexaPoster()" style="width:100%;padding:8px 10px;font-size:.84rem">
+        </div>
+      </div>
+
+      <div>
+        <label style="font-size:.78rem;font-weight:700;color:var(--mut);display:block;margin-bottom:4px">Bold Headline (Poster & Slide 1 Hook)</label>
+        <input type="text" id="vs-headline" value="STOP LOSING LEADS WHILE YOU SLEEP" oninput="renderSoftNexaPoster()" style="width:100%;padding:9px 12px;font-size:.9rem;font-weight:700">
+      </div>
+
+      <div>
+        <label style="font-size:.78rem;font-weight:700;color:var(--mut);display:block;margin-bottom:4px">Subheadline</label>
+        <input type="text" id="vs-sub" value="24/7 AI WhatsApp Sales Bot + Custom High-Converting Store" oninput="renderSoftNexaPoster()" style="width:100%;padding:8px 12px;font-size:.85rem">
+      </div>
+
+      <div style="display:grid;gap:6px">
+        <label style="font-size:.78rem;font-weight:700;color:var(--mut)">3 Highlight Points (Poster & Slide 2 Services)</label>
+        <input type="text" id="vs-b1" value="🤖 24/7 AI WhatsApp Sales & Booking Automation" oninput="renderSoftNexaPoster()" style="width:100%;padding:7px 10px;font-size:.82rem">
+        <input type="text" id="vs-b2" value="🛍️ Custom Websites & E-Commerce (Cards / COD / Alerts)" oninput="renderSoftNexaPoster()" style="width:100%;padding:7px 10px;font-size:.82rem">
+        <input type="text" id="vs-b3" value="📊 Custom ERP, Mobile Apps & High-ROAS Marketing" oninput="renderSoftNexaPoster()" style="width:100%;padding:7px 10px;font-size:.82rem">
+      </div>
+
+      <div>
+        <label style="font-size:.78rem;font-weight:700;color:var(--mut);display:block;margin-bottom:4px">Facebook / Social Caption (Auto-filled from Agent Output)</label>
+        <textarea id="vs-caption" rows="3" style="width:100%;font-size:.82rem;line-height:1.4" placeholder="Caption for your Facebook Page Photo Post..."><?= e($resultText ? mb_substr($resultText, 0, 1200) : "🚀 Stop losing 40% of your leads to slow replies!\n\nSoftNexa builds 24/7 AI WhatsApp Sales Bots, High-Converting Websites, E-Commerce Stores & Custom ERPs under our 100% Fixed-Price Guarantee.\n\n🌐 Live Demos: https://softnexasolution.com/#/demos\n📲 WhatsApp: +92 335 5556290\n\n#SoftNexa #WhatsAppAI #WebDevelopment #Ecommerce #DubaiBusiness #KarachiTech") ?></textarea>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button type="button" onclick="downloadPosterPNG()" class="btn p" style="padding:9px 16px;font-size:.84rem;background:linear-gradient(120deg,#6E4BFF,#0284C7);border:0">
+          ⬇️ Download HD Poster (PNG)
+        </button>
+        <button type="button" id="reel-btn" onclick="generateAnimatedReelVideo()" class="btn" style="padding:9px 16px;font-size:.84rem;background:linear-gradient(120deg,#EC4899,#9333EA);color:#fff;border:0;font-weight:700">
+          🎬 Render 12-Sec Animated Reel Video
+        </button>
+        <form method="post" id="fb-photo-form" style="margin:0;display:inline-block" onsubmit="return prepareFbPhotoPublish()">
+          <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+          <input type="hidden" name="action" value="publish_fb_photo">
+          <input type="hidden" name="poster_data_url" id="fb-poster-data">
+          <input type="hidden" name="post_caption" id="fb-poster-caption">
+          <button type="submit" class="btn" style="padding:9px 16px;font-size:.84rem;background:#1877F2;color:#fff;border:0;font-weight:700">
+            📘 Publish Poster + Caption to FB Page
+          </button>
+        </form>
+      </div>
+      <div id="reel-status" style="font-size:.8rem;color:var(--iris);font-weight:600;min-height:18px"></div>
+    </div>
+
+    <!-- Right: Live 1080x1080 Canvas Preview -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+      <canvas id="softnexa-poster-canvas" width="1080" height="1080" style="width:100%;max-width:380px;aspect-ratio:1/1;border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.35);border:1px solid rgba(110,75,255,.4)"></canvas>
+      <canvas id="softnexa-reel-canvas" width="720" height="1280" style="display:none"></canvas>
+      <span style="font-size:.76rem;color:var(--mut)">Live 1080×1080 HD Preview — Ready for Instagram, Facebook, LinkedIn & WhatsApp Status</span>
+    </div>
+  </div>
+</div>
+
 <!-- Recent Agency Agent Runs Log -->
 <?php if (!empty($historyList)): ?>
   <div class="card" style="margin-top:24px">
@@ -1585,4 +1709,294 @@ function copyModalOutput(btn) {
     setTimeout(function() { btn.innerText = orig; }, 2000);
   });
 }
+
+// ============================================================
+// SOFTNEXA HD POSTER (1080x1080) & 12-SEC ANIMATED REEL STUDIO
+// ============================================================
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight) {
+  var words = String(text || '').split(' ');
+  var line = '';
+  var curY = y;
+  for (var n = 0; n < words.length; n++) {
+    var testLine = line + words[n] + ' ';
+    if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+      ctx.fillText(line.trim(), x, curY);
+      line = words[n] + ' ';
+      curY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  if (line.trim()) {
+    ctx.fillText(line.trim(), x, curY);
+    curY += lineHeight;
+  }
+  return curY;
+}
+
+function getStudioThemeColors(theme) {
+  if (theme === 'cyan') return { bg1: '#071426', bg2: '#0B2F52', accent: '#06B6D4', accent2: '#3B82F6', pill: 'rgba(6,182,212,.22)' };
+  if (theme === 'gold') return { bg1: '#0F1117', bg2: '#1F2430', accent: '#F59E0B', accent2: '#FBBF24', pill: 'rgba(245,158,11,.22)' };
+  return { bg1: '#090818', bg2: '#1E1548', accent: '#7C5CFF', accent2: '#06B6D4', pill: 'rgba(124,92,255,.24)' };
+}
+
+function renderSoftNexaPoster() {
+  var canvas = document.getElementById('softnexa-poster-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 1080, H = 1080;
+  var theme = (document.getElementById('vs-theme') || {}).value || 'iris';
+  var badge = (document.getElementById('vs-badge') || {}).value || '100% FIXED-PRICE GUARANTEE';
+  var headline = (document.getElementById('vs-headline') || {}).value || 'STOP LOSING LEADS WHILE YOU SLEEP';
+  var sub = (document.getElementById('vs-sub') || {}).value || '';
+  var b1 = (document.getElementById('vs-b1') || {}).value || '';
+  var b2 = (document.getElementById('vs-b2') || {}).value || '';
+  var b3 = (document.getElementById('vs-b3') || {}).value || '';
+  var C = getStudioThemeColors(theme);
+
+  // Background gradient
+  var grad = ctx.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, C.bg1);
+  grad.addColorStop(1, C.bg2);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Glow orbs
+  var g1 = ctx.createRadialGradient(920, 140, 20, 920, 140, 380);
+  g1.addColorStop(0, C.accent + '55');
+  g1.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g1;
+  ctx.fillRect(0, 0, W, H);
+
+  var g2 = ctx.createRadialGradient(140, 940, 20, 140, 940, 340);
+  g2.addColorStop(0, C.accent2 + '40');
+  g2.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g2;
+  ctx.fillRect(0, 0, W, H);
+
+  // Brand Header
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '800 42px system-ui, -apple-system, sans-serif';
+  ctx.fillText('⚡ SOFTNEXA SOLUTIONS', 80, 115);
+
+  // Top Badge Pill
+  ctx.font = '700 24px system-ui, -apple-system, sans-serif';
+  var bw = ctx.measureText(badge.toUpperCase()).width + 52;
+  ctx.fillStyle = C.pill;
+  ctx.beginPath();
+  ctx.roundRect(80, 155, bw, 52, 26);
+  ctx.fill();
+  ctx.strokeStyle = C.accent;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText(badge.toUpperCase(), 106, 189);
+
+  // Main Headline
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '900 72px system-ui, -apple-system, sans-serif';
+  var nextY = wrapCanvasText(ctx, headline, 80, 300, 920, 86);
+
+  // Subheadline
+  ctx.fillStyle = '#CBD5E1';
+  ctx.font = '500 32px system-ui, -apple-system, sans-serif';
+  nextY = wrapCanvasText(ctx, sub, 80, nextY + 18, 920, 44);
+
+  // Service Cards Box
+  var cardY = Math.max(nextY + 30, 560);
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  ctx.beginPath();
+  ctx.roundRect(80, cardY, 920, 260, 24);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.fillStyle = '#F8FAFC';
+  ctx.font = '600 30px system-ui, -apple-system, sans-serif';
+  ctx.fillText(b1, 116, cardY + 68);
+  ctx.fillText(b2, 116, cardY + 142);
+  ctx.fillText(b3, 116, cardY + 216);
+
+  // Bottom CTA Bar
+  var barGrad = ctx.createLinearGradient(80, 920, 1000, 920);
+  barGrad.addColorStop(0, C.accent);
+  barGrad.addColorStop(1, C.accent2);
+  ctx.fillStyle = barGrad;
+  ctx.beginPath();
+  ctx.roundRect(80, 905, 920, 98, 22);
+  ctx.fill();
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '800 32px system-ui, -apple-system, sans-serif';
+  ctx.fillText('🌐 softnexasolution.com   |   📲 +92 335 5556290', 124, 965);
+}
+
+function downloadPosterPNG() {
+  renderSoftNexaPoster();
+  var canvas = document.getElementById('softnexa-poster-canvas');
+  var link = document.createElement('a');
+  link.download = 'softnexa-poster-' + Date.now() + '.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function prepareFbPhotoPublish() {
+  renderSoftNexaPoster();
+  var canvas = document.getElementById('softnexa-poster-canvas');
+  var cap = (document.getElementById('vs-caption') || {}).value || '';
+  document.getElementById('fb-poster-data').value = canvas.toDataURL('image/png');
+  document.getElementById('fb-poster-caption').value = cap;
+  return confirm('Publish this 1080x1080 HD Poster + Caption directly to your Facebook Page?');
+}
+
+function generateAnimatedReelVideo() {
+  var canvas = document.getElementById('softnexa-reel-canvas');
+  var statusEl = document.getElementById('reel-status');
+  var btn = document.getElementById('reel-btn');
+  if (!canvas || typeof MediaRecorder === 'undefined') {
+    alert('Your browser does not support video recording. Please use Chrome or Edge.');
+    return;
+  }
+
+  var theme = (document.getElementById('vs-theme') || {}).value || 'iris';
+  var badge = (document.getElementById('vs-badge') || {}).value || '100% FIXED-PRICE GUARANTEE';
+  var headline = (document.getElementById('vs-headline') || {}).value || 'STOP LOSING LEADS WHILE YOU SLEEP';
+  var sub = (document.getElementById('vs-sub') || {}).value || '';
+  var b1 = (document.getElementById('vs-b1') || {}).value || '';
+  var b2 = (document.getElementById('vs-b2') || {}).value || '';
+  var b3 = (document.getElementById('vs-b3') || {}).value || '';
+  var C = getStudioThemeColors(theme);
+
+  var ctx = canvas.getContext('2d');
+  var W = 720, H = 1280;
+  var stream = canvas.captureStream(30);
+  var mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+  var recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 3500000 });
+  var chunks = [];
+
+  recorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
+  recorder.onstop = function() {
+    var blob = new Blob(chunks, { type: 'video/webm' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'softnexa-reel-' + Date.now() + '.webm';
+    a.click();
+    statusEl.innerText = '✅ 12-Second Vertical Reel Video downloaded! Upload directly to Instagram Reels, TikTok, Facebook Reels or WhatsApp Status.';
+    btn.disabled = false;
+    btn.innerText = '🎬 Render 12-Sec Animated Reel Video';
+  };
+
+  btn.disabled = true;
+  btn.innerText = '⏳ Rendering 12s Reel...';
+  recorder.start();
+
+  var startTime = performance.now();
+  var totalMs = 12000;
+
+  function drawFrame(now) {
+    var elapsed = now - startTime;
+    var pct = Math.min(elapsed / totalMs, 1);
+    statusEl.innerText = '🎬 Recording Animated Vertical Reel: ' + Math.round(pct * 100) + '% (' + Math.ceil((totalMs - elapsed) / 1000) + 's left)...';
+
+    // Animated BG
+    var grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, C.bg1);
+    grad.addColorStop(1, C.bg2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Floating Accent Orb
+    var orbY = 300 + Math.sin(elapsed / 900) * 120;
+    var og = ctx.createRadialGradient(W * 0.7, orbY, 10, W * 0.7, orbY, 320);
+    og.addColorStop(0, C.accent + '66');
+    og.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = og;
+    ctx.fillRect(0, 0, W, H);
+
+    // Top Brand Logo
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '800 34px system-ui, sans-serif';
+    ctx.fillText('⚡ SOFTNEXA SOLUTIONS', 56, 110);
+
+    // Progress Bar Top
+    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    ctx.fillRect(56, 52, W - 112, 6);
+    ctx.fillStyle = C.accent2;
+    ctx.fillRect(56, 52, (W - 112) * pct, 6);
+
+    if (elapsed < 4000) {
+      // SLIDE 1: HOOK
+      var t = Math.min(elapsed / 600, 1);
+      ctx.globalAlpha = t;
+      ctx.fillStyle = C.accent2;
+      ctx.font = '800 24px system-ui, sans-serif';
+      ctx.fillText(badge.toUpperCase(), 56, 360);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 62px system-ui, sans-serif';
+      var ny = wrapCanvasText(ctx, headline, 56, 450, W - 112, 74);
+      ctx.fillStyle = '#CBD5E1';
+      ctx.font = '500 30px system-ui, sans-serif';
+      wrapCanvasText(ctx, sub, 56, ny + 30, W - 112, 42);
+      ctx.globalAlpha = 1;
+    } else if (elapsed < 8500) {
+      // SLIDE 2: TOP SERVICES
+      var t2 = Math.min((elapsed - 4000) / 600, 1);
+      ctx.globalAlpha = t2;
+      ctx.fillStyle = C.accent2;
+      ctx.font = '800 26px system-ui, sans-serif';
+      ctx.fillText('WHAT SOFTNEXA BUILDS FOR YOU', 56, 290);
+      var items = [b1, b2, b3];
+      items.forEach(function(item, idx) {
+        var iy = 360 + idx * 185;
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.beginPath();
+        ctx.roundRect(56, iy, W - 112, 145, 22);
+        ctx.fill();
+        ctx.strokeStyle = C.accent;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '700 28px system-ui, sans-serif';
+        wrapCanvasText(ctx, item, 84, iy + 62, W - 168, 40);
+      });
+      ctx.globalAlpha = 1;
+    } else {
+      // SLIDE 3: CTA
+      var t3 = Math.min((elapsed - 8500) / 600, 1);
+      ctx.globalAlpha = t3;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 58px system-ui, sans-serif';
+      wrapCanvasText(ctx, 'GET YOUR FREE 48-HOUR SCOPE BLUEPRINT', 56, 400, W - 112, 72);
+
+      var bGrad = ctx.createLinearGradient(56, 700, W - 56, 700);
+      bGrad.addColorStop(0, C.accent);
+      bGrad.addColorStop(1, C.accent2);
+      ctx.fillStyle = bGrad;
+      ctx.beginPath();
+      ctx.roundRect(56, 680, W - 112, 130, 26);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '800 34px system-ui, sans-serif';
+      ctx.fillText('📲 WhatsApp: +92 335 5556290', 96, 756);
+
+      ctx.fillStyle = '#CBD5E1';
+      ctx.font = '700 30px system-ui, sans-serif';
+      ctx.fillText('🌐 softnexasolution.com/#/demos', 110, 880);
+      ctx.globalAlpha = 1;
+    }
+
+    if (elapsed < totalMs) {
+      requestAnimationFrame(drawFrame);
+    } else {
+      recorder.stop();
+    }
+  }
+  requestAnimationFrame(drawFrame);
+}
+
+// Auto-render poster on page load
+window.addEventListener('DOMContentLoaded', renderSoftNexaPoster);
 </script>
