@@ -183,12 +183,38 @@ Output Structure:
             "TikTok / Reels script targeting doctors and clinics to show how they lose 40% patients without WhatsApp automation.",
             "High-ticket B2B ad targeting Middle East (UAE/Saudi) businesses needing Custom ERP software."
         ]
+    ],
+
+    'social_publisher' => [
+        'title'       => 'Social Media Post Manager',
+        'badge'       => 'FB / IG / LinkedIn',
+        'icon'        => '📣',
+        'color'       => '#0EA5E9',
+        'description' => 'Creates daily ready-to-publish Facebook, Instagram & LinkedIn authority posts, hashtags, and 7-day calendars — with 1-Click Facebook Page publish.',
+        'deliverable' => 'Ready-to-post LinkedIn Authority Post, Facebook/Instagram Carousel Caption, Hashtags, and Image Visual Concept.',
+        'system'      => "You are 'Social Media Post Manager' at SoftNexa (softnexasolution.com).
+Your mission: Write high-engagement daily social media posts for LinkedIn, Facebook, and Instagram that position SoftNexa as a premium software, AI automation, and e-commerce engineering partner for Pakistan and Middle East founders.
+Output Structure:
+1. 💼 LinkedIn Authority Post (Storytelling hook, 3 actionable business insights, soft CTA to softnexasolution.com)
+2. 📘 Facebook & Instagram Post (Engaging Roman Urdu / English caption + clear WhatsApp CTA +92 335 5556290)
+3. 🎨 Visual / Canva Graphic Idea (Exact headline text to put on the image)
+4. #️⃣ Targeted Hashtags (10 high-reach B2B & local tags).",
+        'quick_prompts' => [
+            "Write a LinkedIn & Facebook post explaining why Pakistani & UAE businesses lose 40% leads without a 24/7 WhatsApp AI Agent.",
+            "Create a promotional post showcasing SoftNexa's 100% Fixed-Price Guarantee for E-Commerce & Custom ERP software.",
+            "Generate a 7-day social media content calendar for SoftNexa covering Websites, Mobile Apps, AI Bots, and Digital Marketing."
+        ]
     ]
 ];
 
 $activeAgentId = $_GET['agent'] ?? 'closer';
 if (!isset($AGENTS[$activeAgentId])) $activeAgentId = 'closer';
 $currAgent = $AGENTS[$activeAgentId];
+
+$prefillPrompt = trim((string)($_POST['prompt'] ?? ($_GET['prefill'] ?? '')));
+$targetPhone   = preg_replace('/[^0-9]/', '', (string)($_POST['target_phone'] ?? ($_GET['phone'] ?? '')));
+$fbPageId      = trim((string)setting('fb_page_id', ''));
+$fbPageToken   = trim((string)setting('fb_page_token', ''));
 
 $resultText = '';
 $resultSource = '';
@@ -561,7 +587,7 @@ Client Tier (Web/Mobile) ──HTTPS──> Cloudflare Edge / Reverse Proxy
 • Automated daily database snapshots with encrypted off-site cloud replication.";
     }
     
-    if ($agentId === 'viral_ads') {
+    if ($agentId === 'viral_ads' || $agentId === 'copywriter') {
         return "📱 THE VIRAL AD & CONTENT MAESTRO — PERFORMANCE MARKETING
 
 [Marketing Brief / Offer: \"$p\"]
@@ -610,6 +636,55 @@ Host: \"Abhi bio mein link par click karein aur apna free 48-Hour Scope Blueprin
 • Age: 24 - 55 | Interests: Entrepreneurship, E-commerce, Small business owners, Shopify, Retail.
 • Placements: Advantage+ Placements (Priority: Instagram Reels, Facebook Feed, Instagram Stories).";
     }
+
+    if ($agentId === 'social_publisher') {
+        return "📣 SOCIAL MEDIA POST MANAGER — READY TO PUBLISH
+
+[Post Topic / Brief: \"$p\"]
+
+────────────────────────────────────────────
+1. 💼 LINKEDIN AUTHORITY POST (Copy & Post)
+────────────────────────────────────────────
+Every week, we speak with founders in Dubai, Riyadh, and Karachi who spend thousands on ads — yet lose 40% of their leads before a single sales call happens.
+
+Why? Because buyers today don't wait 4 hours for a reply.
+
+Here are 3 systems every high-growth business needs in 2026:
+1️⃣ A sub-2-second custom web/e-commerce platform built for mobile conversion.
+2️⃣ A 24/7 Autonomous WhatsApp AI Consultant that qualifies leads in English, Urdu & Arabic while your team sleeps.
+3️⃣ Automated CRM & milestone workflows that eliminate spreadsheet chaos.
+
+At SoftNexa, we engineer all three under our 100% Fixed-Price Guarantee — zero surprise hourly billing, full code ownership.
+
+Want a complimentary 48-Hour Scope Blueprint for your business?
+Comment \"BLUEPRINT\" or visit: https://softnexasolution.com
+
+#SoftwareDevelopment #AIAutomation #WhatsAppBot #DubaiBusiness #KarachiTech #EcommerceGrowth #SoftNexa
+
+────────────────────────────────────────────
+2. 📘 FACEBOOK & INSTAGRAM POST CAPTION
+────────────────────────────────────────────
+Kya aapka business bhi late WhatsApp replies ki wajah se clients lose kar raha hai? 🚀
+
+SoftNexa aapke liye build karta hai:
+✅ High-Converting Custom Websites & E-Commerce Stores
+✅ 24/7 Autonomous WhatsApp AI Sales Bot (Roman Urdu + English)
+✅ Custom ERP, POS & Mobile Apps (iOS & Android)
+✅ 100% Fixed-Price Guarantee — Koi hidden charges nahi!
+
+Apne project ka Free 48-Hour Scope Blueprint hasil karne ke liye abhi message karein:
+📲 WhatsApp: +92 335 5556290
+🌐 Website: https://softnexasolution.com
+
+#SoftNexa #WebDevelopmentPakistan #WhatsAppAI #EcommercePakistan #DigitalTransformation #DubaiStartups
+
+────────────────────────────────────────────
+3. 🎨 VISUAL / CANVA GRAPHIC TEXT IDEA
+────────────────────────────────────────────
+Headline: \"STOP LOSING LEADS WHILE YOU SLEEP\"
+Subtext: \"24/7 WhatsApp AI Agent + Custom High-Speed Store by SoftNexa\"
+Footer: \"softnexasolution.com | +92 335 5556290\"";
+    }
     
     return "✅ SOFTNEXA DELIVERABLE FOR: " . $prompt;
 }
@@ -623,6 +698,54 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
         set_setting('gemini_api_key', $newKey);
         $geminiKey = $newKey;
         $runNotice = 'Google Gemini API Key updated successfully!';
+    } elseif ($action === 'save_fb_settings') {
+        $fbPageId    = trim((string)($_POST['fb_page_id'] ?? ''));
+        $fbPageToken = trim((string)($_POST['fb_page_token'] ?? ''));
+        set_setting('fb_page_id', $fbPageId);
+        set_setting('fb_page_token', $fbPageToken);
+        $runNotice = '📘 Facebook Page Auto-Publish settings saved successfully!';
+    } elseif ($action === 'publish_fb_post') {
+        $postMessage = trim((string)($_POST['post_message'] ?? ''));
+        if (empty($fbPageId) || empty($fbPageToken)) {
+            $runError = 'Facebook Page ID aur Page Access Token pehle "⚙️ Key & Social Settings" mein save karein.';
+        } elseif (empty($postMessage)) {
+            $runError = 'Post content khali hai.';
+        } else {
+            $ch = curl_init("https://graph.facebook.com/v20.0/" . urlencode($fbPageId) . "/feed");
+            curl_setopt_array($ch, [
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => http_build_query(['message' => $postMessage, 'access_token' => $fbPageToken]),
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT        => 15,
+                CURLOPT_SSL_VERIFYPEER => false
+            ]);
+            $fbRes = curl_exec($ch);
+            $fbCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            $fbJson = json_decode((string)$fbRes, true);
+            if ($fbCode === 200 && !empty($fbJson['id'])) {
+                $runNotice = '🎉 Facebook Page par post live publish ho gayi! Post ID: ' . $fbJson['id'];
+            } else {
+                $runError = 'Facebook Publish Error: ' . ($fbJson['error']['message'] ?? "HTTP $fbCode");
+            }
+            $resultText = $postMessage;
+            $resultSource = 'Published / Drafted Content';
+        }
+    } elseif ($action === 'send_wa_deliverable') {
+        $sendPhone = preg_replace('/[^0-9]/', '', (string)($_POST['target_phone'] ?? ''));
+        $sendBody  = trim((string)($_POST['wa_message'] ?? ''));
+        if (strlen($sendPhone) >= 10 && !empty($sendBody)) {
+            $waRes = send_meta_whatsapp_message($sendPhone, mb_substr($sendBody, 0, 3800));
+            if (!empty($waRes['ok'])) {
+                $runNotice = "✅ Reply directly delivered to client (+{$sendPhone}) via WhatsApp Cloud API!";
+            } else {
+                $runError = 'WhatsApp Cloud API Error: ' . json_encode($waRes['response'] ?? $waRes['error'] ?? 'Unknown error');
+            }
+            $resultText = $sendBody;
+            $resultSource = 'Sent to +' . $sendPhone;
+        } else {
+            $runError = 'Valid target phone number required to send directly.';
+        }
     } elseif ($action === 'test_gemini') {
         $discovery = discover_gemini_models($geminiKey);
         if (!empty($discovery['models'])) {
@@ -868,20 +991,20 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
   </div>
   <div style="display:flex;gap:10px;align-items:center">
     <button type="button" class="btn" onclick="toggleKeySettings()" style="background:rgba(255,255,255,.07);font-size:.82rem">
-      ⚙️ Gemini Key & Diagnostic
+      ⚙️ Key & Social Settings
     </button>
-    <span class="pill s-won" style="font-weight:700">🟢 7 Active Personas</span>
+    <span class="pill s-won" style="font-weight:700">🟢 <?= count($AGENTS) ?> Active Personas</span>
     <a href="https://github.com/msitarzewski/agency-agents" target="_blank" rel="noopener" class="btn" style="background:rgba(255,255,255,.07)">
       Repo Specs ↗
     </a>
   </div>
 </div>
 
-<!-- Quick Gemini Key Configuration Panel (Collapsible) -->
+<!-- Quick Gemini Key & Facebook Page Publish Settings (Collapsible) -->
 <div id="key-panel" class="card" style="display:none;margin-bottom:16px;border:1px solid var(--iris);background:rgba(110,75,255,.04)">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
     <h3 style="margin:0;font-size:1rem;display:flex;align-items:center;gap:6px">
-      <span>🔑</span> <span>Google Gemini AI Configuration & Model Discovery</span>
+      <span>🔑</span> <span>AI Brain (Gemini) & Facebook Page Auto-Publish Settings</span>
     </h3>
     <button type="button" onclick="toggleKeySettings()" class="btn" style="padding:2px 8px;font-size:.8rem">&times;</button>
   </div>
@@ -889,7 +1012,7 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
     <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
     <input type="hidden" name="action" value="save_gemini_key">
     <input type="text" name="gemini_api_key" value="<?= e($geminiKey) ?>" placeholder="AIzaSy... (Get free key from aistudio.google.com)" style="flex:1;min-width:260px;font-family:monospace;font-size:.85rem;padding:8px 12px">
-    <button type="submit" class="btn p" style="padding:8px 16px;font-size:.85rem">💾 Save Key</button>
+    <button type="submit" class="btn p" style="padding:8px 16px;font-size:.85rem">💾 Save Gemini Key</button>
   </form>
   <form method="post" style="margin-top:10px;display:inline-block">
     <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
@@ -897,6 +1020,16 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
     <button type="submit" class="btn" style="padding:6px 14px;font-size:.8rem;background:rgba(2,132,199,.1);color:var(--cyan);border:1px solid var(--cyan)">
       🧪 Test Key & Check Supported Models
     </button>
+  </form>
+
+  <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+  <div style="font-size:.82rem;font-weight:700;margin-bottom:8px">📘 Facebook Page 1-Click Auto-Publish (Optional — Meta Graph API)</div>
+  <form method="post" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+    <input type="hidden" name="action" value="save_fb_settings">
+    <input type="text" name="fb_page_id" value="<?= e($fbPageId) ?>" placeholder="Facebook Page ID (e.g. 1234567890)" style="width:220px;font-family:monospace;font-size:.82rem;padding:8px 12px">
+    <input type="password" name="fb_page_token" value="<?= e($fbPageToken) ?>" placeholder="Page Access Token (pages_manage_posts)" style="flex:1;min-width:240px;font-family:monospace;font-size:.82rem;padding:8px 12px">
+    <button type="submit" class="btn" style="padding:8px 14px;font-size:.82rem;background:#1877F2;color:#fff;border:0">💾 Save FB Page</button>
   </form>
 </div>
 
@@ -963,13 +1096,19 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
       <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
       <input type="hidden" name="action" value="run_agent">
       <input type="hidden" name="agent_id" value="<?= e($activeAgentId) ?>">
+      <?php if ($targetPhone): ?>
+        <input type="hidden" name="target_phone" value="<?= e($targetPhone) ?>">
+        <div style="background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.35);color:#059669;padding:8px 12px;border-radius:8px;font-size:.82rem;font-weight:600">
+          📲 Linked WhatsApp Client: <b>+<?= e($targetPhone) ?></b> — Deliverable generate hone ke baad aap 1-click mein direct WhatsApp par bhej sakte hain!
+        </div>
+      <?php endif; ?>
 
       <div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <label style="font-weight:700">Project Context, Lead Details, or Client Objection:</label>
-          <span style="font-size:.75rem;color:var(--mut)">Powered by Gemini 1.5 Flash</span>
+          <span style="font-size:.75rem;color:var(--mut)">Gemini AI + SoftNexa Native Engine</span>
         </div>
-        <textarea name="prompt" id="prompt-input" rows="6" placeholder="Paste the client's message, business industry, or project requirements here..." required style="font-size:.88rem;line-height:1.5"><?= e($_POST['prompt'] ?? '') ?></textarea>
+        <textarea name="prompt" id="prompt-input" rows="6" placeholder="Paste the client's message, business industry, or project requirements here..." required style="font-size:.88rem;line-height:1.5"><?= e($prefillPrompt) ?></textarea>
       </div>
 
       <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
@@ -993,7 +1132,7 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
 
   <!-- Right: Deliverable & Output Display Area -->
   <div class="card" style="border:1px solid var(--line);box-shadow:0 4px 20px -8px rgba(0,0,0,.06);display:flex;flex-direction:column">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:8px">
       <div>
         <h3 style="margin:0;font-size:1.05rem;display:flex;align-items:center;gap:6px">
           <span>📋</span> <span>Agent Deliverable Output</span>
@@ -1005,13 +1144,34 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
         <?php endif; ?>
       </div>
       <?php if (!empty($resultText)): ?>
-        <div style="display:flex;gap:8px">
-          <button type="button" class="btn" onclick="copyOutput(this)" style="padding:6px 14px;font-size:.8rem;background:rgba(110,75,255,.1);color:var(--iris);border:1px solid var(--iris)">
-            📋 Copy Output
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn" onclick="copyOutput(this)" style="padding:6px 12px;font-size:.78rem;background:rgba(110,75,255,.1);color:var(--iris);border:1px solid var(--iris)">
+            📋 Copy
           </button>
-          <button type="button" class="btn" onclick="openWhatsAppShare()" style="padding:6px 14px;font-size:.8rem;background:#25D366;color:#fff;border:0">
-            💬 Share on WA
+          <button type="button" class="btn" onclick="openWhatsAppShare()" style="padding:6px 12px;font-size:.78rem;background:#25D366;color:#fff;border:0">
+            💬 Share WA
           </button>
+          <?php if ($targetPhone): ?>
+            <form method="post" style="margin:0;display:inline-block">
+              <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+              <input type="hidden" name="action" value="send_wa_deliverable">
+              <input type="hidden" name="target_phone" value="<?= e($targetPhone) ?>">
+              <input type="hidden" name="wa_message" value="<?= e($resultText) ?>">
+              <button type="submit" class="btn" style="padding:6px 12px;font-size:.78rem;background:#059669;color:#fff;border:0;font-weight:700">
+                🚀 Send Direct to +<?= e($targetPhone) ?>
+              </button>
+            </form>
+          <?php endif; ?>
+          <?php if ($activeAgentId === 'social_publisher' || $activeAgentId === 'copywriter'): ?>
+            <form method="post" style="margin:0;display:inline-block" onsubmit="return confirm('Publish this content directly to your Facebook Page?')">
+              <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+              <input type="hidden" name="action" value="publish_fb_post">
+              <input type="hidden" name="post_message" value="<?= e($resultText) ?>">
+              <button type="submit" class="btn" style="padding:6px 12px;font-size:.78rem;background:#1877F2;color:#fff;border:0;font-weight:700">
+                📘 Publish to FB Page
+              </button>
+            </form>
+          <?php endif; ?>
         </div>
       <?php endif; ?>
     </div>

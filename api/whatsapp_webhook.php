@@ -383,6 +383,7 @@ if ($geminiKey) {
    ------------------------------------------------------------ */
 if (!$llmSucceeded || empty($aiReply)) {
     // Intent flags
+    $isObjection        = (bool)preg_match('/\b(mehnga|mehenga|zyada hai|ziada hai|sasta|discount|kam karo|kam kar|soch kar|soch ke|baad mein|bad mein|aglay maheenay|next month|too expensive|expensive|high price|budget nahi|budget issue|cheaper)\b/i', $msgLower);
     $isFollowUp         = (bool)preg_match('/\b(are you there|active ho|reply karo|sun rahe ho|kahan ho|sun rha|hello\?|koi hai|response do|jawab do)\b/i', $msgLower);
     $isTimeline         = (bool)preg_match('/\b(kitne din|kitnay din|din|timeline|kab tak|kitna time|duration|delivery time|urgent|kab live|kab milega|kab milegi)\b/i', $msgLower);
     $isPrice            = (bool)preg_match('/\b(price|cost|charges|rate|kharcha|kitna|pese|paise|fees|budget|quote|estimate)\b/i', $msgLower);
@@ -399,8 +400,18 @@ if (!$llmSucceeded || empty($aiReply)) {
     $isDemo             = (bool)preg_match('/\b(demo|sample|portfolio|previous work|link|check|live)\b/i', $msgLower);
     $isGreeting         = (bool)preg_match('/\b(hi|hello|hey|assalam|salam|aoa|kese ho|kaise ho|keise|kaisa|kese hain)\b/i', $msgLower);
 
+    // 0. Auto-Deal Closer (Objection / Price Hesitation Handler)
+    if ($isObjection) {
+        if ($lang === 'ro') {
+            $aiReply = "Aapki baat bilkul valid hai, har business ke liye ROI sab se important hota hai! 💼✨\n\nMarket mein saste templates ya freelancers shuru mein kam charge karte hain, lekin slow speed, bugs aur weak security ki wajah se baad mein 3 guna zyada kharcha aur waqt zaya ho jata hai.\n\nSoftNexa par hum aapka risk 0% rakhte hain:\n✅ 100% Fixed-Price Guarantee (koi hidden charges nahi)\n✅ Milestone Delivery (aap pehle live module verify karein, tab payment release karein)\n✅ Free 48-Hour Tailored Scope Blueprint\n\nKya hum kal 10-minute ki quick discovery call par aapke budget ke mutabiq phased roadmap plan kar lein?";
+        } elseif ($lang === 'ur') {
+            $aiReply = "آپ کی بات بالکل درست ہے، ہر کاروبار کے لیے بجٹ اور معیار دونوں اہم ہیں۔ 💼✨\n\nسافٹ نیکسا میں ہم آپ کا رسک صفر رکھتے ہیں:\n✅ 100% فکسڈ پرائس گارنٹی\n✅ مائل اسٹون ڈیلیوری (ہر فیز لائیو دیکھ کر ادائیگی کریں)\n✅ مفت 48 گھنٹے کا اسکوپ بلیو پرنٹ\n\nکیا کل 10 منٹ کی کال پر آپ کے بجٹ کے مطابق فیزڈ پلان ڈسکس کر لیں؟";
+        } else {
+            $aiReply = "I completely respect keeping a close eye on budget! 💼✨\n\nCheap templates often end up costing 3x more in bugs, slow checkout speeds, and rewrites. At SoftNexa, we de-risk your investment completely:\n✅ 100% Fixed-Price Guarantee (zero hidden hourly bills)\n✅ Milestone-Gated Delivery (you only pay as you verify working modules)\n✅ Complimentary 48-Hour Scope Blueprint\n\nWould you be open to a quick 10-minute call tomorrow to structure a phased plan that fits your goals?";
+        }
+    }
     // 1. Timeline Question (kitnay din mein milegi)
-    if ($isTimeline) {
+    elseif ($isTimeline) {
         if ($lang === 'ro') {
             $aiReply = "SoftNexa par project delivery guaranteed on-time hoti hai:\n\n🛍️ E-Commerce Online Store: 2 se 3 weeks mein complete payment gateways, product catalog aur WhatsApp order alerts ke sath live ho jata hai.\n⚡ Corporate / Business Website: 5 se 7 working days.\n📱 Mobile App / Custom ERP: 3 se 6 weeks (weekly milestone demos ke sath).\n\nAapko kab tak store launch karna hai? Hum timeline ko fast-track bhi kar sakte hain!";
         } elseif ($lang === 'ur') {

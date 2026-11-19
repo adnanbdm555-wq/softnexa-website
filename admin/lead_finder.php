@@ -10,11 +10,234 @@ $pdo = db();
 $flash = '';
 $flashType = 'success';
 
-// Handle 1-Click Save to CRM Leads Table
+// Ensure scraped_leads table exists
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS scraped_leads (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        source_type VARCHAR(30) NOT NULL DEFAULT 'google_maps',
+        sector VARCHAR(50) NOT NULL DEFAULT '',
+        city VARCHAR(80) NOT NULL DEFAULT '',
+        name VARCHAR(160) DEFAULT '',
+        company VARCHAR(180) DEFAULT '',
+        phone VARCHAR(60) DEFAULT '',
+        email VARCHAR(160) DEFAULT '',
+        website VARCHAR(255) DEFAULT '',
+        linkedin_url VARCHAR(255) DEFAULT '',
+        address VARCHAR(255) DEFAULT '',
+        rating VARCHAR(80) DEFAULT '',
+        country VARCHAR(20) DEFAULT 'GCC',
+        status VARCHAR(30) DEFAULT 'new',
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX(source_type), INDEX(sector), INDEX(created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+} catch (Exception $e) {}
+
+$serperKey = trim((string)setting('serper_api_key', ''));
+
+// Helper: Extract public email from website homepage (fast 3s timeout)
+function extract_email_from_url($url) {
+    if (empty($url) || !preg_match('#^https?://#i', $url)) return '';
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_MAXREDIRS      => 2,
+        CURLOPT_TIMEOUT        => 3,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_USERAGENT      => 'Mozilla/5.0 (compatible; SoftNexaBot/1.0)'
+    ]);
+    $html = curl_exec($ch);
+    curl_close($ch);
+    if (!$html) return '';
+    if (preg_match_all('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}/', $html, $m)) {
+        foreach ($m[0] as $em) {
+            $emLower = strtolower($em);
+            if (!preg_match('/(example\.com|sentry\.io|wixpress|wordpress|@2x\.|png|jpg|svg|webp|noreply|no-reply)/i', $emLower)) {
+                return $emLower;
+            }
+        }
+    }
+    return '';
+}
+
+// Helper: Live Scrape via Serper.dev (Google Maps Places OR LinkedIn X-Ray)
+function run_serper_scrape($apiKey, $mode, $query, $city) {
+    $endpoint = ($mode === 'linkedin') ? 'https://google.serper.dev/search' : 'https://google.serper.dev/places';
+    $q = ($mode === 'linkedin')
+        ? 'site:linkedin.com/in/ ("CEO" OR "Founder" OR "Managing Director" OR "Owner") "' . $query . '" "' . $city . '"'
+        : $query . ' in ' . $city;
+
+    $ch = curl_init($endpoint);
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => json_encode(['q' => $q, 'num' => 15]),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 15,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_HTTPHEADER     => [
+            'X-API-KEY: ' . $apiKey,
+            'Content-Type: application/json'
+        ]
+    ]);
+    $res = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($code !== 200 || !$res) {
+        $errJson = json_decode((string)$res, true);
+        return ['ok' => false, 'error' => $errJson['message'] ?? "Serper API HTTP $code"];
+    }
+    $data = json_decode($res, true);
+    $results = [];
+
+    $countryCode = 'GCC';
+    if (stripos($city, 'Dubai') !== false || stripos($city, 'Abu Dhabi') !== false || stripos($city, 'Sharjah') !== false) $countryCode = 'UAE';
+    elseif (stripos($city, 'Riyadh') !== false || stripos($city, 'Jeddah') !== false) $countryCode = 'KSA';
+    elseif (stripos($city, 'Karachi') !== false || stripos($city, 'Lahore') !== false || stripos($city, 'Islamabad') !== false) $countryCode = 'PK';
+
+    if ($mode === 'linkedin') {
+        foreach (($data['organic'] ?? []) as $item) {
+            $title = trim((string)($item['title'] ?? ''));
+            $link  = trim((string)($item['link'] ?? ''));
+            $snip  = trim((string)($item['snippet'] ?? ''));
+            if (empty($link)) continue;
+            $parts = preg_split('/\s*[-–|]\s*/', $title);
+            $personName = trim($parts[0] ?? 'Decision Maker');
+            $companyOrRole = trim($parts[1] ?? $title);
+            $emailFound = '';
+            if (preg_match('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}/', $snip, $em)) {
+                $emailFound = strtolower($em[0]);
+            }
+            $results[] = [
+                'source_type'  => 'linkedin',
+                'name'         => $personName,
+                'company'      => $companyOrRole,
+                'phone'        => '',
+                'email'        => $emailFound,
+                'website'      => '',
+                'linkedin_url' => $link,
+                'address'      => $city . ' · LinkedIn Decision Maker',
+                'rating'       => '💼 LinkedIn Profile',
+                'country'      => $countryCode
+            ];
+        }
+    } else {
+        $count = 0;
+        foreach (($data['places'] ?? []) as $pl) {
+            $title   = trim((string)($pl['title'] ?? ''));
+            if (empty($title)) continue;
+            $phone   = trim((string)($pl['phoneNumber'] ?? ''));
+            $website = trim((string)($pl['website'] ?? ''));
+            $address = trim((string)($pl['address'] ?? $city));
+            $rating  = isset($pl['rating']) ? ($pl['rating'] . ' ★ (' . ($pl['ratingCount'] ?? 0) . ' reviews)') : 'Google Business';
+            // Extract email for first 6 websites to keep scrape fast
+            $email = ($website && $count < 6) ? extract_email_from_url($website) : '';
+            $count++;
+            $results[] = [
+                'source_type'  => 'google_maps',
+                'name'         => $title,
+                'company'      => $title,
+                'phone'        => $phone,
+                'email'        => $email,
+                'website'      => $website,
+                'linkedin_url' => '',
+                'address'      => $address,
+                'rating'       => $rating,
+                'country'      => $countryCode
+            ];
+        }
+    }
+    return ['ok' => true, 'leads' => $results];
+}
+
+// Handle POST Actions
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
     $action = $_POST['action'] ?? '';
-    
-    if ($action === 'save_lead') {
+
+    if ($action === 'save_serper_key') {
+        $newKey = trim((string)($_POST['serper_api_key'] ?? ''));
+        set_setting('serper_api_key', $newKey);
+        $serperKey = $newKey;
+        $flash = '✅ Serper.dev Live Scraper API Key saved successfully! Ab aap Live Google Maps & LinkedIn Leads scrape kar sakte hain.';
+    } elseif ($action === 'live_scrape') {
+        $scrapeMode = ($_POST['scrape_mode'] ?? 'google_maps') === 'linkedin' ? 'linkedin' : 'google_maps';
+        $sq         = trim((string)($_POST['scrape_query'] ?? 'Real Estate Agency'));
+        $scity      = trim((string)($_POST['scrape_city'] ?? 'Dubai'));
+        $ssector    = trim((string)($_POST['scrape_sector'] ?? 'realestate_uae'));
+
+        if (empty($serperKey)) {
+            $flash = '⚠️ Pehle apni free Serper.dev API Key add karein ("⚙️ Live Scraper API Key" button par click karein — serper.dev par 2,500 searches bilkul free milti hain).';
+            $flashType = 'error';
+        } else {
+            $out = run_serper_scrape($serperKey, $scrapeMode, $sq, $scity);
+            if (!empty($out['ok']) && !empty($out['leads'])) {
+                $inserted = 0;
+                $ins = $pdo->prepare("INSERT INTO scraped_leads (source_type, sector, city, name, company, phone, email, website, linkedin_url, address, rating, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                foreach ($out['leads'] as $ld) {
+                    // Avoid exact duplicate company+city
+                    $chk = $pdo->prepare("SELECT id FROM scraped_leads WHERE company = ? AND city = ? LIMIT 1");
+                    $chk->execute([$ld['company'], $scity]);
+                    if (!$chk->fetch()) {
+                        $ins->execute([
+                            $ld['source_type'], $ssector, $scity, $ld['name'], $ld['company'],
+                            $ld['phone'], $ld['email'], $ld['website'], $ld['linkedin_url'],
+                            $ld['address'], $ld['rating'], $ld['country']
+                        ]);
+                        $inserted++;
+                    }
+                }
+                $label = ($scrapeMode === 'linkedin') ? 'LinkedIn Decision Makers' : 'Google Maps Businesses';
+                $flash = "🚀 Live Scrape Complete! {$inserted} naye {$label} ({$scity}) pull hokar neeche save ho gaye hain!";
+            } else {
+                $flash = '❌ Live Scrape Error: ' . ($out['error'] ?? 'No results returned for this query.');
+                $flashType = 'error';
+            }
+        }
+    } elseif ($action === 'send_cold_email') {
+        $toEmail = trim((string)($_POST['email'] ?? ''));
+        $toName  = trim((string)($_POST['name'] ?? 'Partner'));
+        $company = trim((string)($_POST['company'] ?? ''));
+        $service = trim((string)($_POST['service'] ?? 'Custom Software & AI Automation'));
+        $pitch   = trim((string)($_POST['pitch'] ?? ''));
+
+        if (!filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
+            $flash = '⚠️ Valid email address nahi mila is lead ke liye.';
+            $flashType = 'error';
+        } else {
+            $subject = "Quick idea for {$company} — {$service} | SoftNexa";
+            $body = "Hello {$toName},\n\n" . $pitch . "\n\nBest regards,\nAdnan | SoftNexa Solutions\nWhatsApp: +92 335 5556290\nWeb: https://softnexasolution.com";
+            $headers = "From: SoftNexa Solutions <" . MAIL_FROM . ">\r\nReply-To: " . MAIL_FROM . "\r\nContent-Type: text/plain; charset=UTF-8\r\n";
+            if (@mail($toEmail, $subject, $body, $headers)) {
+                $flash = "✅ Personalized Cold Email successfully sent to {$toEmail} ({$company})!";
+            } else {
+                $flash = "⚠️ Server mail() send nahi kar saka. Aap manual email ya Proposal button use kar sakte hain.";
+                $flashType = 'error';
+            }
+        }
+    } elseif ($action === 'send_direct_wa') {
+        $toPhone = preg_replace('/[^0-9]/', '', (string)($_POST['phone'] ?? ''));
+        if (str_starts_with($toPhone, '03')) $toPhone = '92' . substr($toPhone, 1);
+        $pitch   = trim((string)($_POST['pitch'] ?? ''));
+        $company = trim((string)($_POST['company'] ?? 'Client'));
+
+        if (strlen($toPhone) < 10) {
+            $flash = '⚠️ Valid phone number nahi hai is lead par.';
+            $flashType = 'error';
+        } else {
+            $resWa = send_meta_whatsapp_message($toPhone, $pitch);
+            if (!empty($resWa['ok'])) {
+                $flash = "✅ WhatsApp Cloud API message delivered to +{$toPhone} ({$company})!";
+            } else {
+                $flash = '⚠️ Meta WhatsApp Cloud API ne direct cold message reject kiya (24-hr window rule). Green "💬 WA (EN)" button se 1-click bhejein (0% ban risk).';
+                $flashType = 'error';
+            }
+        }
+    } elseif ($action === 'clear_scraped') {
+        try {
+            $pdo->exec("DELETE FROM scraped_leads");
+            $flash = '🧹 Scraped leads list clear kar di gayi hai.';
+        } catch (Exception $e) {}
+    } elseif ($action === 'save_lead') {
         $name     = trim($_POST['name'] ?? '');
         $company  = trim($_POST['company'] ?? '');
         $phone    = trim($_POST['phone'] ?? '');
@@ -196,7 +419,15 @@ $SAMPLE_DIRECTORY = [
     ]
 ];
 
-$displayLeads = $SAMPLE_DIRECTORY[$selectedSectorKey] ?? $SAMPLE_DIRECTORY['realestate_uae'];
+// Load live scraped leads from DB first (newest on top)
+$scrapedRows = [];
+try {
+    $st = $pdo->query("SELECT * FROM scraped_leads ORDER BY id DESC LIMIT 60");
+    $scrapedRows = $st->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+
+$sampleLeads = $SAMPLE_DIRECTORY[$selectedSectorKey] ?? $SAMPLE_DIRECTORY['realestate_uae'];
+$displayLeads = array_merge($scrapedRows, $sampleLeads);
 
 // LinkedIn Dorking Query builder
 $targetRole = $_GET['li_role'] ?? 'Founder OR CEO OR "Managing Director" OR Owner';
@@ -242,13 +473,33 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 
 <div class="top">
   <div>
-    <h1>B2B Lead Scout & Middle East Outreach Engine</h1>
-    <span class="mut">Scout high-ticket business leads across UAE (Dubai / Abu Dhabi) & Saudi Arabia (Riyadh / Jeddah) — with Executive English Pitches, Tailored Short Proposals & Google Meet.</span>
+    <h1>B2B Lead Scout & Live Google / LinkedIn Scraper</h1>
+    <span class="mut">Scrape real-time Google Maps businesses & LinkedIn Decision Makers across UAE, KSA & Pakistan — with 1-Click Auto-Email, WhatsApp & AI Pitches.</span>
   </div>
   <div class="sp">
+    <button type="button" class="btn" onclick="var el=document.getElementById('serper-panel');el.style.display=(el.style.display==='none'?'block':'none');">
+      ⚙️ Live Scraper API Key <?= $serperKey ? '🟢' : '🔴' ?>
+    </button>
     <a href="leads.php" class="btn">View CRM Pipeline</a>
-    <a href="../#/schedule" target="_blank" class="btn p">📅 Open Google Meet Scheduler</a>
+    <a href="../#/schedule" target="_blank" class="btn p">📅 Google Meet Scheduler</a>
   </div>
+</div>
+
+<!-- Live Scraper API Key Panel (Serper.dev Free 2,500 Searches/Month) -->
+<div id="serper-panel" class="card" style="display:<?= $serperKey ? 'none' : 'block' ?>;margin-bottom:20px;border:1.5px solid var(--iris);background:rgba(110,75,255,.04)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+    <h3 style="margin:0;font-size:1rem">🔑 Live Google & LinkedIn Scraper Setup (Serper.dev — 2,500 Free Searches)</h3>
+    <a href="https://serper.dev" target="_blank" rel="noopener" class="btn sm" style="font-size:.78rem">Get Free API Key at serper.dev ↗</a>
+  </div>
+  <p style="margin:0 0 10px;font-size:.83rem;color:var(--mut)">
+    Direct server scraping block hoti hai, is liye hum official <b>Serper.dev</b> API use karte hain (free signup, no credit card). Key paste kar ke save karein — phir 1-click mein live Google Maps aur LinkedIn leads email ke sath scrape honge!
+  </p>
+  <form method="post" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+    <input type="hidden" name="action" value="save_serper_key">
+    <input type="text" name="serper_api_key" value="<?= e($serperKey) ?>" placeholder="Paste your Serper.dev API key here..." style="flex:1;min-width:260px;font-family:monospace;padding:9px 12px">
+    <button type="submit" class="btn p" style="padding:9px 18px">💾 Save Scraper Key</button>
+  </form>
 </div>
 
 <?php if ($flash): ?>
@@ -341,99 +592,167 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
     </div>
   </form>
 
-  <!-- High-Converting Sector Strategy Banner -->
-  <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+  <!-- Live Scrape Trigger Bar (Google Maps + LinkedIn X-Ray) -->
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
     <div>
-      <span style="font-size:.82rem;color:var(--cyan);font-weight:700">TARGET PRODUCT TO SELL:</span>
+      <span style="font-size:.82rem;color:var(--cyan);font-weight:700">LIVE SCRAPER ENGINE:</span>
       <b style="font-size:.92rem;color:var(--ink);margin-left:6px"><?= e($currSector['service']) ?></b>
-      <span style="display:block;font-size:.78rem;color:var(--mut);margin-top:2px"><?= e($currSector['hook']) ?></span>
+      <span style="display:block;font-size:.78rem;color:var(--mut);margin-top:2px">Query: <code><?= e($customQuery ?: $currSector['query']) ?></code> in <b><?= e($selectedCity) ?></b></span>
     </div>
-    <div>
-      <a href="https://www.google.com/search?q=<?= urlencode($liSearchQuery) ?>" target="_blank" rel="noopener" class="btn sm" style="background:rgba(10,102,194,.18);border-color:#0A66C2;color:#60A5FA" title="Run Google X-Ray Search for LinkedIn Decision Makers">
-        💼 Scout LinkedIn Decision Makers
-      </a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <form method="post" style="margin:0;display:inline-block">
+        <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+        <input type="hidden" name="action" value="live_scrape">
+        <input type="hidden" name="scrape_mode" value="google_maps">
+        <input type="hidden" name="scrape_query" value="<?= e($customQuery ?: $currSector['query']) ?>">
+        <input type="hidden" name="scrape_city" value="<?= e($selectedCity) ?>">
+        <input type="hidden" name="scrape_sector" value="<?= e($selectedSectorKey) ?>">
+        <button type="submit" class="btn p" style="padding:8px 14px;font-size:.82rem;background:linear-gradient(120deg,#059669,#0284C7);border:0">
+          🌐 Scrape Google Maps Live
+        </button>
+      </form>
+      <form method="post" style="margin:0;display:inline-block">
+        <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+        <input type="hidden" name="action" value="live_scrape">
+        <input type="hidden" name="scrape_mode" value="linkedin">
+        <input type="hidden" name="scrape_query" value="<?= e($customQuery ?: $currSector['query']) ?>">
+        <input type="hidden" name="scrape_city" value="<?= e($selectedCity) ?>">
+        <input type="hidden" name="scrape_sector" value="<?= e($selectedSectorKey) ?>">
+        <button type="submit" class="btn" style="padding:8px 14px;font-size:.82rem;background:rgba(10,102,194,.18);border:1px solid #0A66C2;color:#60A5FA;font-weight:700">
+          💼 Scrape LinkedIn Live
+        </button>
+      </form>
+      <?php if (!empty($scrapedRows)): ?>
+        <form method="post" style="margin:0;display:inline-block" onsubmit="return confirm('Clear all live scraped leads?')">
+          <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+          <input type="hidden" name="action" value="clear_scraped">
+          <button type="submit" class="btn sm" style="padding:8px 10px;font-size:.76rem">🧹 Clear Scraped (<?= count($scrapedRows) ?>)</button>
+        </form>
+      <?php endif; ?>
     </div>
   </div>
 </div>
 
 <!-- Scouted Leads Results Grid -->
-<h2 style="margin-bottom:14px;display:flex;align-items:center;gap:10px">
+<h2 style="margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
   <span>Scouted Prospects (<?= count($displayLeads) ?>)</span>
-  <span style="font-size:.8rem;color:var(--mut);font-weight:400">Ready for English Outreach, Short Proposal & Google Meet</span>
+  <?php if (!empty($scrapedRows)): ?>
+    <span class="pill s-won" style="font-size:.76rem">🔥 <?= count($scrapedRows) ?> Live Scraped Leads on Top</span>
+  <?php endif; ?>
+  <span style="font-size:.8rem;color:var(--mut);font-weight:400">Ready for 1-Click Auto-Email, WhatsApp, AI Pitch & Google Meet</span>
 </h2>
 
 <div class="scout-grid">
   <?php foreach ($displayLeads as $p): 
-    $phoneClean = preg_replace('/[^0-9]/', '', $p['phone']);
+    $phoneClean = preg_replace('/[^0-9]/', '', (string)($p['phone'] ?? ''));
     if (str_starts_with($phoneClean, '03')) {
         $waNum = '92' . substr($phoneClean, 1);
     } else {
         $waNum = $phoneClean;
     }
 
-    $clientName = $p['name'] ?: $p['company'];
+    $clientName = ($p['name'] ?? '') ?: ($p['company'] ?? 'Partner');
+    $srcType    = $p['source_type'] ?? '';
+    $liUrl      = $p['linkedin_url'] ?? '';
     
     // English Pitch (Default for International)
     $waTextEn = str_replace('[Name]', $clientName, $currSector['pitch_en'] ?? $currSector['pitch']);
-    $waUrlEn = 'https://wa.me/' . $waNum . '?text=' . rawurlencode($waTextEn);
+    $waUrlEn = $waNum ? ('https://wa.me/' . $waNum . '?text=' . rawurlencode($waTextEn)) : '';
 
     // Roman Urdu Pitch
     $waTextRo = str_replace('[Name]', $clientName, $currSector['pitch_ro'] ?? $currSector['pitch']);
-    $waUrlRo = 'https://wa.me/' . $waNum . '?text=' . rawurlencode($waTextRo);
+    $waUrlRo = $waNum ? ('https://wa.me/' . $waNum . '?text=' . rawurlencode($waTextRo)) : '';
 
     // Direct Short Proposal Trigger Link
     $propUrl = "../api/send_proposal.php?name=" . urlencode($clientName) 
-        . "&company=" . urlencode($p['company']) 
+        . "&company=" . urlencode($p['company'] ?? '') 
         . "&email=" . urlencode($p['email'] ?? '') 
-        . "&phone=" . urlencode($p['phone']) 
+        . "&phone=" . urlencode($p['phone'] ?? '') 
         . "&service=" . urlencode($currSector['service']) 
-        . "&lang=" . ($p['country'] === 'PK' ? 'ro' : 'en');
+        . "&lang=" . (($p['country'] ?? '') === 'PK' ? 'ro' : 'en');
+
+    // AI Cold Outreach Agent Prefill Link
+    $aiPrefill = "Target Company: " . ($p['company'] ?? '') . " (" . ($p['address'] ?? '') . "). Decision Maker: " . $clientName . ". Website: " . (($p['website'] ?? '') ?: 'None') . ". Pitch our " . $currSector['service'] . ".";
+    $aiPitchUrl = "agency_agents.php?agent=outreach&phone=" . urlencode($waNum) . "&prefill=" . urlencode($aiPrefill);
 
     // Google Calendar / Meet Scheduling URL
     $calPrefill = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" 
-        . urlencode("SoftNexa Discovery Call: " . $p['company'] . " & SoftNexa")
-        . "&details=" . urlencode("30-Minute Google Meet Discovery Call regarding " . $currSector['service'] . ".\nClient: " . $clientName . "\nPhone: " . $p['phone'] . "\nWebsite: https://softnexasolution.com")
+        . urlencode("SoftNexa Discovery Call: " . ($p['company'] ?? '') . " & SoftNexa")
+        . "&details=" . urlencode("30-Minute Google Meet Discovery Call regarding " . $currSector['service'] . ".\nClient: " . $clientName . "\nPhone: " . ($p['phone'] ?? '') . "\nWebsite: https://softnexasolution.com")
         . "&location=" . urlencode("https://meet.google.com/new");
   ?>
-    <div class="prospect-card">
+    <div class="prospect-card" style="<?= $srcType ? 'border-color:rgba(110,75,255,.35)' : '' ?>">
       <div>
         <div class="prospect-head">
           <div>
-            <div class="prospect-title"><?= e($p['company']) ?></div>
-            <div class="prospect-meta"><?= e($p['name']) ?> · <?= e($p['address']) ?></div>
+            <div class="prospect-title"><?= e($p['company'] ?? '') ?></div>
+            <div class="prospect-meta"><?= e($p['name'] ?? '') ?> · <?= e($p['address'] ?? '') ?></div>
           </div>
-          <div style="display:flex;gap:4px">
+          <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">
+            <?php if ($srcType === 'google_maps'): ?>
+              <span class="prospect-tag ready">🔥 LIVE GOOGLE</span>
+            <?php elseif ($srcType === 'linkedin'): ?>
+              <span class="prospect-tag flag" style="background:rgba(10,102,194,.16);color:#2563EB;border-color:#0A66C2">💼 LINKEDIN</span>
+            <?php endif; ?>
             <span class="prospect-tag flag"><?= e($p['country'] ?? 'GCC') ?></span>
-            <?php if (empty($p['website'])): ?>
+            <?php if (empty($p['website']) && $srcType !== 'linkedin'): ?>
               <span class="prospect-tag hot" title="No active website detected! Prime client for Web App / E-Commerce">NO SITE</span>
-            <?php else: ?>
+            <?php elseif (!empty($p['website'])): ?>
               <span class="prospect-tag ready" title="Active website. Prime client for Modern ERP & AI Automation">HAS SITE</span>
             <?php endif; ?>
           </div>
         </div>
 
         <div class="prospect-body">
-          <div>📱 <b>Phone / WhatsApp:</b> <?= e($p['phone']) ?></div>
+          <?php if (!empty($p['phone'])): ?>
+            <div>📱 <b>Phone / WhatsApp:</b> <?= e($p['phone']) ?></div>
+          <?php endif; ?>
           <?php if (!empty($p['email'])): ?>
             <div>✉️ <b>Email:</b> <a href="mailto:<?= e($p['email']) ?>" style="color:var(--cyan)"><?= e($p['email']) ?></a></div>
           <?php endif; ?>
           <?php if (!empty($p['website'])): ?>
             <div>🌐 <b>Website:</b> <a href="<?= e($p['website']) ?>" target="_blank" rel="noopener" style="color:var(--mut)"><?= e(parse_url($p['website'], PHP_URL_HOST) ?: $p['website']) ?></a></div>
           <?php endif; ?>
-          <div>⭐ <b>Google Rating:</b> <?= e($p['rating']) ?></div>
+          <?php if (!empty($liUrl)): ?>
+            <div>💼 <b>LinkedIn:</b> <a href="<?= e($liUrl) ?>" target="_blank" rel="noopener" style="color:#2563EB;font-weight:600">Open Profile ↗</a></div>
+          <?php endif; ?>
+          <div>⭐ <b>Source / Rating:</b> <?= e($p['rating'] ?? '') ?></div>
         </div>
       </div>
 
       <div>
         <div class="prospect-actions">
-          <!-- 1-Click English WhatsApp (Primary) -->
-          <a href="<?= e($waUrlEn) ?>" target="_blank" rel="noopener" class="btn-wa-en" title="Send Executive English Pitch on WhatsApp">
-            <span>💬</span> <span>WA (EN)</span>
-          </a>
+          <?php if ($waUrlEn): ?>
+            <!-- 1-Click English WhatsApp (Primary) -->
+            <a href="<?= e($waUrlEn) ?>" target="_blank" rel="noopener" class="btn-wa-en" title="Send Executive English Pitch on WhatsApp">
+              <span>💬</span> <span>WA (EN)</span>
+            </a>
 
-          <!-- Roman Urdu Option -->
-          <a href="<?= e($waUrlRo) ?>" target="_blank" rel="noopener" class="btn-wa-ro" title="Send Roman Urdu Pitch on WhatsApp">
-            <span>Urdu</span>
+            <!-- Roman Urdu Option -->
+            <a href="<?= e($waUrlRo) ?>" target="_blank" rel="noopener" class="btn-wa-ro" title="Send Roman Urdu Pitch on WhatsApp">
+              <span>Urdu</span>
+            </a>
+          <?php endif; ?>
+
+          <?php if (!empty($p['email'])): ?>
+            <!-- 1-Click Auto Cold Email -->
+            <form method="post" style="margin:0">
+              <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+              <input type="hidden" name="action" value="send_cold_email">
+              <input type="hidden" name="email" value="<?= e($p['email']) ?>">
+              <input type="hidden" name="name" value="<?= e($clientName) ?>">
+              <input type="hidden" name="company" value="<?= e($p['company'] ?? '') ?>">
+              <input type="hidden" name="service" value="<?= e($currSector['service']) ?>">
+              <input type="hidden" name="pitch" value="<?= e($waTextEn) ?>">
+              <button type="submit" class="btn-meet" style="background:linear-gradient(120deg,#0284C7,#0369A1)" title="Send Personalized Cold Email directly from marketing@softnexasolution.com">
+                <span>✉️</span> <span>Auto-Email</span>
+              </button>
+            </form>
+          <?php endif; ?>
+
+          <!-- AI Outreach Sniper Agent -->
+          <a href="<?= e($aiPitchUrl) ?>" class="btn-prop" style="background:linear-gradient(120deg,#6E4BFF,#EC4899)" title="Open this lead in Cold Outreach Sniper AI Agent">
+            <span>⚡</span> <span>AI Pitch</span>
           </a>
 
           <!-- 1-Click Send Proposal (Email & WhatsApp) -->
@@ -441,17 +760,12 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
             <span>📄</span> <span>Proposal</span>
           </a>
 
-          <!-- Google Meet Link -->
-          <a href="<?= e($calPrefill) ?>" target="_blank" rel="noopener" class="btn-meet" title="Schedule Google Meet with this lead">
-            <span>📅</span> <span>Meet</span>
-          </a>
-
           <!-- Save to CRM -->
           <form method="post" action="lead_finder.php?sector=<?= e($selectedSectorKey) ?>&city=<?= urlencode($selectedCity) ?>" style="margin:0">
             <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
             <input type="hidden" name="action" value="save_lead">
-            <input type="hidden" name="name" value="<?= e($p['name']) ?>">
-            <input type="hidden" name="company" value="<?= e($p['company']) ?>">
+            <input type="hidden" name="name" value="<?= e($p['name'] ?? '') ?>">
+            <input type="hidden" name="company" value="<?= e($p['company'] ?? '') ?>">
             <input type="hidden" name="phone" value="<?= e($p['phone']) ?>">
             <input type="hidden" name="email" value="<?= e($p['email']) ?>">
             <input type="hidden" name="service" value="<?= e($currSector['service']) ?>">

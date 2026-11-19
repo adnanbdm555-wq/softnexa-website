@@ -340,7 +340,15 @@ admin_head('whatsapp_bot.php', 'WhatsApp AI Bot · ' . ADMIN_TITLE);
                 if (!is_array($pausedList)) $pausedList = [];
                 $isChatPaused = in_array($c['phone'], $pausedList);
                 ?>
-                <div style="display:flex;gap:6px;align-items:center">
+                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                  <?php if ($c['direction'] === 'in'): ?>
+                    <a href="agency_agents.php?agent=closer&phone=<?= urlencode($c['phone']) ?>&prefill=<?= urlencode('WhatsApp Client (' . ($c['name'] ?: '+' . $c['phone']) . ') says: ' . $c['message']) ?>" class="btn" style="padding:4px 8px;font-size:.74rem;background:rgba(110,75,255,.14);color:var(--iris);border:1px solid var(--iris)" title="Draft Closing Reply with The Deal Closer AI Agent">
+                      💼 Closer
+                    </a>
+                    <a href="agency_agents.php?agent=proposal&phone=<?= urlencode($c['phone']) ?>&prefill=<?= urlencode('WhatsApp Client (' . ($c['name'] ?: '+' . $c['phone']) . ') project inquiry: ' . $c['message']) ?>" class="btn" style="padding:4px 8px;font-size:.74rem;background:rgba(2,132,199,.14);color:var(--cyan);border:1px solid var(--cyan)" title="Generate Scope Proposal with The Proposal Architect">
+                      📄 Proposal
+                    </a>
+                  <?php endif; ?>
                   <form method="post" style="display:inline;margin:0">
                     <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
                     <input type="hidden" name="action" value="toggle_chat_pause">
