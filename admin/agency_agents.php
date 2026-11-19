@@ -213,6 +213,9 @@ $currAgent = $AGENTS[$activeAgentId];
 
 $prefillPrompt = trim((string)($_POST['prompt'] ?? ($_GET['prefill'] ?? '')));
 $targetPhone   = preg_replace('/[^0-9]/', '', (string)($_POST['target_phone'] ?? ($_GET['phone'] ?? '')));
+if (str_starts_with($targetPhone, '03')) $targetPhone = '92' . substr($targetPhone, 1);
+$targetEmail   = trim((string)($_POST['target_email'] ?? ($_GET['email'] ?? '')));
+$targetName    = trim((string)($_POST['target_name'] ?? ($_GET['name'] ?? '')));
 $fbPageId      = trim((string)setting('fb_page_id', ''));
 $fbPageToken   = trim((string)setting('fb_page_token', ''));
 
@@ -746,6 +749,25 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
         } else {
             $runError = 'Valid target phone number required to send directly.';
         }
+    } elseif ($action === 'send_email_deliverable') {
+        $toEmail = trim((string)($_POST['target_email'] ?? ''));
+        $toName  = trim((string)($_POST['target_name'] ?? 'Partner'));
+        $bodyTxt = trim((string)($_POST['email_message'] ?? ''));
+        if (!filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
+            $runError = 'Valid email address required to dispatch directly.';
+        } elseif (empty($bodyTxt)) {
+            $runError = 'Email body is empty.';
+        } else {
+            $subj = "SoftNexa Proposal & Strategy for " . ($toName ?: 'Your Business');
+            $hdrs = "From: SoftNexa Solutions <" . MAIL_FROM . ">\r\nReply-To: " . MAIL_FROM . "\r\nContent-Type: text/plain; charset=UTF-8\r\n";
+            if (@mail($toEmail, $subj, $bodyTxt . "\n\n---\nSoftNexa Solutions | +92 335 5556290 | https://softnexasolution.com", $hdrs)) {
+                $runNotice = "✅ AI Deliverable successfully emailed to {$toEmail}!";
+            } else {
+                $runError = "Email server error sending to {$toEmail}.";
+            }
+            $resultText = $bodyTxt;
+            $resultSource = 'Emailed to ' . $toEmail;
+        }
     } elseif ($action === 'test_gemini') {
         $discovery = discover_gemini_models($geminiKey);
         if (!empty($discovery['models'])) {
@@ -869,6 +891,28 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
 try {
     $st = $pdo->query("SELECT * FROM agency_agent_runs ORDER BY id DESC LIMIT 10");
     $historyList = $st->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+
+// Unified Live Automation Queues (Lead Scout + CRM Leads + Client Briefs + WhatsApp AI Bot)
+$hubScraped = [];
+$hubLeads   = [];
+$hubBriefs  = [];
+$hubWaChats = [];
+
+try {
+    $hubScraped = $pdo->query("SELECT id, source_type, city, name, company, phone, email, website, address FROM scraped_leads ORDER BY id DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+
+try {
+    $hubLeads = $pdo->query("SELECT id, name, company, email, phone, service, industry, message, status, created_at FROM leads ORDER BY id DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+
+try {
+    $hubBriefs = $pdo->query("SELECT id, name, company, email, phone, city, project_type, features, budget, timeline, goal, status, created_at FROM briefs ORDER BY id DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+
+try {
+    $hubWaChats = $pdo->query("SELECT id, phone, name, message, created_at FROM wa_messages WHERE direction = 'in' ORDER BY id DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {}
 
 admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
@@ -1045,6 +1089,199 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
   </div>
 <?php endif; ?>
 
+<!-- UNIFIED AUTOMATION HUB: Lead Scout + CRM Leads + Client Briefs + WhatsApp AI Bot -->
+<div class="card" style="margin-bottom:22px;border:1.5px solid rgba(110,75,255,.3);background:linear-gradient(180deg,rgba(110,75,255,.04) 0%,rgba(255,255,255,0) 100%)">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+    <div>
+      <h2 style="margin:0;font-size:1.12rem;display:flex;align-items:center;gap:8px">
+        <span>🚀</span> <span>Unified Live Automation Hub (All Leads, Briefs & WhatsApp Chats)</span>
+      </h2>
+      <span style="font-size:.8rem;color:var(--mut)">Kisi bhi lead, brief ya WhatsApp chat par <b>⚡ 1-Click Auto-Run</b> dabayein — Agent khud select hokar ready-to-send pitch / proposal bana dega!</span>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button type="button" class="btn sm hub-tab-btn" data-tab="hub-scraped" onclick="switchHubTab('hub-scraped', this)" style="background:var(--iris);color:#fff;border:0">
+        🔥 Lead Scout (<?= count($hubScraped) ?>)
+      </button>
+      <button type="button" class="btn sm hub-tab-btn" data-tab="hub-leads" onclick="switchHubTab('hub-leads', this)">
+        📥 CRM Leads (<?= count($hubLeads) ?>)
+      </button>
+      <button type="button" class="btn sm hub-tab-btn" data-tab="hub-briefs" onclick="switchHubTab('hub-briefs', this)">
+        📋 Client Briefs (<?= count($hubBriefs) ?>)
+      </button>
+      <button type="button" class="btn sm hub-tab-btn" data-tab="hub-wa" onclick="switchHubTab('hub-wa', this)">
+        🤖 WhatsApp Chats (<?= count($hubWaChats) ?>)
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab 1: Scraped Leads (Lead Scout) -->
+  <div id="hub-scraped" class="hub-tab-panel" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;max-height:260px;overflow-y:auto;padding-right:4px">
+    <?php if (empty($hubScraped)): ?>
+      <div style="grid-column:1/-1;color:var(--mut);font-size:.85rem;padding:12px">Abhi koi live scraped lead nahi hai. <a href="lead_finder.php" style="color:var(--iris);font-weight:700">Lead Scout</a> se Google Maps / LinkedIn scrape karein to yahan auto-show honge.</div>
+    <?php else: foreach ($hubScraped as $s):
+      $sPhone = preg_replace('/[^0-9]/', '', (string)$s['phone']);
+      if (str_starts_with($sPhone, '03')) $sPhone = '92' . substr($sPhone, 1);
+      $sPrompt = "Live Scraped Business: " . $s['company'] . " (" . $s['address'] . "). Website: " . ($s['website'] ?: 'None — needs website & automation') . ". Write a tailored cold outreach pitch for their exact industry.";
+    ?>
+      <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between;gap:8px">
+        <div>
+          <div style="font-weight:700;font-size:.88rem;color:var(--ink)"><?= e($s['company']) ?></div>
+          <div style="font-size:.75rem;color:var(--mut)"><?= e($s['city']) ?> · <?= e($s['phone'] ?: ($s['email'] ?: 'LinkedIn/Web')) ?></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <form method="post" style="margin:0;flex:1">
+            <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+            <input type="hidden" name="action" value="run_agent">
+            <input type="hidden" name="agent_id" value="outreach">
+            <input type="hidden" name="lang" value="en">
+            <input type="hidden" name="target_phone" value="<?= e($sPhone) ?>">
+            <input type="hidden" name="target_email" value="<?= e($s['email']) ?>">
+            <input type="hidden" name="target_name" value="<?= e($s['company']) ?>">
+            <input type="hidden" name="prompt" value="<?= e($sPrompt) ?>">
+            <button type="submit" class="btn p" style="width:100%;justify-content:center;padding:5px 8px;font-size:.74rem">⚡ Auto-Pitch</button>
+          </form>
+          <form method="post" style="margin:0">
+            <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+            <input type="hidden" name="action" value="run_agent">
+            <input type="hidden" name="agent_id" value="proposal">
+            <input type="hidden" name="lang" value="en">
+            <input type="hidden" name="target_phone" value="<?= e($sPhone) ?>">
+            <input type="hidden" name="target_email" value="<?= e($s['email']) ?>">
+            <input type="hidden" name="target_name" value="<?= e($s['company']) ?>">
+            <input type="hidden" name="prompt" value="<?= e($sPrompt) ?>">
+            <button type="submit" class="btn" style="padding:5px 8px;font-size:.74rem">📄 Proposal</button>
+          </form>
+        </div>
+      </div>
+    <?php endforeach; endif; ?>
+  </div>
+
+  <!-- Tab 2: CRM Leads -->
+  <div id="hub-leads" class="hub-tab-panel" style="display:none;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;max-height:260px;overflow-y:auto;padding-right:4px">
+    <?php if (empty($hubLeads)): ?>
+      <div style="grid-column:1/-1;color:var(--mut);font-size:.85rem;padding:12px">Abhi koi CRM lead nahi hai.</div>
+    <?php else: foreach ($hubLeads as $l):
+      $lPhone = preg_replace('/[^0-9]/', '', (string)$l['phone']);
+      if (str_starts_with($lPhone, '03')) $lPhone = '92' . substr($lPhone, 1);
+      $lName = $l['company'] ?: ($l['name'] ?: 'CRM Lead');
+      $lPrompt = "CRM Lead: {$lName} ({$l['industry']}). Interested in: {$l['service']}. Details: " . mb_substr((string)$l['message'], 0, 260);
+    ?>
+      <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between;gap:8px">
+        <div>
+          <div style="font-weight:700;font-size:.88rem;color:var(--ink)"><?= e($lName) ?> <span class="pill" style="font-size:.66rem"><?= e($l['status']) ?></span></div>
+          <div style="font-size:.75rem;color:var(--mut)"><?= e($l['service'] ?: $l['industry']) ?> · <?= e($l['phone'] ?: $l['email']) ?></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <form method="post" style="margin:0;flex:1">
+            <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+            <input type="hidden" name="action" value="run_agent">
+            <input type="hidden" name="agent_id" value="proposal">
+            <input type="hidden" name="lang" value="ro">
+            <input type="hidden" name="target_phone" value="<?= e($lPhone) ?>">
+            <input type="hidden" name="target_email" value="<?= e($l['email']) ?>">
+            <input type="hidden" name="target_name" value="<?= e($lName) ?>">
+            <input type="hidden" name="prompt" value="<?= e($lPrompt) ?>">
+            <button type="submit" class="btn p" style="width:100%;justify-content:center;padding:5px 8px;font-size:.74rem">📄 Auto-Proposal</button>
+          </form>
+          <form method="post" style="margin:0">
+            <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+            <input type="hidden" name="action" value="run_agent">
+            <input type="hidden" name="agent_id" value="closer">
+            <input type="hidden" name="lang" value="ro">
+            <input type="hidden" name="target_phone" value="<?= e($lPhone) ?>">
+            <input type="hidden" name="target_email" value="<?= e($l['email']) ?>">
+            <input type="hidden" name="target_name" value="<?= e($lName) ?>">
+            <input type="hidden" name="prompt" value="<?= e($lPrompt) ?>">
+            <button type="submit" class="btn" style="padding:5px 8px;font-size:.74rem">💼 Closer</button>
+          </form>
+        </div>
+      </div>
+    <?php endforeach; endif; ?>
+  </div>
+
+  <!-- Tab 3: Client Briefs -->
+  <div id="hub-briefs" class="hub-tab-panel" style="display:none;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;max-height:260px;overflow-y:auto;padding-right:4px">
+    <?php if (empty($hubBriefs)): ?>
+      <div style="grid-column:1/-1;color:var(--mut);font-size:.85rem;padding:12px">Abhi koi Client Brief submit nahi hua.</div>
+    <?php else: foreach ($hubBriefs as $b):
+      $bPhone = preg_replace('/[^0-9]/', '', (string)$b['phone']);
+      if (str_starts_with($bPhone, '03')) $bPhone = '92' . substr($bPhone, 1);
+      $bName = $b['company'] ?: ($b['name'] ?: 'Client Brief');
+      $bPrompt = "Client Project Brief from {$bName} ({$b['city']}). Type: {$b['project_type']}. Budget: {$b['budget']}. Timeline: {$b['timeline']}. Features: {$b['features']}. Goal: {$b['goal']}";
+    ?>
+      <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between;gap:8px">
+        <div>
+          <div style="font-weight:700;font-size:.88rem;color:var(--ink)"><?= e($bName) ?></div>
+          <div style="font-size:.75rem;color:var(--mut)"><?= e($b['project_type']) ?> · Budget: <?= e($b['budget'] ?: 'TBD') ?></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <form method="post" style="margin:0;flex:1">
+            <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+            <input type="hidden" name="action" value="run_agent">
+            <input type="hidden" name="agent_id" value="proposal">
+            <input type="hidden" name="lang" value="en">
+            <input type="hidden" name="target_phone" value="<?= e($bPhone) ?>">
+            <input type="hidden" name="target_email" value="<?= e($b['email']) ?>">
+            <input type="hidden" name="target_name" value="<?= e($bName) ?>">
+            <input type="hidden" name="prompt" value="<?= e($bPrompt) ?>">
+            <button type="submit" class="btn p" style="width:100%;justify-content:center;padding:5px 8px;font-size:.74rem">📄 48h Blueprint</button>
+          </form>
+          <form method="post" style="margin:0">
+            <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+            <input type="hidden" name="action" value="run_agent">
+            <input type="hidden" name="agent_id" value="architect">
+            <input type="hidden" name="lang" value="en">
+            <input type="hidden" name="target_phone" value="<?= e($bPhone) ?>">
+            <input type="hidden" name="target_email" value="<?= e($b['email']) ?>">
+            <input type="hidden" name="target_name" value="<?= e($bName) ?>">
+            <input type="hidden" name="prompt" value="<?= e($bPrompt) ?>">
+            <button type="submit" class="btn" style="padding:5px 8px;font-size:.74rem">🛠️ Tech Spec</button>
+          </form>
+        </div>
+      </div>
+    <?php endforeach; endif; ?>
+  </div>
+
+  <!-- Tab 4: WhatsApp AI Bot Chats -->
+  <div id="hub-wa" class="hub-tab-panel" style="display:none;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;max-height:260px;overflow-y:auto;padding-right:4px">
+    <?php if (empty($hubWaChats)): ?>
+      <div style="grid-column:1/-1;color:var(--mut);font-size:.85rem;padding:12px">Abhi koi incoming WhatsApp message nahi aaya.</div>
+    <?php else: foreach ($hubWaChats as $w):
+      $wName = $w['name'] ?: ('+' . $w['phone']);
+      $wPrompt = "WhatsApp Client ({$wName}, +{$w['phone']}) just messaged: \"" . $w['message'] . "\". Craft the highest-converting reply to move them to a discovery call or deal close.";
+    ?>
+      <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between;gap:8px">
+        <div>
+          <div style="font-weight:700;font-size:.88rem;color:var(--ink)"><?= e($wName) ?> <span style="font-size:.72rem;color:var(--cyan);font-family:monospace">+<?= e($w['phone']) ?></span></div>
+          <div style="font-size:.76rem;color:var(--mut);margin-top:2px">"<?= e(mb_strimwidth($w['message'], 0, 85, '...')) ?>"</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <form method="post" style="margin:0;flex:1">
+            <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+            <input type="hidden" name="action" value="run_agent">
+            <input type="hidden" name="agent_id" value="closer">
+            <input type="hidden" name="lang" value="ro">
+            <input type="hidden" name="target_phone" value="<?= e($w['phone']) ?>">
+            <input type="hidden" name="target_name" value="<?= e($wName) ?>">
+            <input type="hidden" name="prompt" value="<?= e($wPrompt) ?>">
+            <button type="submit" class="btn p" style="width:100%;justify-content:center;padding:5px 8px;font-size:.74rem">💼 Auto-Close Reply</button>
+          </form>
+          <form method="post" style="margin:0">
+            <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+            <input type="hidden" name="action" value="run_agent">
+            <input type="hidden" name="agent_id" value="proposal">
+            <input type="hidden" name="lang" value="ro">
+            <input type="hidden" name="target_phone" value="<?= e($w['phone']) ?>">
+            <input type="hidden" name="target_name" value="<?= e($wName) ?>">
+            <input type="hidden" name="prompt" value="<?= e($wPrompt) ?>">
+            <button type="submit" class="btn" style="padding:5px 8px;font-size:.74rem">📄 Proposal</button>
+          </form>
+        </div>
+      </div>
+    <?php endforeach; endif; ?>
+  </div>
+</div>
+
 <!-- Agent Selection Carousel Grid -->
 <div class="agent-grid">
   <?php foreach ($AGENTS as $id => $a): ?>
@@ -1096,10 +1333,14 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
       <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
       <input type="hidden" name="action" value="run_agent">
       <input type="hidden" name="agent_id" value="<?= e($activeAgentId) ?>">
-      <?php if ($targetPhone): ?>
+      <?php if ($targetPhone || $targetEmail): ?>
         <input type="hidden" name="target_phone" value="<?= e($targetPhone) ?>">
+        <input type="hidden" name="target_email" value="<?= e($targetEmail) ?>">
+        <input type="hidden" name="target_name" value="<?= e($targetName) ?>">
         <div style="background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.35);color:#059669;padding:8px 12px;border-radius:8px;font-size:.82rem;font-weight:600">
-          📲 Linked WhatsApp Client: <b>+<?= e($targetPhone) ?></b> — Deliverable generate hone ke baad aap 1-click mein direct WhatsApp par bhej sakte hain!
+          🎯 Linked Client: <b><?= e($targetName ?: 'Prospect') ?></b>
+          <?= $targetPhone ? ' · 📱 +' . e($targetPhone) : '' ?>
+          <?= $targetEmail ? ' · ✉️ ' . e($targetEmail) : '' ?>
         </div>
       <?php endif; ?>
 
@@ -1159,6 +1400,18 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
               <input type="hidden" name="wa_message" value="<?= e($resultText) ?>">
               <button type="submit" class="btn" style="padding:6px 12px;font-size:.78rem;background:#059669;color:#fff;border:0;font-weight:700">
                 🚀 Send Direct to +<?= e($targetPhone) ?>
+              </button>
+            </form>
+          <?php endif; ?>
+          <?php if ($targetEmail && filter_var($targetEmail, FILTER_VALIDATE_EMAIL)): ?>
+            <form method="post" style="margin:0;display:inline-block">
+              <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+              <input type="hidden" name="action" value="send_email_deliverable">
+              <input type="hidden" name="target_email" value="<?= e($targetEmail) ?>">
+              <input type="hidden" name="target_name" value="<?= e($targetName) ?>">
+              <input type="hidden" name="email_message" value="<?= e($resultText) ?>">
+              <button type="submit" class="btn" style="padding:6px 12px;font-size:.78rem;background:#0284C7;color:#fff;border:0;font-weight:700">
+                ✉️ Email <?= e($targetEmail) ?>
               </button>
             </form>
           <?php endif; ?>
@@ -1259,6 +1512,22 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
 </div>
 
 <script>
+function switchHubTab(tabId, btn) {
+  document.querySelectorAll('.hub-tab-panel').forEach(function(p) { p.style.display = 'none'; });
+  document.querySelectorAll('.hub-tab-btn').forEach(function(b) {
+    b.style.background = '';
+    b.style.color = '';
+    b.style.border = '';
+  });
+  var target = document.getElementById(tabId);
+  if (target) target.style.display = 'grid';
+  if (btn) {
+    btn.style.background = 'var(--iris)';
+    btn.style.color = '#fff';
+    btn.style.border = '0';
+  }
+}
+
 function toggleKeySettings() {
   var p = document.getElementById('key-panel');
   if (p) p.style.display = (p.style.display === 'none' || p.style.display === '') ? 'block' : 'none';
@@ -1288,7 +1557,9 @@ function openWhatsAppShare() {
   var el = document.getElementById('result-output');
   if (!el) return;
   var txt = el.innerText || el.textContent;
-  window.open('https://wa.me/?text=' + encodeURIComponent(txt.substring(0, 3500)), '_blank');
+  var phone = <?= json_encode($targetPhone) ?>;
+  var base = phone ? ('https://wa.me/' + phone + '?text=') : 'https://wa.me/?text=';
+  window.open(base + encodeURIComponent(txt.substring(0, 3500)), '_blank');
 }
 
 function viewHistoryItem(btn) {
