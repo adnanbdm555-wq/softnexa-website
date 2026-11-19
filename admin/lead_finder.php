@@ -626,71 +626,71 @@ function get_smart_pitch_for_lead($p, $currSector, $customQuery = '') {
             'pattern'  => '/\b(salon|saloon|parlor|parlour|beauty|spa|makeup|bridal|hair|nails|lash|brow|barber|grooming|aesthetic studio)\b/i',
             'label'    => 'Beauty Salon & Spa',
             'service'  => 'Online Salon Booking Website & 24/7 WhatsApp Appointment Bot',
-            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build modern booking websites and 24/7 WhatsApp appointment bots specifically for beauty salons and spas. Your clients can view your bridal, hair & skincare packages, book time slots automatically, and get WhatsApp reminders (reducing no-shows by 70%). Review live demos: https://softnexasolution.com/#/demos — Would you be open to a quick 10-minute demo this week? Schedule here: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum beauty salons aur parlours ke liye modern booking website aur 24/7 WhatsApp Appointment Bot banate hain — jisme clients aapke bridal, hair aur skincare packages dekh kar khud slot book kar sakte hain aur automatic WhatsApp reminders jate hain. Live demos: https://softnexasolution.com/#/demos — Kya main aapko 2 minute ka quick demo share kar sakta hoon?"
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa Solutions. We build modern online booking websites and 24/7 WhatsApp appointment bots for beauty salons & spas (100% Fixed-Price Guarantee) — letting clients browse bridal/hair/skin packages and book slots automatically.\n\nTest our live interactive demos below — reply \"Interested\" if you'd like a custom system for your salon:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum beauty salons aur parlours ke liye online booking website aur 24/7 WhatsApp Appointment Bot banate hain (100% Fixed-Price Guarantee par) — jisme clients khud bridal, hair aur skin slots book kar sakte hain.\n\nHamare live interactive demos khud check karein — agar apne salon ke liye isi tarah ka system chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ],
         [
             'pattern'  => '/\b(restaurant|cafe|coffee|bakery|pizza|burger|biryani|bbq|kitchen|catering|food|grill|bistro|eatery|sweets|halwa|diner)\b/i',
             'label'    => 'Restaurant & Food',
             'service'  => 'Commission-Free Online Ordering Website & WhatsApp Menu Bot',
-            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build commission-free direct food ordering websites and 24/7 WhatsApp ordering bots for restaurants and cafes — helping you save 25-30% on third-party delivery app commissions and receive instant WhatsApp order alerts. Live demos: https://softnexasolution.com/#/demos — Book a 10-minute demo: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum restaurants aur cafes ke liye commission-free direct online ordering website aur WhatsApp Menu Bot banate hain — jis se aap delivery apps ka 25-30% commission bacha kar direct orders aur table bookings le sakte hain. Live demos: https://softnexasolution.com/#/demos"
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa Solutions. We build commission-free online food ordering websites and 24/7 WhatsApp menu bots for restaurants & cafes — helping you save 25–30% on delivery app commissions (100% Fixed-Price Guarantee).\n\nExplore our live interactive demos below — reply \"Interested\" if you'd like one for your brand:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum restaurants aur cafes ke liye commission-free online ordering website aur WhatsApp Menu Bot banate hain — jis se aap delivery apps ka 25–30% commission bacha kar direct orders le sakte hain.\n\nHamare live interactive demos khud check karein — agar apne restaurant ke liye chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ],
         [
             'pattern'  => '/\b(clinic|dental|dentist|doctor|dr\.|hospital|medical|derma|skin|health|pharma|orthodont|implant|physio|lab|diagnostic)\b/i',
             'label'    => 'Clinic & Healthcare',
             'service'  => 'Smart Clinic Booking Portal & WhatsApp Patient Reminder Bot',
-            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build online patient appointment portals and 24/7 WhatsApp reminder bots for medical and dental clinics — cutting missed appointments (no-shows) by 70% and organizing digital patient history. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute walkthrough: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum clinics aur doctors ke liye online appointment booking portal aur automated WhatsApp patient reminder bot banate hain jo missed appointments (no-shows) ko 70% kam karta hai. Live demos: https://softnexasolution.com/#/demos"
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa Solutions. We build smart online appointment portals and 24/7 WhatsApp patient reminder bots for clinics & doctors — reducing missed appointments by 70% (100% Fixed-Price Guarantee).\n\nExplore our live clinic & software demos below — reply \"Interested\" to get a custom blueprint:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum clinics aur doctors ke liye online appointment booking portal aur automated WhatsApp patient reminder bot banate hain jo missed appointments ko 70% kam karta hai.\n\nHamare live interactive demos khud check karein — agar apne clinic ke liye chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ],
         [
             'pattern'  => '/\b(real estate|property|properties|realty|builder|builders|developer|developers|estate|housing|brokerage|realtor)\b/i',
             'label'    => 'Real Estate',
             'service'  => 'EstateFlow CRM & 24/7 WhatsApp Property Bot',
-            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build custom 24/7 WhatsApp property automation bots and agent lead vault CRMs for real estate brokerages. It auto-delivers project PDF brochures within 30 seconds and books viewing appointments automatically. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute demo: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum real estate agencies aur builders ke liye automated WhatsApp property bot aur agent lead CRM banate hain jo clients ko 30 seconds mein project brochures bhej kar site visit book karta hai. Live demos: https://softnexasolution.com/#/demos"
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa Solutions. We build 24/7 WhatsApp property automation bots and agent lead CRMs for real estate brokerages — auto-delivering project PDF brochures within 30 seconds and booking viewing slots (100% Fixed-Price Guarantee).\n\nExplore our live interactive demos below — reply \"Interested\" to see how it fits your team:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum real estate agencies aur builders ke liye 24/7 WhatsApp property bot aur agent lead CRM banate hain jo clients ko 30 seconds mein brochures bhej kar site visit book karta hai.\n\nHamare live interactive demos khud check karein — agar apni agency ke liye chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ],
         [
             'pattern'  => '/\b(clothing|fashion|garment|garments|abaya|boutique|perfume|oud|fragrance|jewelry|jewellery|shoes|footwear|leather|bags|cosmetics|watches|apparel|textile|mart|store|shop)\b/i',
             'label'    => 'E-Commerce & Retail',
             'service'  => 'High-Converting E-Commerce Store & WhatsApp Order Bot',
-            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We engineer ultra-fast mobile e-commerce stores with 1-click checkout (Cards, COD, Local Wallets/Tabby) and automated WhatsApp order confirmation & cart recovery bots for retail brands. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute demo: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum retail aur fashion brands ke liye fast mobile E-Commerce Store (Cards/JazzCash/COD checkout) aur automated WhatsApp order confirmation bot banate hain jo aapki online sales ko double karta hai. Live demos: https://softnexasolution.com/#/demos"
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa Solutions. We engineer high-speed mobile e-commerce stores with 1-click checkout (Cards/COD/Wallets) and automated WhatsApp order confirmation bots (100% Fixed-Price Guarantee).\n\nTest our live interactive store demos below — reply \"Interested\" if you'd like a custom store for your brand:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum retail aur fashion brands ke liye fast mobile E-Commerce Store (Cards/JazzCash/COD checkout) aur automated WhatsApp order bot banate hain (100% Fixed-Price Guarantee par).\n\nHamare live interactive demos khud check karein — agar apne brand ke liye chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ],
         [
             'pattern'  => '/\b(gym|fitness|crossfit|yoga|pilates|workout|athletic|training club|health club)\b/i',
             'label'    => 'Gym & Fitness',
             'service'  => 'Gym Membership Portal & Automated WhatsApp Fee Reminder Bot',
-            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build smart gym membership management systems with automated WhatsApp monthly fee reminders, attendance tracking, and online trainer bookings. Live demos: https://softnexasolution.com/#/demos — Book a quick 10-min demo: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum gyms aur fitness clubs ke liye smart membership software aur automated WhatsApp monthly fee reminder bot banate hain jo member renewals aur attendance 100% auto-manage karta hai. Live demos: https://softnexasolution.com/#/demos"
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa Solutions. We build smart gym membership portals with automated WhatsApp monthly fee reminders and attendance tracking (100% Fixed-Price Guarantee).\n\nExplore our live interactive demos below — reply \"Interested\" to get a custom walkthrough:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum gyms aur fitness clubs ke liye smart membership software aur automated WhatsApp fee reminder bot banate hain.\n\nHamare live interactive demos khud check karein — agar apne gym ke liye chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ],
         [
             'pattern'  => '/\b(school|academy|institute|college|university|coaching|tuition|education|montessori|training center)\b/i',
             'label'    => 'Education & Academy',
             'service'  => 'Smart School/Academy Portal & Parent WhatsApp Alert System',
-            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build modern school & academy management portals with automated WhatsApp fee challan reminders, student attendance alerts, and online admissions. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute demo: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum schools aur academies ke liye complete management portal aur Parents WhatsApp Alert System (fee reminders, attendance, online admission) banate hain. Live demos: https://softnexasolution.com/#/demos"
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa Solutions. We build modern school & academy portals with automated WhatsApp fee reminders, attendance alerts, and online admissions (100% Fixed-Price Guarantee).\n\nExplore our live interactive demos below — reply \"Interested\" for a custom blueprint:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum schools aur academies ke liye complete management portal aur Parents WhatsApp Alert System (fee reminders, attendance, admissions) banate hain.\n\nHamare live interactive demos khud check karein — agar apne institute ke liye chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ],
         [
             'pattern'  => '/\b(logistics|cargo|freight|transport|courier|shipping|fleet|movers|packer|forwarding)\b/i',
             'label'    => 'Logistics & Fleet',
             'service'  => 'FleetTrack ERP & Automated WhatsApp Delivery Tracking',
-            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build custom fleet tracking ERPs and driver mobile apps for logistics companies — eliminating paper challans and sending real-time WhatsApp shipment tracking to clients. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute demo: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum logistics aur cargo companies ke liye custom fleet tracking ERP aur driver mobile app banate hain jo customers ko live WhatsApp delivery status deta hai. Live demos: https://softnexasolution.com/#/demos"
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa Solutions. We build custom fleet tracking ERPs and driver mobile apps that send real-time WhatsApp shipment tracking to your clients (100% Fixed-Price Guarantee).\n\nExplore our live interactive demos below — reply \"Interested\" to see how it works:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum logistics aur cargo companies ke liye custom fleet tracking ERP aur driver mobile app banate hain jo customers ko live WhatsApp delivery status deta hai.\n\nHamare live interactive demos khud check karein — agar apni company ke liye chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ],
         [
             'pattern'  => '/\b(contract|construction|fitout|fit-out|interior|architect|mep|engineering|renovation|decor)\b/i',
             'label'    => 'Contracting & Interior',
             'service'  => 'BuildPro Project Costing, BOQ & Client Portal ERP',
-            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build custom project costing, BOQ tracking, and client portfolio websites for contracting and interior fit-out companies. Live demos: https://softnexasolution.com/#/demos — Schedule a 10-minute demo: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum contracting aur interior design companies ke liye project costing ERP aur modern portfolio website banate hain. Live demos: https://softnexasolution.com/#/demos"
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa Solutions. We build custom project costing ERPs, BOQ trackers, and high-converting portfolio websites for contracting & interior fit-out firms (100% Fixed-Price Guarantee).\n\nExplore our live interactive demos below — reply \"Interested\" for a tailored scope:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum contracting aur interior design companies ke liye project costing ERP aur modern portfolio website banate hain.\n\nHamare live interactive demos khud check karein — agar apni company ke liye chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ],
         [
             'pattern'  => '/\b(car|auto|motors|garage|workshop|detailing|rent a car|car rental|tyre|showroom)\b/i',
             'label'    => 'Automotive & Motors',
             'service'  => 'Auto Booking Portal & 24/7 WhatsApp Inquiry Bot',
-            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa (softnexasolution.com). We build custom car showroom / rental / workshop booking websites and 24/7 WhatsApp AI inquiry bots that auto-share availability, pricing, and book appointments instantly. Live demos: https://softnexasolution.com/#/demos — Schedule a demo: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se rabta kar rahe hain. Hum auto showrooms, workshops aur car rentals ke liye booking website aur 24/7 WhatsApp inquiry bot banate hain jo clients ko foran rates aur booking slots deta hai. Live demos: https://softnexasolution.com/#/demos"
+            'pitch_en' => "Hello [Name], this is Adnan from SoftNexa Solutions. We build custom showroom/rental/workshop booking websites and 24/7 WhatsApp AI inquiry bots that auto-share pricing and book appointments instantly (100% Fixed-Price Guarantee).\n\nExplore our live interactive demos below — reply \"Interested\" to get started:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum [Name], SoftNexa se Adnan baat kar raha hoon. Hum auto showrooms, workshops aur car rentals ke liye booking website aur 24/7 WhatsApp inquiry bot banate hain.\n\nHamare live interactive demos khud check karein — agar apne business ke liye chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ]
     ];
 
@@ -705,14 +705,14 @@ function get_smart_pitch_for_lead($p, $currSector, $customQuery = '') {
         }
     }
 
-    // If custom query was searched and doesn't match a specific niche, use SoftNexa Top 4 Core Services pitch
+    // If custom query was searched and doesn't match a specific niche, use SoftNexa Top 4 Core Services pitch (1-Link Live Demo Preview)
     if (!empty($customQuery) && stripos($currSector['query'], $customQuery) === false) {
         $ind = ucwords($customQuery);
         return [
             'label'    => $ind,
             'service'  => "SoftNexa Top 4 Core Solutions for {$ind}",
-            'pitch_en' => "Hello {$name}, this is Adnan from SoftNexa Solutions (softnexasolution.com). We help businesses scale faster under our 100% Fixed-Price Guarantee across 4 core solutions:\n\n🤖 24/7 AI WhatsApp Sales & Booking Bots\n🛍️ High-Converting Websites & E-Commerce Stores\n📊 Custom ERP, CRM & Inventory Software\n📱 Mobile Apps (iOS/Android) & Performance Marketing\n\nLive interactive demos: https://softnexasolution.com/#/demos\nWould you be open to a quick 10-minute call this week? Schedule here: https://softnexasolution.com/#/schedule",
-            'pitch_ro' => "Assalam o Alaikum {$name}, SoftNexa (softnexasolution.com) se Adnan baat kar raha hoon. Hum 100% Fixed-Price Guarantee par businesses ko grow karne ke liye 4 core services dete hain:\n\n🤖 24/7 AI WhatsApp Sales & Booking Bot (raat ko bhi clients auto-handle)\n🛍️ Modern Websites & E-Commerce Stores (Cards/JazzCash/COD + WA Alerts)\n📊 Custom ERP, CRM & POS Software (Stock, Billing & Accounts)\n📱 Mobile Apps & Digital Marketing (Meta/Google Ads + SEO)\n\nLive Demos: https://softnexasolution.com/#/demos\nKya hum 10-minute ki quick call par aapke business ke mutabiq free blueprint share karein?"
+            'pitch_en' => "Hello {$name}, this is Adnan from SoftNexa Solutions. We help businesses scale faster under our 100% Fixed-Price Guarantee across 4 core solutions:\n\n🤖 24/7 AI WhatsApp Sales & Booking Bots\n🛍️ High-Converting Websites & E-Commerce Stores\n📊 Custom ERP, CRM & Inventory Software\n📱 Mobile Apps (iOS/Android) & Performance Marketing\n\nTest our live interactive demos below — reply \"Interested\" if you'd like a custom system for your business:\nhttps://softnexasolution.com/#/demos",
+            'pitch_ro' => "Assalam o Alaikum {$name}, SoftNexa se Adnan baat kar raha hoon. Hum 100% Fixed-Price Guarantee par businesses ko grow karne ke liye 4 core services dete hain:\n\n🤖 24/7 AI WhatsApp Sales & Booking Bot (raat ko bhi clients auto-handle)\n🛍️ Modern Websites & E-Commerce Stores (Cards/JazzCash/COD + WA Alerts)\n📊 Custom ERP, CRM & POS Software (Stock, Billing & Accounts)\n📱 Mobile Apps & Digital Marketing (Meta/Google Ads + SEO)\n\nHamare live interactive demos khud check karein — agar apne business ke liye chahiye ho to bas \"Interested\" reply kar dein:\nhttps://softnexasolution.com/#/demos"
         ];
     }
 
