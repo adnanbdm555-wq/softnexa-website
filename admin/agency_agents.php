@@ -451,7 +451,7 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
       </label>
       <div style="display:grid;gap:6px">
         <?php foreach ($currAgent['quick_prompts'] as $qp): ?>
-          <button type="button" class="quick-pill" onclick="fillPrompt(<?= json_encode($qp) ?>)">
+          <button type="button" class="quick-pill" data-prompt="<?= e($qp) ?>" onclick="fillPrompt(this)">
             💬 <?= e($qp) ?>
           </button>
         <?php endforeach; ?>
@@ -559,7 +559,7 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
                 <?= e(mb_strimwidth($h['output'], 0, 140, '...')) ?>
               </td>
               <td style="white-space:nowrap">
-                <button type="button" class="btn" style="padding:4px 10px;font-size:.75rem" onclick="viewHistoryItem(<?= json_encode($h['prompt']) ?>, <?= json_encode($h['output']) ?>, <?= json_encode($h['agent_title']) ?>)">
+                <button type="button" class="btn" style="padding:4px 10px;font-size:.75rem" data-title="<?= e($h['agent_title']) ?>" data-prompt="<?= e($h['prompt']) ?>" data-output="<?= e($h['output']) ?>" onclick="viewHistoryItem(this)">
                   👁️ View Full
                 </button>
               </td>
@@ -592,11 +592,13 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
 </div>
 
 <script>
-function fillPrompt(text) {
+function fillPrompt(btnOrText) {
+  var text = (typeof btnOrText === 'string') ? btnOrText : btnOrText.getAttribute('data-prompt');
   var el = document.getElementById('prompt-input');
-  if (el) {
+  if (el && text) {
     el.value = text;
     el.focus();
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
 
@@ -617,7 +619,10 @@ function openWhatsAppShare() {
   window.open('https://wa.me/?text=' + encodeURIComponent(txt.substring(0, 3500)), '_blank');
 }
 
-function viewHistoryItem(prompt, output, title) {
+function viewHistoryItem(btn) {
+  var title = btn.getAttribute('data-title') || '';
+  var prompt = btn.getAttribute('data-prompt') || '';
+  var output = btn.getAttribute('data-output') || '';
   document.getElementById('modal-agent-title').innerText = title;
   document.getElementById('modal-prompt').innerText = prompt;
   document.getElementById('modal-output').innerText = output;
