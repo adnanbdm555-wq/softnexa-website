@@ -500,9 +500,9 @@ if (!$llmSucceeded || empty($aiReply)) {
     // 4. Timeline Question
     elseif ($isTimeline) {
         if ($lang === 'ro') {
-            $aiReply = "SoftNexa par delivery guaranteed on-time hoti hai:\n\n⚡ Business / Booking Website: **5 se 7 working days**\n🤖 24/7 AI WhatsApp Sales Bot: **3 se 5 working days**\n🛍️ E-Commerce Online Store: **2 se 3 weeks**\n📊 Custom ERP / Mobile App: **3 se 6 weeks** (weekly live demos ke sath)\n\nAapka target launch kab tak ka hai? Hum timeline fast-track bhi kar sakte hain!";
+            $aiReply = "SoftNexa par har project (Website, E-Commerce Store, 24/7 AI WhatsApp Bot, Mobile App ya Custom Software) **2 se 3 weeks** mein guaranteed on-time live deliver hota hai (weekly milestone demos ke sath). ⚡✨\n\nAapko kab tak launch karna hai?";
         } else {
-            $aiReply = "Our guaranteed delivery timelines:\n⚡ Business / Booking Websites: **5–7 working days**\n🤖 24/7 AI WhatsApp Bot: **3–5 working days**\n🛍️ E-Commerce Stores: **2–3 weeks**\n📊 Custom ERPs & Mobile Apps: **3–6 weeks** (with weekly staging demos)\n\nWhat target launch date are you aiming for?";
+            $aiReply = "At SoftNexa, every project — whether a Website, E-Commerce Store, 24/7 AI WhatsApp Bot, Mobile App, or Custom ERP — is delivered in **2 to 3 weeks** with weekly staging demos and guaranteed on-time delivery. ⚡✨\n\nWhat target launch date are you aiming for?";
         }
     }
     // 5. Category-Specific Handlers (10 Industries + 4 Core Services)
@@ -580,9 +580,9 @@ if (!$llmSucceeded || empty($aiReply)) {
         }
     } elseif ($isWebsite) {
         if ($lang === 'ro') {
-            $aiReply = "G bilkul! Website development SoftNexa ki core specialization hai. 💻✨\n\nHum 5–7 din mein high-speed, mobile-responsive websites deliver karte hain (Corporate Portfolio, Booking Portal ya E-Commerce Store).\n\nAapka business kis category ka hai taake main uske mutabiq best solution aur live demo suggest kar sakoon?";
+            $aiReply = "G bilkul! Website development SoftNexa ki core specialization hai. 💻✨\n\nHum 2 se 3 weeks mein high-speed, mobile-responsive websites deliver karte hain (Corporate Portfolio, Booking Portal ya E-Commerce Store).\n\nAapka business kis category ka hai taake main uske mutabiq best solution aur live demo suggest kar sakoon?";
         } else {
-            $aiReply = "Absolutely! Custom high-speed websites are our core expertise at SoftNexa (delivered in 5–7 working days). 💻✨\n\nWhat industry is your business in so I can suggest the best layout and features?";
+            $aiReply = "Absolutely! Custom high-speed websites are our core expertise at SoftNexa (delivered in 2 to 3 weeks). 💻✨\n\nWhat industry is your business in so I can suggest the best layout and features?";
         }
     } elseif ($isOfficeContact) {
         if ($lang === 'ro') {
