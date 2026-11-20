@@ -1045,8 +1045,18 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
   grid-template-columns: 1.1fr .9fr;
   gap: 20px;
 }
+.visual-studio-grid {
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 22px;
+  align-items: start;
+}
 @media(max-width:960px){
-  .workspace-grid { grid-template-columns: 1fr; }
+  .workspace-grid, .visual-studio-grid { grid-template-columns: 1fr !important; gap: 14px; }
+  .squad-hero { padding: 14px 16px; }
+  .agent-grid { grid-template-columns: 1fr !important; gap: 10px; }
+  .hub-tab-panel { grid-template-columns: 1fr !important; }
+  .output-box { padding: 14px; font-size: .86rem; }
 }
 .output-box {
   background: #090818;
@@ -1498,7 +1508,7 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
     <span class="pill s-won" style="font-size:.76rem">✨ Zero Canva / Zero Paid API</span>
   </div>
 
-  <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:start">
+  <div class="visual-studio-grid">
     <!-- Left: Controls -->
     <div style="display:grid;gap:12px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">

@@ -820,7 +820,16 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 .scout-tab:hover{color:var(--ink);border-color:var(--iris)}
 .scout-tab.active{background:linear-gradient(110deg,var(--iris),var(--cyan));border-color:transparent;color:#fff}
 .scout-search-bar{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:24px;box-shadow:0 1px 3px rgba(15,23,42,.04)}
-.scout-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.scout-search-form{display:grid;grid-template-columns:2fr 1.2fr 1.2fr auto auto;gap:12px;align-items:end}
+.scout-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+@media(max-width:900px){
+  .scout-search-bar{padding:14px}
+  .scout-search-form{grid-template-columns:1fr !important;gap:10px}
+  .scout-grid{grid-template-columns:1fr !important;gap:12px}
+  .prospect-card{padding:14px;min-width:0;word-break:break-word}
+  .prospect-head{flex-direction:column;gap:8px}
+  .advisory-box{padding:14px}
+}
 .prospect-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .2s ease,border-color .2s ease;box-shadow:0 1px 3px rgba(15,23,42,.04)}
 .prospect-card:hover{border-color:color-mix(in srgb,var(--cyan) 50%,var(--iris));transform:translateY(-2px);box-shadow:0 4px 12px rgba(15,23,42,.08)}
 .prospect-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
@@ -941,7 +950,7 @@ admin_head('lead_finder.php', 'B2B Lead Scout & Middle East Outreach Engine — 
 
 <!-- Search Controls Box -->
 <div class="scout-search-bar">
-  <form method="get" action="lead_finder.php" style="display:grid;grid-template-columns:2fr 1.2fr 1.2fr auto auto;gap:12px;align-items:end">
+  <form method="get" action="lead_finder.php" class="scout-search-form">
     <input type="hidden" name="sector" value="<?= e($selectedSectorKey) ?>">
     <div>
       <label style="display:block;font-size:.8rem;color:var(--mut);margin-bottom:6px">Target Business / Industry</label>

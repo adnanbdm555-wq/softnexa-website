@@ -88,6 +88,7 @@ function admin_head($active = '', $title = '') {
 :root{--void:#F8FAFC;--panel:#FFFFFF;--panel2:#F1F5F9;--ink:#0F172A;--mut:#64748B;--line:#E2E8F0;--line2:#CBD5E1;
  --iris:#6E4BFF;--cyan:#0284C7;--pink:#E11D48;--mint:#10B981;--amber:#F59E0B;--r:16px}
 *{box-sizing:border-box}
+html,body{overflow-x:hidden;max-width:100%}
 body{margin:0;background:var(--void);color:var(--ink);font-family:"Hanken Grotesk",system-ui,sans-serif;font-size:15px}
 a{color:inherit}
 h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;letter-spacing:-.03em;margin:0}
@@ -157,9 +158,25 @@ label{display:block;font-size:.78rem;color:var(--mut);margin-bottom:5px;font-wei
 .filters > div{min-width:150px}
 .muted{color:var(--mut)}
 .empty{padding:40px;text-align:center;color:var(--mut)}
-@media(max-width:900px){.shell{grid-template-columns:1fr}aside{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}
- aside nav{display:flex;gap:6px}.brand{border-bottom:0;padding:0 12px 0 0;margin:0;border-right:1px solid var(--line)}
- aside .foot{display:none}.cards,.grid2,.grid3{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr;width:100%}
+  aside{flex-direction:row;align-items:center;overflow-x:auto;-webkit-overflow-scrolling:touch;border-right:0;border-bottom:1px solid var(--line);padding:10px 12px;gap:8px}
+  aside nav{display:flex;gap:6px;flex-wrap:nowrap}
+  aside nav a{white-space:nowrap;flex-shrink:0;padding:8px 11px;font-size:.82rem}
+  .brand{border-bottom:0;padding:0 12px 0 0;margin:0;border-right:1px solid var(--line);flex-shrink:0}
+  .brand small{display:none}
+  aside .foot{display:none}
+  main{padding:14px 12px 32px;width:100%;max-width:100vw;overflow-x:hidden}
+  h1{font-size:1.35rem;line-height:1.2}
+  h2{font-size:1.05rem}
+  .top{gap:10px;margin-bottom:14px}
+  .top .sp{margin-left:0;width:100%}
+  .cards,.grid2,.grid3{grid-template-columns:1fr !important;gap:10px}
+  .card{padding:14px;max-width:100%;overflow-x:auto}
+  .btn{padding:8px 13px;font-size:.82rem}
+  .filters > div{min-width:100%;flex:1 1 100%}
+  th,td{padding:8px 9px;font-size:.8rem}
+}
 </style></head><body><div class="shell">
 <aside>
   <div class="brand"><img src="../assets/logo-mark.png" alt="" style="height:32px;width:auto"><span><b>Soft<span style="background:linear-gradient(100deg,#1E6BFF,#12C8F0);-webkit-background-clip:text;background-clip:text;color:transparent">Nexa</span></b><small>Control panel</small></span></div>
