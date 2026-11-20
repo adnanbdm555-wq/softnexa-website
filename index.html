@@ -2662,6 +2662,36 @@ table.sdt .mu{color:var(--muted)}
 .sx-head-wa-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:rgba(37,211,102,.14);border:1px solid rgba(37,211,102,.3);transition:transform .2s,background .2s;text-decoration:none;margin-right:6px}
 .sx-head-wa-btn:hover{background:rgba(37,211,102,.25);transform:scale(1.08)}
 
+/* Ultra-Modern Instant Services & Live Demos Hero Showcase */
+.sx-instant-dock{margin-top:34px;position:relative;z-index:4}
+.sx-instant-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.sx-instant-label{display:inline-flex;align-items:center;gap:8px;font-size:.76rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--iris)}
+.sx-live-dot{width:8px;height:8px;border-radius:50%;background:#10B981;box-shadow:0 0 0 4px rgba(16,185,129,.2);animation:sxWaPulse 2s infinite}
+.sx-svc-dock{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sx-svc-pill{position:relative;display:flex;flex-direction:column;gap:6px;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(110,75,255,.18);text-decoration:none;color:var(--ink);box-shadow:0 10px 30px -15px rgba(15,23,42,.15);transition:transform .22s cubic-bezier(.22,1,.36,1),border-color .22s,box-shadow .22s;overflow:hidden}
+.sx-svc-pill:hover{transform:translateY(-4px);border-color:var(--iris);box-shadow:0 18px 38px -14px rgba(110,75,255,.32)}
+.sx-svc-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sx-svc-ico{font-size:1.45rem;line-height:1}
+.sx-svc-tag{font-size:.66rem;font-weight:700;padding:3px 8px;border-radius:999px;background:rgba(110,75,255,.1);color:var(--iris);letter-spacing:.02em}
+.sx-svc-pill b{font-family:var(--font-display);font-size:.98rem;font-weight:800;line-height:1.2;color:var(--ink)}
+.sx-svc-pill small{font-size:.78rem;color:var(--muted);line-height:1.35}
+.sx-svc-go{font-size:.74rem;font-weight:700;color:var(--iris);margin-top:auto;padding-top:4px;display:inline-flex;align-items:center;gap:4px}
+.sx-demo-strip{margin-top:14px;padding:12px 16px;border-radius:16px;background:linear-gradient(120deg,#0B0A1F 0%,#151238 60%,#0F1D3A 100%);border:1px solid rgba(110,75,255,.38);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:0 14px 36px -16px rgba(15,23,42,.55)}
+.sx-demo-strip-links{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.sx-demo-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#F8FAFC;font-size:.78rem;font-weight:600;text-decoration:none;transition:all .18s ease}
+.sx-demo-chip:hover{background:linear-gradient(110deg,#6E4BFF,#0284C7);border-color:transparent;transform:translateY(-1px);color:#fff}
+.sx-demo-wa{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:#25D366;color:#fff;font-size:.8rem;font-weight:700;text-decoration:none;box-shadow:0 6px 18px rgba(37,211,102,.35)}
+.sx-demo-wa:hover{background:#1EBE5B;color:#fff}
+@media(max-width:1024px){.sx-svc-dock{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){
+  .sx-instant-dock{margin-top:22px}
+  .sx-svc-dock{grid-template-columns:1fr;gap:10px}
+  .sx-svc-pill{padding:14px}
+  .sx-demo-strip{padding:12px}
+  .sx-demo-chip{padding:6px 10px;font-size:.74rem}
+  .sx-demo-wa{width:100%;justify-content:center}
+}
+
 /* Mobile full drawer & zero horizontal cut-off polish */
 @media (max-width:768px){
   html,body{overflow-x:clip !important;max-width:100vw !important}
@@ -4223,8 +4253,53 @@ PAGES.home=function(){
       '<div><b>12</b><small>Live sector demos</small></div>'+
       '<div><b>100%</b><small>Fixed price guarantee</small></div>'+
       '<div><b>48 hrs</b><small>To your tailored scope</small></div>'+
-      '<div><b>Karachi</b><small>Built and supported here</small></div>'+
-    '</div></div><div data-h="7" style="opacity:0">'+heroConsole()+'</div></div></div></section>'+
+      '<div><b>Global</b><small>PK · UAE · UK · USA</small></div>'+
+    '</div></div><div data-h="7" style="opacity:0">'+heroConsole()+'</div></div>'+
+    '<div class="sx-instant-dock">'+
+      '<div class="sx-instant-head">'+
+        '<span class="sx-instant-label"><span class="sx-live-dot"></span>Top 4 Core Solutions · 100% Fixed-Price Guarantee</span>'+
+        '<a href="#/demos" data-nav style="font-size:.8rem;font-weight:700;color:var(--iris);text-decoration:none">Explore all 12 Live Demos →</a>'+
+      '</div>'+
+      '<div class="sx-svc-dock">'+
+        '<a class="sx-svc-pill" href="whatsapp-ai-bot.html">'+
+          '<div class="sx-svc-top"><span class="sx-svc-ico">🤖</span><span class="sx-svc-tag">3–5 Days</span></div>'+
+          '<b>24/7 AI WhatsApp Bots</b>'+
+          '<small>Official Meta Cloud API agents that reply in 2s, book slots &amp; close leads 24/7.</small>'+
+          '<span class="sx-svc-go">See AI Bot Details →</span>'+
+        '</a>'+
+        '<a class="sx-svc-pill" href="ecommerce-development.html">'+
+          '<div class="sx-svc-top"><span class="sx-svc-ico">🛍️</span><span class="sx-svc-tag">5–14 Days</span></div>'+
+          '<b>Websites &amp; E-Commerce</b>'+
+          '<small>Sub-2s mobile stores with Cards, COD, JazzCash, Tabby &amp; WhatsApp order alerts.</small>'+
+          '<span class="sx-svc-go">View Store Solutions →</span>'+
+        '</a>'+
+        '<a class="sx-svc-pill" href="custom-erp-software.html">'+
+          '<div class="sx-svc-top"><span class="sx-svc-ico">📊</span><span class="sx-svc-tag">0 Seat Fees</span></div>'+
+          '<b>Custom ERP, CRM &amp; POS</b>'+
+          '<small>Multi-branch inventory, billing, accounts &amp; live executive dashboards.</small>'+
+          '<span class="sx-svc-go">Explore Custom ERP →</span>'+
+        '</a>'+
+        '<a class="sx-svc-pill" href="#/services/mobile-apps" data-nav>'+
+          '<div class="sx-svc-top"><span class="sx-svc-ico">📱</span><span class="sx-svc-tag">iOS + Android</span></div>'+
+          '<b>Mobile Apps &amp; Meta Ads</b>'+
+          '<small>Flutter iOS/Android apps + high-ROAS Meta/Google Ads &amp; SEO growth retainers.</small>'+
+          '<span class="sx-svc-go">View Apps &amp; Growth →</span>'+
+        '</a>'+
+      '</div>'+
+      '<div class="sx-demo-strip">'+
+        '<div class="sx-demo-strip-links">'+
+          '<span style="font-size:.74rem;font-weight:800;letter-spacing:.06em;color:#38BDF8;text-transform:uppercase;margin-right:4px">⚡ Live Demos:</span>'+
+          '<a class="sx-demo-chip" href="#/demos" data-nav>🏥 Clinic Booking</a>'+
+          '<a class="sx-demo-chip" href="#/demos" data-nav>🛍️ E-Commerce Store</a>'+
+          '<a class="sx-demo-chip" href="#/demos" data-nav>📊 Retail POS / ERP</a>'+
+          '<a class="sx-demo-chip" href="#/demos" data-nav>🏢 Real Estate CRM</a>'+
+          '<a class="sx-demo-chip" href="#/demos" data-nav>🚚 Logistics Fleet</a>'+
+          '<a class="sx-demo-chip" href="#/demos" data-nav>🍽️ Restaurant Order</a>'+
+        '</div>'+
+        '<a class="sx-demo-wa" href="https://wa.me/923355556290?text=Hi%20SoftNexa%2C%20I%20just%20visited%20your%20website%20and%20want%20to%20discuss%20a%20project" target="_blank" rel="noopener">💬 WhatsApp Now</a>'+
+      '</div>'+
+    '</div>'+
+    '</div></section>'+
 
     marquee()+
 
