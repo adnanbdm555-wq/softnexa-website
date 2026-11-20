@@ -9062,8 +9062,9 @@ if(matchMedia('(pointer:fine)').matches && !reduce){
     });
   }
 
-  // Auto Popup Sidebar Drawer after 3.5 seconds
+  // Auto Popup Sidebar Drawer after 3.5 seconds (Desktop only — never auto-open on mobile)
   setTimeout(function(){
+    if(window.innerWidth <= 768) return;
     var dismissed = false;
     try { dismissed = sessionStorage.getItem('sx_chat_dismissed') === '1'; } catch(e){}
     if(!isOpen && !dismissed){
