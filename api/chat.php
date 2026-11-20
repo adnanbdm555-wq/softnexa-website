@@ -89,7 +89,7 @@ Pricing & Delivery Model:
 Official Contact & WhatsApp:
 - Official WhatsApp / Direct Call: +92 335 5556290 (https://wa.me/923355556290)
 - Official Email: info@softnexasolution.com
-- Office: Shahrah-e-Faisal, Karachi, Pakistan
+- Office: Karachi, Pakistan
 - When the user asks for contact info, phone, or how to WhatsApp us, provide +92 335 5556290 and invite them to connect.
 
 Tone & Behavior:
@@ -279,11 +279,11 @@ if (!$llmSucceeded || empty($aiReply)) {
     // 11. Office Location & Meetings
     elseif ($isLocation) {
         if ($lang === 'ur') {
-            $aiReply = "سافٹ نیکسا کا مین انجینئرنگ ہاؤس شاہراہِ فیصل، کراچی میں واقع ہے، اور ہم امریکہ، برطانیہ، مشرق وسطیٰ اور پاکستان بھر کے کلائنٹس کو انٹرپرائز سافٹ ویئر سلوشنز فراہم کرتے ہیں۔ آپ کراچی آفس میں میٹنگ بھی شیڈول کر سکتے ہیں!";
+            $aiReply = "سافٹ نیکسا کراچی، پاکستان میں واقع ہے، اور ہم امریکہ، برطانیہ، مشرق وسطیٰ اور پاکستان بھر کے کلائنٹس کو انٹرپرائز سافٹ ویئر سلوشنز فراہم کرتے ہیں۔ آپ ہم سے گوگل میٹ یا واٹس ایپ پر میٹنگ شیڈول کر سکتے ہیں!";
         } elseif ($lang === 'ro') {
-            $aiReply = "SoftNexa ka main engineering office Shahrah-e-Faisal, Karachi mein hai. Hum locally Pakistan aur globally US, UK, UAE ke enterprise clients ko serve karte hain. Aap direct call ya Karachi office mein in-person meeting bhi schedule kar sakte hain! Aap kis city/country se baat kar rahe hain?";
+            $aiReply = "SoftNexa Karachi, Pakistan mein based hai. Hum locally Pakistan aur globally US, UK, UAE aur Saudi Arabia ke enterprise clients ko serve karte hain. Aap direct WhatsApp ya Google Meet call schedule kar sakte hain! Aap kis city/country se baat kar rahe hain?";
         } else {
-            $aiReply = "SoftNexa's primary engineering office is located on Shahrah-e-Faisal, Karachi, Pakistan, serving enterprise clients globally across the US, UK, Middle East, and Pakistan. We'd be delighted to schedule a virtual discovery call or an in-person meeting at our office!";
+            $aiReply = "SoftNexa is based in Karachi, Pakistan, serving enterprise clients globally across the US, UK, Middle East, and Pakistan. We'd be delighted to schedule a quick Google Meet discovery call with you!";
         }
     }
     // 11. Polite Greetings

@@ -1,6 +1,6 @@
 # SoftNexa Solutions
 
-> SoftNexa Solutions (https://softnexasolution.com) is a fixed-price custom software engineering, E-Commerce, and 24/7 AI WhatsApp automation agency headquartered on Shahrah-e-Faisal, Karachi, Pakistan, serving businesses across Pakistan, Dubai (UAE), Saudi Arabia (Riyadh & Jeddah), Qatar, the UK, and the United States.
+> SoftNexa Solutions (https://softnexasolution.com) is a fixed-price custom software engineering, E-Commerce, and 24/7 AI WhatsApp automation agency headquartered in Karachi, Pakistan, serving businesses across Pakistan, Dubai (UAE), Saudi Arabia (Riyadh & Jeddah), Qatar, the UK, and the United States.
 
 ## Top 4 Core Services (100% Fixed-Price Guarantee)
 1. **24/7 AI WhatsApp Sales & Booking Bots** (https://softnexasolution.com/whatsapp-ai-bot.html): Official Meta WhatsApp Cloud API AI agents that reply in 2 seconds across English, Roman Urdu, Urdu, and Arabic. Built for beauty salons, clinics, real estate brokerages, restaurants, and e-commerce stores with 1-click human takeover. Deployed in 3–5 working days.
@@ -23,4 +23,4 @@
 - Book 10-Min Google Meet: https://softnexasolution.com/#/schedule
 - Direct WhatsApp & Phone: +92 335 5556290 (https://wa.me/923355556290)
 - Email: info@softnexasolution.com | marketing@softnexasolution.com
-- Headquarters: Shahrah-e-Faisal, Karachi, Pakistan
+- Headquarters: Karachi, Pakistan

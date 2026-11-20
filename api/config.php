@@ -465,7 +465,7 @@ function render_customer_confirmation_email($data) {
           <tr>
             <td style="padding:20px 28px;background:#090818;border-top:1px solid #1C1B33;text-align:center;">
               <div style="font-size:12px;color:#8B8AA5;margin-bottom:6px;">
-                SoftNexa Solutions • Shahrah-e-Faisal, Karachi, Pakistan • WhatsApp: +92 335 5556290
+                SoftNexa Solutions • Karachi, Pakistan • WhatsApp: +92 335 5556290
               </div>
               <div style="font-size:11px;color:#5A5872;">
                 Official Website: <a href="https://softnexasolution.com" style="color:#1FD3F0;text-decoration:none;">softnexasolution.com</a> • <a href="mailto:info@softnexasolution.com" style="color:#1FD3F0;text-decoration:none;">info@softnexasolution.com</a>

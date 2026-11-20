@@ -530,7 +530,7 @@ The prospect has likely experienced burned timelines, runaway hourly invoices, o
 ────────────────────────────────────────────
 • Anchor 1: SoftNexa 100% Fixed-Price Guarantee — \"We never charge hourly fees or send surprise invoices. We scope thoroughly and commit to a fixed investment.\"
 • Anchor 2: Milestone-Gated Delivery — \"You only approve payments as you verify working modules on our staging server.\"
-• Anchor 3: Karachi Tech Hub + Global Standards — \"We are headquartered right on Shahrah-e-Faisal, Karachi with enterprise-grade standards.\"
+• Anchor 3: Karachi Tech Hub + Global Standards — \"We are headquartered in Karachi, Pakistan with enterprise-grade global engineering standards.\"
 
 ────────────────────────────────────────────
 4. 🚪 THE DEAL-CLOSING TRANSITION QUESTION

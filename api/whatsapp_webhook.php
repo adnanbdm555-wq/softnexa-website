@@ -343,7 +343,7 @@ BEHAVIOR & CONVERSATION RULES:
 4. If they ask about charges, explain the value of door-to-door AC Alto car vs public van.
 5. Format cleanly with friendly emojis (🚗, 🌸, ✨, 📍).";
 } else {
-    $systemPrompt = "You are Adnan's Senior Solutions Consultant at SoftNexa Solutions (softnexasolution.com), based on Shahrah-e-Faisal, Karachi, Pakistan.
+    $systemPrompt = "You are Adnan's Senior Solutions Consultant at SoftNexa Solutions (softnexasolution.com), based in Karachi, Pakistan.
 You are chatting directly with a prospective business client on WhatsApp.
 
 CRITICAL HUMAN-LIKE CONVERSATION RULES:
@@ -356,7 +356,7 @@ CRITICAL HUMAN-LIKE CONVERSATION RULES:
    📱 4. Mobile Apps (iOS/Android) & Performance Marketing (Meta/Google Ads + SEO)
 4. 100% Fixed-Price Guarantee with milestone delivery (zero hidden hourly bills).
 5. CRITICAL PRICING INSTRUCTION: Never quote fixed dollar/PKR prices. Explain that every project is custom-scoped to their exact features under our 100% Fixed-Price Guarantee, and offer a free 48-Hour Scope Blueprint or a quick 10-minute discovery call.
-6. Live demos: https://softnexasolution.com/#/demos | Office: Shahrah-e-Faisal, Karachi | Direct: +92 335 5556290.
+6. Live demos: https://softnexasolution.com/#/demos | Location: Karachi, Pakistan | Direct: +92 335 5556290.
 
 Language & Formatting:
 - Match the client's exact language naturally:
@@ -586,9 +586,9 @@ if (!$llmSucceeded || empty($aiReply)) {
         }
     } elseif ($isOfficeContact) {
         if ($lang === 'ro') {
-            $aiReply = "Aap hamari senior team se direct connect kar sakte hain:\n\n🏢 Office: Shahrah-e-Faisal, Karachi, Pakistan\n📞 Direct Call / WhatsApp: +92 335 5556290\n✉️ Email: info@softnexasolution.com\n🌐 Website: https://softnexasolution.com\n\nKya aap office visit karna chahenge ya 10-minute Google Meet call schedule kar dein?";
+            $aiReply = "Aap hamari senior team se direct connect kar sakte hain:\n\n📍 Location: Karachi, Pakistan\n📞 Direct Call / WhatsApp: +92 335 5556290\n✉️ Email: info@softnexasolution.com\n🌐 Website: https://softnexasolution.com\n\nKya aap 10-minute Google Meet call schedule kar dein?";
         } else {
-            $aiReply = "You can connect directly with our senior team:\n🏢 Office: Shahrah-e-Faisal, Karachi, Pakistan\n📞 Direct Call / WhatsApp: +92 335 5556290\n✉️ Email: info@softnexasolution.com\n\nWould you prefer an in-person meeting or a 10-minute Google Meet call?";
+            $aiReply = "You can connect directly with our senior team:\n📍 Location: Karachi, Pakistan\n📞 Direct Call / WhatsApp: +92 335 5556290\n✉️ Email: info@softnexasolution.com\n\nWould you like to schedule a 10-minute Google Meet call?";
         }
     } elseif ($isDemo) {
         if ($lang === 'ro') {
