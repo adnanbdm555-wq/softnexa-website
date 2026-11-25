@@ -369,13 +369,11 @@ if ($geminiKey !== '') {
     $candidateModels = [];
     if ($cachedModel !== '') $candidateModels[] = $cachedModel;
 
-    // Fast modern Gemini models
+    // Fast modern Gemini models (ordered by speed & availability)
     $defaults = [
         'v1beta/models/gemini-2.5-flash',
-        'v1beta/models/gemini-2.0-flash',
         'v1beta/models/gemini-2.5-flash-lite',
-        'v1/models/gemini-2.0-flash',
-        'v1/models/gemini-1.5-flash'
+        'v1beta/models/gemini-2.0-flash'
     ];
     foreach ($defaults as $dm) {
         if (!in_array($dm, $candidateModels)) $candidateModels[] = $dm;
@@ -403,8 +401,8 @@ if ($geminiKey !== '') {
         $contents[] = ['role' => 'user', 'parts' => [['text' => $msgText]]];
     }
 
-    $lastLlmError = '';
-    $tryModels = function($modelsList) use ($geminiKey, $systemPrompt, $contents, &$aiReply, &$llmSucceeded, &$lastLlmError, $cachedModel) {
+    $allLlmErrors = [];
+    $tryModels = function($modelsList) use ($geminiKey, $systemPrompt, $contents, &$aiReply, &$llmSucceeded, &$allLlmErrors, $cachedModel) {
         foreach ($modelsList as $modelEndpoint) {
             try {
                 $genCfg = [
@@ -424,7 +422,7 @@ if ($geminiKey !== '') {
                     CURLOPT_POST           => true,
                     CURLOPT_POSTFIELDS     => $modelPayload,
                     CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_TIMEOUT        => 12,
+                    CURLOPT_TIMEOUT        => 10,
                     CURLOPT_SSL_VERIFYPEER => false,
                     CURLOPT_SSL_VERIFYHOST => false,
                     CURLOPT_HTTPHEADER     => ['Content-Type: application/json']
@@ -445,13 +443,13 @@ if ($geminiKey !== '') {
                         }
                         return true;
                     }
-                    $lastLlmError = "{$modelEndpoint}: empty candidates";
+                    $allLlmErrors[] = "{$modelEndpoint}: empty candidates";
                 } else {
                     $ej = json_decode((string)$res, true);
-                    $lastLlmError = "{$modelEndpoint}: HTTP {$httpCode} " . ($ej['error']['message'] ?? $cErr);
+                    $allLlmErrors[] = "{$modelEndpoint}: HTTP {$httpCode} " . ($ej['error']['message'] ?? $cErr);
                 }
             } catch (Exception $e) {
-                $lastLlmError = $e->getMessage();
+                $allLlmErrors[] = $e->getMessage();
             }
         }
         return false;
@@ -772,7 +770,7 @@ if ($isGateway) {
         ],
         'reply'     => $aiReply,
         'llm_used'  => $llmSucceeded,
-        'llm_debug' => $lastLlmError ?? ($geminiKey === '' ? 'empty_key' : 'ok')
+        'llm_debug' => $geminiKey === '' ? 'empty_key' : (empty($allLlmErrors) ? 'ok' : implode(' | ', $allLlmErrors))
     ]);
     exit;
 }
