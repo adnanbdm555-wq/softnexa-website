@@ -403,25 +403,26 @@ if ($geminiKey !== '') {
         $contents[] = ['role' => 'user', 'parts' => [['text' => $msgText]]];
     }
 
-    $payload = json_encode([
-        'systemInstruction' => [
-            'parts' => [['text' => $systemPrompt]]
-        ],
-        'contents' => $contents,
-        'generationConfig' => [
-            'temperature'     => 0.72,
-            'maxOutputTokens' => 450,
-            'thinkingConfig'  => ['thinkingBudget' => 0]
-        ]
-    ]);
-
-    $tryModels = function($modelsList) use ($geminiKey, $payload, &$aiReply, &$llmSucceeded, $cachedModel) {
+    $lastLlmError = '';
+    $tryModels = function($modelsList) use ($geminiKey, $systemPrompt, $contents, &$aiReply, &$llmSucceeded, &$lastLlmError, $cachedModel) {
         foreach ($modelsList as $modelEndpoint) {
             try {
+                $genCfg = [
+                    'temperature'     => 0.72,
+                    'maxOutputTokens' => 450
+                ];
+                if (strpos($modelEndpoint, '2.5') !== false) {
+                    $genCfg['thinkingConfig'] = ['thinkingBudget' => 0];
+                }
+                $modelPayload = json_encode([
+                    'systemInstruction' => ['parts' => [['text' => $systemPrompt]]],
+                    'contents'          => $contents,
+                    'generationConfig'  => $genCfg
+                ]);
                 $ch = curl_init("https://generativelanguage.googleapis.com/{$modelEndpoint}:generateContent?key=" . urlencode($geminiKey));
                 curl_setopt_array($ch, [
                     CURLOPT_POST           => true,
-                    CURLOPT_POSTFIELDS     => $payload,
+                    CURLOPT_POSTFIELDS     => $modelPayload,
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_TIMEOUT        => 12,
                     CURLOPT_SSL_VERIFYPEER => false,
@@ -430,6 +431,7 @@ if ($geminiKey !== '') {
                 ]);
                 $res = curl_exec($ch);
                 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $cErr = curl_error($ch);
                 curl_close($ch);
 
                 if ($httpCode === 200 && $res) {
@@ -443,8 +445,14 @@ if ($geminiKey !== '') {
                         }
                         return true;
                     }
+                    $lastLlmError = "{$modelEndpoint}: empty candidates";
+                } else {
+                    $ej = json_decode((string)$res, true);
+                    $lastLlmError = "{$modelEndpoint}: HTTP {$httpCode} " . ($ej['error']['message'] ?? $cErr);
                 }
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+                $lastLlmError = $e->getMessage();
+            }
         }
         return false;
     };
@@ -762,8 +770,9 @@ if ($isGateway) {
         'replies' => [
             ['message' => $aiReply]
         ],
-        'reply'    => $aiReply,
-        'llm_used' => $llmSucceeded
+        'reply'     => $aiReply,
+        'llm_used'  => $llmSucceeded,
+        'llm_debug' => $lastLlmError ?? ($geminiKey === '' ? 'empty_key' : 'ok')
     ]);
     exit;
 }
