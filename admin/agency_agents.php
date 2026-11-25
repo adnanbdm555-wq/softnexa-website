@@ -6,6 +6,8 @@
    ============================================================ */
 
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../api/cron_auto_reels.php';
+init_reels_queue_table();
 require_admin();
 $pdo = db();
 
@@ -707,6 +709,58 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && csrf_ok()) {
         set_setting('fb_page_id', $fbPageId);
         set_setting('fb_page_token', $fbPageToken);
         $runNotice = '📘 Facebook Page Auto-Publish settings saved successfully!';
+    } elseif ($action === 'save_reels_settings') {
+        set_setting('auto_reels_enabled', isset($_POST['auto_reels_enabled']) ? '1' : '0');
+        set_setting('auto_reels_loop', isset($_POST['auto_reels_loop']) ? '1' : '0');
+        $runNotice = '🎬 Daily Auto-Reels schedule settings saved!';
+    } elseif ($action === 'upload_reel_queue') {
+        $rTitle   = trim((string)($_POST['reel_title'] ?? 'SoftNexa AI & Software Solutions'));
+        $rCaption = trim((string)($_POST['reel_caption'] ?? ''));
+        $rUrl     = trim((string)($_POST['reel_video_url'] ?? ''));
+
+        if (!empty($_FILES['reel_file']['tmp_name']) && is_uploaded_file($_FILES['reel_file']['tmp_name'])) {
+            $ext = strtolower(pathinfo((string)$_FILES['reel_file']['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, ['mp4', 'mov'])) {
+                $runError = 'Sirf .MP4 ya .MOV vertical Reel video upload karein (Meta Reels API requirement).';
+            } else {
+                $upDir = __DIR__ . '/../uploads/reels';
+                if (!is_dir($upDir)) @mkdir($upDir, 0755, true);
+                $fname = 'reel_' . date('Ymd_His') . '_' . bin2hex(random_bytes(3)) . '.' . $ext;
+                if (@move_uploaded_file($_FILES['reel_file']['tmp_name'], $upDir . '/' . $fname)) {
+                    $rUrl = 'https://softnexasolution.com/uploads/reels/' . $fname;
+                } else {
+                    $runError = 'Server par uploads/reels/ folder mein video save nahi ho saki.';
+                }
+            }
+        }
+        if (empty($runError)) {
+            if ($rUrl === '' || !preg_match('/^https?:\/\//i', $rUrl)) {
+                $runError = 'MP4 video file select karein ya valid public https:// MP4 video URL paste karein.';
+            } else {
+                db()->prepare("INSERT INTO social_reels_queue (title, video_url, caption, status) VALUES (?, ?, ?, 'queued')")
+                    ->execute([$rTitle ?: 'SoftNexa Reel', $rUrl, $rCaption]);
+                $runNotice = '🎬 Reel Queue mein add ho gayi! Daily Cron isay auto-publish kar dega (ya abhi "Publish Next Reel Now" click karein).';
+            }
+        }
+    } elseif ($action === 'run_auto_reel_now') {
+        $pubRes = publish_next_auto_reel(true);
+        if (!empty($pubRes['ok'])) {
+            $runNotice = $pubRes['message'];
+        } else {
+            $runError = $pubRes['message'];
+        }
+    } elseif ($action === 'requeue_reel') {
+        $rid = (int)($_POST['reel_id'] ?? 0);
+        if ($rid > 0) {
+            db()->prepare("UPDATE social_reels_queue SET status = 'queued', last_error = '' WHERE id = ?")->execute([$rid]);
+            $runNotice = '🔄 Reel dobara Queue mein daal di gayi!';
+        }
+    } elseif ($action === 'delete_reel') {
+        $rid = (int)($_POST['reel_id'] ?? 0);
+        if ($rid > 0) {
+            db()->prepare("DELETE FROM social_reels_queue WHERE id = ?")->execute([$rid]);
+            $runNotice = '🗑️ Reel queue se delete kar di gayi.';
+        }
     } elseif ($action === 'publish_fb_post') {
         $postMessage = trim((string)($_POST['post_message'] ?? ''));
         if (empty($fbPageId) || empty($fbPageToken)) {
@@ -1120,13 +1174,133 @@ admin_head('agency_agents.php', 'Agency Agents Squad · ' . ADMIN_TITLE);
 
   <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
   <div style="font-size:.82rem;font-weight:700;margin-bottom:8px">📘 Facebook Page 1-Click Auto-Publish (Optional — Meta Graph API)</div>
-  <form method="post" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+  <form method="post" autocomplete="off" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
     <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
     <input type="hidden" name="action" value="save_fb_settings">
-    <input type="text" name="fb_page_id" value="<?= e($fbPageId) ?>" placeholder="Facebook Page ID (e.g. 1234567890)" style="width:220px;font-family:monospace;font-size:.82rem;padding:8px 12px">
-    <input type="password" name="fb_page_token" value="<?= e($fbPageToken) ?>" placeholder="Page Access Token (pages_manage_posts)" style="flex:1;min-width:240px;font-family:monospace;font-size:.82rem;padding:8px 12px">
+    <input type="text" name="fb_page_id" autocomplete="off" value="<?= e($fbPageId) ?>" placeholder="Facebook Page ID (use: me)" style="width:220px;font-family:monospace;font-size:.82rem;padding:8px 12px">
+    <input type="password" name="fb_page_token" autocomplete="new-password" value="<?= e($fbPageToken) ?>" placeholder="Never-Expiring Page Token (pages_manage_posts + instagram_content_publish)" style="flex:1;min-width:240px;font-family:monospace;font-size:.82rem;padding:8px 12px">
     <button type="submit" class="btn" style="padding:8px 14px;font-size:.82rem;background:#1877F2;color:#fff;border:0">💾 Save FB Page</button>
   </form>
+</div>
+
+<?php
+$reelsQueue = [];
+try {
+    $reelsQueue = db()->query("SELECT * FROM social_reels_queue ORDER BY FIELD(status,'queued','failed','posted'), id DESC LIMIT 30")->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {}
+$autoReelsOn   = (setting('auto_reels_enabled', '1') === '1');
+$autoReelsLoop = (setting('auto_reels_loop', '1') === '1');
+$lastReelRun   = setting('auto_reels_last_run', 'Not run yet');
+?>
+
+<!-- DAILY AUTO-REELS ENGINE (FACEBOOK REELS + INSTAGRAM REELS) -->
+<div class="card" style="margin-bottom:20px;border:1.5px solid rgba(225,48,108,.35);background:linear-gradient(135deg,rgba(24,119,242,.04) 0%,rgba(225,48,108,.05) 100%)">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+    <div>
+      <h2 style="margin:0;font-size:1.08rem;display:flex;align-items:center;gap:8px">
+        <span>🎬</span> <span>Daily Auto-Reels Engine (Facebook Reels + Instagram Reels)</span>
+      </h2>
+      <span style="font-size:.8rem;color:var(--mut)">MP4 Reels upload kar ke queue mein daal dein — Hostinger Daily Cron har roz khud fresh Gemini AI caption ke sath <b>Facebook + Instagram (@adnan_promotion)</b> dono par publish kar dega! | Last Run: <b><?= e($lastReelRun) ?></b></span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <form method="post" style="display:inline-flex;gap:10px;align-items:center;margin:0">
+        <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+        <input type="hidden" name="action" value="save_reels_settings">
+        <label style="font-size:.78rem;display:inline-flex;align-items:center;gap:4px;cursor:pointer">
+          <input type="checkbox" name="auto_reels_enabled" <?= $autoReelsOn ? 'checked' : '' ?>> Daily Cron ON
+        </label>
+        <label style="font-size:.78rem;display:inline-flex;align-items:center;gap:4px;cursor:pointer">
+          <input type="checkbox" name="auto_reels_loop" <?= $autoReelsLoop ? 'checked' : '' ?>> Auto-Loop
+        </label>
+        <button type="submit" class="btn sm" style="padding:5px 10px;font-size:.76rem">Save</button>
+      </form>
+      <form method="post" style="margin:0">
+        <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+        <input type="hidden" name="action" value="run_auto_reel_now">
+        <button type="submit" class="btn sm" style="background:linear-gradient(135deg,#1877F2,#E1306C);color:#fff;border:0;padding:7px 14px;font-weight:700">🚀 Publish Next Reel Now (FB + IG)</button>
+      </form>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;align-items:end;padding:12px;border-radius:10px;background:rgba(255,255,255,.6);border:1px solid var(--line);margin-bottom:12px">
+    <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+    <input type="hidden" name="action" value="upload_reel_queue">
+    <div>
+      <label style="display:block;font-size:.74rem;font-weight:700;margin-bottom:4px">Reel Topic / Title *</label>
+      <input type="text" name="reel_title" required placeholder="e.g. 24/7 AI WhatsApp Sales Bot Demo" style="width:100%;padding:7px 10px;font-size:.82rem">
+    </div>
+    <div>
+      <label style="display:block;font-size:.74rem;font-weight:700;margin-bottom:4px">Upload Vertical MP4 Reel (9:16)</label>
+      <input type="file" name="reel_file" accept=".mp4,.mov,video/mp4" style="width:100%;padding:5px;font-size:.78rem">
+    </div>
+    <div>
+      <label style="display:block;font-size:.74rem;font-weight:700;margin-bottom:4px">Caption (Blank = Gemini AI Auto-Caption)</label>
+      <input type="text" name="reel_caption" placeholder="Optional — khali chhor dein for AI viral caption" style="width:100%;padding:7px 10px;font-size:.82rem">
+    </div>
+    <div>
+      <button type="submit" class="btn p" style="width:100%;padding:8px 12px;font-size:.82rem">➕ Add Reel to Daily Queue</button>
+    </div>
+  </form>
+
+  <div style="font-size:.76rem;color:var(--mut);margin-bottom:10px;padding:8px 10px;border-radius:8px;background:rgba(15,23,42,.04);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <span>⏰ <b>Hostinger Daily Cron URL:</b> <code style="user-select:all;color:var(--iris)">https://softnexasolution.com/api/cron_auto_reels.php?key=softnexa_reels_2026</code></span>
+    <span>Queue: <b><?= count($reelsQueue) ?></b> Reels</span>
+  </div>
+
+  <?php if (!empty($reelsQueue)): ?>
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:.8rem">
+      <thead>
+        <tr style="text-align:left;border-bottom:1px solid var(--line);color:var(--mut)">
+          <th style="padding:6px">Title</th>
+          <th style="padding:6px">Status</th>
+          <th style="padding:6px">FB / IG IDs & Notes</th>
+          <th style="padding:6px;text-align:right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($reelsQueue as $rq): ?>
+        <tr style="border-bottom:1px solid var(--line)">
+          <td style="padding:7px 6px">
+            <b><?= e($rq['title']) ?></b><br>
+            <a href="<?= e($rq['video_url']) ?>" target="_blank" style="font-size:.73rem;color:var(--cyan)">▶ Preview MP4</a>
+          </td>
+          <td style="padding:7px 6px">
+            <?php if ($rq['status'] === 'posted'): ?>
+              <span style="background:rgba(16,185,129,.15);color:#059669;padding:2px 8px;border-radius:99px;font-weight:700;font-size:.72rem">✅ Posted</span>
+            <?php elseif ($rq['status'] === 'failed'): ?>
+              <span style="background:rgba(225,29,72,.15);color:#e11d48;padding:2px 8px;border-radius:99px;font-weight:700;font-size:.72rem">⚠️ Failed</span>
+            <?php else: ?>
+              <span style="background:rgba(110,75,255,.15);color:var(--iris);padding:2px 8px;border-radius:99px;font-weight:700;font-size:.72rem">⏳ Queued</span>
+            <?php endif; ?>
+          </td>
+          <td style="padding:7px 6px;font-size:.74rem;color:var(--mut);max-width:340px">
+            <?php if (!empty($rq['fb_video_id'])): ?><div>📘 FB: <code><?= e($rq['fb_video_id']) ?></code></div><?php endif; ?>
+            <?php if (!empty($rq['ig_media_id'])): ?><div>📸 IG: <code><?= e($rq['ig_media_id']) ?></code></div><?php endif; ?>
+            <?php if (!empty($rq['last_error'])): ?><div style="color:#d97706"><?= e($rq['last_error']) ?></div><?php endif; ?>
+          </td>
+          <td style="padding:7px 6px;text-align:right;white-space:nowrap">
+            <?php if ($rq['status'] !== 'queued'): ?>
+              <form method="post" style="display:inline">
+                <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+                <input type="hidden" name="action" value="requeue_reel">
+                <input type="hidden" name="reel_id" value="<?= (int)$rq['id'] ?>">
+                <button type="submit" class="btn sm" style="padding:3px 8px;font-size:.72rem">🔄 Re-Queue</button>
+              </form>
+            <?php endif; ?>
+            <form method="post" style="display:inline" onsubmit="return confirm('Delete this Reel from queue?')">
+              <input type="hidden" name="csrf" value="<?= e(csrf()) ?>">
+              <input type="hidden" name="action" value="delete_reel">
+              <input type="hidden" name="reel_id" value="<?= (int)$rq['id'] ?>">
+              <button type="submit" class="btn sm" style="padding:3px 8px;font-size:.72rem;color:#e11d48">🗑️</button>
+            </form>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+  <?php endif; ?>
 </div>
 
 <?php if ($runNotice): ?>
