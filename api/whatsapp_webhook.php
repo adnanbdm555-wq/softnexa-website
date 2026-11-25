@@ -369,11 +369,12 @@ if ($geminiKey !== '') {
     $candidateModels = [];
     if ($cachedModel !== '') $candidateModels[] = $cachedModel;
 
-    // Fast modern Gemini models (ordered by speed & availability)
+    // Fast modern Gemini models (ordered by latest availability & speed)
     $defaults = [
-        'v1beta/models/gemini-2.5-flash',
-        'v1beta/models/gemini-2.5-flash-lite',
-        'v1beta/models/gemini-2.0-flash'
+        'v1beta/models/gemini-3.8-flash',
+        'v1beta/models/gemini-3.5-flash-lite',
+        'v1beta/models/gemini-3-flash-preview',
+        'v1beta/models/gemini-3.1-pro-preview'
     ];
     foreach ($defaults as $dm) {
         if (!in_array($dm, $candidateModels)) $candidateModels[] = $dm;
@@ -405,24 +406,31 @@ if ($geminiKey !== '') {
     $tryModels = function($modelsList) use ($geminiKey, $systemPrompt, $contents, &$aiReply, &$llmSucceeded, &$allLlmErrors, $cachedModel) {
         foreach ($modelsList as $modelEndpoint) {
             try {
-                $genCfg = [
-                    'temperature'     => 0.72,
-                    'maxOutputTokens' => 450
+                $isGemma = (stripos($modelEndpoint, 'gemma') !== false);
+                $reqBody = [
+                    'contents'         => $contents,
+                    'generationConfig' => [
+                        'temperature'     => 0.72,
+                        'maxOutputTokens' => 450
+                    ]
                 ];
-                if (strpos($modelEndpoint, '2.5') !== false) {
-                    $genCfg['thinkingConfig'] = ['thinkingBudget' => 0];
+                if ($isGemma) {
+                    // Gemma models on Gemini API do not accept systemInstruction; prepend to first user turn
+                    $gemmaContents = $contents;
+                    if (!empty($gemmaContents)) {
+                        $gemmaContents[0]['parts'][0]['text'] = $systemPrompt . "\n\n---\nClient message:\n" . $gemmaContents[0]['parts'][0]['text'];
+                    }
+                    $reqBody['contents'] = $gemmaContents;
+                } else {
+                    $reqBody['systemInstruction'] = ['parts' => [['text' => $systemPrompt]]];
                 }
-                $modelPayload = json_encode([
-                    'systemInstruction' => ['parts' => [['text' => $systemPrompt]]],
-                    'contents'          => $contents,
-                    'generationConfig'  => $genCfg
-                ]);
+                $modelPayload = json_encode($reqBody);
                 $ch = curl_init("https://generativelanguage.googleapis.com/{$modelEndpoint}:generateContent?key=" . urlencode($geminiKey));
                 curl_setopt_array($ch, [
                     CURLOPT_POST           => true,
                     CURLOPT_POSTFIELDS     => $modelPayload,
                     CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_TIMEOUT        => 10,
+                    CURLOPT_TIMEOUT        => 12,
                     CURLOPT_SSL_VERIFYPEER => false,
                     CURLOPT_SSL_VERIFYHOST => false,
                     CURLOPT_HTTPHEADER     => ['Content-Type: application/json']
@@ -457,7 +465,7 @@ if ($geminiKey !== '') {
 
     // 1. Try cached + fast modern models
     if (!$tryModels($candidateModels)) {
-        // 2. Auto-discover available models for this key via Google ListModels
+        // 2. Auto-discover available text models for this key via Google ListModels
         $chL = curl_init("https://generativelanguage.googleapis.com/v1beta/models?key=" . urlencode($geminiKey));
         curl_setopt_array($chL, [
             CURLOPT_RETURNTRANSFER => true,
@@ -470,15 +478,21 @@ if ($geminiKey !== '') {
         curl_close($chL);
         if ($listCode === 200 && $listRes) {
             $lj = json_decode($listRes, true);
-            $disc = [];
+            $p1 = []; $p2 = []; $p3 = [];
             foreach (($lj['models'] ?? []) as $m) {
-                if (in_array('generateContent', $m['supportedGenerationMethods'] ?? [])) {
-                    $ep = 'v1beta/' . $m['name'];
-                    if (!in_array($ep, $candidateModels)) $disc[] = $ep;
-                }
+                if (!in_array('generateContent', $m['supportedGenerationMethods'] ?? [])) continue;
+                $mName = (string)($m['name'] ?? '');
+                // Skip non-text / audio / TTS / image / embedding / deprecated models
+                if (preg_match('/(tts|image|audio|embedding|aqa|imagen|veo|lyria|robotics|computer-use|vision)/i', $mName)) continue;
+                $ep = 'v1beta/' . $mName;
+                if (in_array($ep, $candidateModels)) continue;
+                if (stripos($mName, 'gemini-3') !== false && stripos($mName, 'flash') !== false) $p1[] = $ep;
+                elseif (stripos($mName, 'gemini-3') !== false || stripos($mName, 'gemini-flash-latest') !== false) $p2[] = $ep;
+                elseif (stripos($mName, 'gemma-') !== false) $p3[] = $ep;
             }
+            $disc = array_merge($p1, $p2, $p3);
             if (!empty($disc)) {
-                $tryModels(array_slice($disc, 0, 3));
+                $tryModels(array_slice($disc, 0, 5));
             }
         }
     }
