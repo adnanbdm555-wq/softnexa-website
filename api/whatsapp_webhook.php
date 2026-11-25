@@ -343,83 +343,124 @@ BEHAVIOR & CONVERSATION RULES:
 4. If they ask about charges, explain the value of door-to-door AC Alto car vs public van.
 5. Format cleanly with friendly emojis (🚗, 🌸, ✨, 📍).";
 } else {
-    $systemPrompt = "You are Adnan's Senior Solutions Consultant at SoftNexa Solutions (softnexasolution.com), based in Karachi, Pakistan.
-You are chatting directly with a prospective business client on WhatsApp.
+    $firstName = trim(explode(' ', (string)$senderName)[0] ?? '');
+    if (strtolower($firstName) === 'whatsapp' || strtolower($firstName) === 'client' || $firstName === '') $firstName = '';
 
-CRITICAL HUMAN-LIKE CONVERSATION RULES:
-1. Sound 100% like a real, warm, empathetic human consultant — NEVER robotic, never scripted, never pushy.
-2. CLIENT REQUIREMENT FIRST: If the client mentions a specific business or need (e.g., beauty salon, leather e-commerce, dental clinic, real estate, restaurant, ERP, mobile app, marketing), respond DIRECTLY to their exact requirement with helpful, tailored advice. Do NOT dump a generic list of all services when they already told you what they want!
-3. Only when the client sends a general greeting ('Hi', 'Salam') or asks 'what services do you offer?', warmly welcome them and briefly introduce SoftNexa's Top 4 Core Services:
-   🤖 1. 24/7 AI WhatsApp Sales & Booking Bots (instant replies & appointment automation)
-   🛍️ 2. High-Converting Websites & E-Commerce Stores (Cards/JazzCash/COD/Tabby + WhatsApp order alerts)
-   📊 3. Custom ERP, CRM & POS Software (multi-branch inventory, billing & accounting automation)
-   📱 4. Mobile Apps (iOS/Android) & Performance Marketing (Meta/Google Ads + SEO)
-4. 100% Fixed-Price Guarantee with milestone delivery (zero hidden hourly bills).
-5. CRITICAL PRICING INSTRUCTION: Never quote fixed dollar/PKR prices. Explain that every project is custom-scoped to their exact features under our 100% Fixed-Price Guarantee, and offer a free 48-Hour Scope Blueprint or a quick 10-minute discovery call.
-6. Live demos: https://softnexasolution.com/#/demos | Location: Karachi, Pakistan | Direct: +92 335 5556290.
+    $systemPrompt = "You are Adnan's team consultant at SoftNexa Solutions (softnexasolution.com), based in Karachi, Pakistan, texting directly with a client on WhatsApp.
 
-Language & Formatting:
-- Match the client's exact language naturally:
-  * Roman Urdu: Natural, warm Pakistani Roman Urdu ('G bilkul', 'Boht zabardast', 'Aap batayein').
-  * Urdu Script: Respectful, polite Urdu.
-  * English: Clear, executive, friendly English.
-- Keep replies concise for WhatsApp (2–4 short paragraphs/bullets) and end with ONE natural human follow-up question.";
+HOW REAL HUMANS TEXT ON WHATSAPP (FOLLOW STRICTLY):
+1. Write like a REAL, warm, friendly Pakistani/international human consultant — SHORT and NATURAL (2 to 4 sentences max). NEVER write long corporate essays or robotic bullet-point brochures unless the client specifically asks for a list of services!
+2. NEVER use double asterisks (**text**). On WhatsApp, only use single *text* if you want bold, and use at most 1-2 emojis per message.
+3. READ THE CONVERSATION HISTORY CAREFULLY: Never repeat yourself. Answer the client's exact last message directly and naturally.
+4. If the client mentions their business or idea (e.g. leather jackets, beauty salon, clinic, restaurant, real estate, app, ERP), react warmly to THAT specific business first, give 1 practical helpful suggestion, and ask ONE short natural question to move forward.
+5. Only when they say a simple greeting ('Hi', 'Salam') or ask 'what services do you offer?', briefly mention our 4 core services: AI WhatsApp Bots, Custom Websites & E-Commerce, Custom ERP/CRM/POS, and Mobile Apps/Marketing — then ask what they're looking to build.
+6. Delivery timeline for all projects: 2 to 3 weeks with transparent milestone scope. Never quote fixed PKR/USD prices — explain we share a free 48-hour scope blueprint & quote after understanding their requirements.
+7. Live demos: https://softnexasolution.com/#/demos | Call booking: https://softnexasolution.com/#/schedule | Direct: +92 335 5556290.
+8. Match their exact language:
+   - Roman Urdu: Warm, natural everyday Pakistani Roman Urdu ('G bilkul', 'Boht zabardast', 'Aap batayein').
+   - Urdu Script: Polite, natural Urdu.
+   - English: Friendly, concise, human English.";
 }
 
-if ($geminiKey) {
-    $candidateModels = [
-        'v1beta/models/gemini-2.0-flash',
-        'v1/models/gemini-1.5-flash',
-        'v1beta/models/gemini-1.5-flash-latest',
-        'v1beta/models/gemini-1.5-flash',
-        'v1beta/models/gemini-1.5-flash-001',
-        'v1beta/models/gemini-1.5-pro',
-        'v1/models/gemini-pro'
-    ];
+$geminiKey = trim((string)$geminiKey);
+if ($geminiKey !== '') {
+    // Check cached working model first for instant 1-2s replies
+    $cachedModel = trim((string)setting('gemini_working_model', ''));
+    $candidateModels = [];
+    if ($cachedModel !== '') $candidateModels[] = $cachedModel;
 
+    // Fast modern Gemini models
+    $defaults = [
+        'v1beta/models/gemini-2.5-flash',
+        'v1beta/models/gemini-2.0-flash',
+        'v1beta/models/gemini-2.5-flash-lite',
+        'v1/models/gemini-2.0-flash',
+        'v1/models/gemini-1.5-flash'
+    ];
+    foreach ($defaults as $dm) {
+        if (!in_array($dm, $candidateModels)) $candidateModels[] = $dm;
+    }
+
+    // Build clean multi-turn history (last 8 messages for genuine human memory)
     $contents = [];
     $contents[] = ['role' => 'user', 'parts' => [['text' => $systemPrompt]]];
-    $contents[] = ['role' => 'model', 'parts' => [['text' => "Understood. I am the SoftNexa WhatsApp Solutions Consultant. I will reply concisely in the user's exact language with high authority, transparency, and warmth."]]];
+    $contents[] = ['role' => 'model', 'parts' => [['text' => "Understood. I will text naturally, warmly, and concisely like a real human consultant on WhatsApp."]]];
 
-    foreach (array_slice($recentHistory, -4) as $h) {
-        $contents[] = ['role' => $h['role'], 'parts' => [['text' => (string)$h['content']]]];
+    foreach (array_slice($recentHistory, -8) as $h) {
+        $txt = trim((string)$h['content']);
+        if ($txt !== '') {
+            $contents[] = ['role' => $h['role'], 'parts' => [['text' => $txt]]];
+        }
     }
     $contents[] = ['role' => 'user', 'parts' => [['text' => $msgText]]];
 
     $payload = json_encode([
         'contents' => $contents,
         'generationConfig' => [
-            'temperature'     => 0.65,
-            'maxOutputTokens' => 250
+            'temperature'     => 0.72,
+            'maxOutputTokens' => 280
         ]
     ]);
 
-    foreach ($candidateModels as $modelEndpoint) {
-        try {
-            $ch = curl_init("https://generativelanguage.googleapis.com/{$modelEndpoint}:generateContent?key=" . urlencode($geminiKey));
-            curl_setopt_array($ch, [
-                CURLOPT_POST           => true,
-                CURLOPT_POSTFIELDS     => $payload,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT        => 8,
-                CURLOPT_HTTPHEADER     => ['Content-Type: application/json']
-            ]);
+    $tryModels = function($modelsList) use ($geminiKey, $payload, &$aiReply, &$llmSucceeded, $cachedModel) {
+        foreach ($modelsList as $modelEndpoint) {
+            try {
+                $ch = curl_init("https://generativelanguage.googleapis.com/{$modelEndpoint}:generateContent?key=" . urlencode($geminiKey));
+                curl_setopt_array($ch, [
+                    CURLOPT_POST           => true,
+                    CURLOPT_POSTFIELDS     => $payload,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_TIMEOUT        => 6,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_SSL_VERIFYHOST => false,
+                    CURLOPT_HTTPHEADER     => ['Content-Type: application/json']
+                ]);
+                $res = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
 
-            $res = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
+                if ($httpCode === 200 && $res) {
+                    $json = json_decode($res, true);
+                    $rawText = trim((string)($json['candidates'][0]['content']['parts'][0]['text'] ?? ''));
+                    if ($rawText !== '') {
+                        $aiReply = $rawText;
+                        $llmSucceeded = true;
+                        if ($modelEndpoint !== $cachedModel) {
+                            try { set_setting('gemini_working_model', $modelEndpoint); } catch (Exception $e) {}
+                        }
+                        return true;
+                    }
+                }
+            } catch (Exception $e) {}
+        }
+        return false;
+    };
 
-            if ($httpCode === 200 && $res) {
-                $json = json_decode($res, true);
-                $rawText = $json['candidates'][0]['content']['parts'][0]['text'] ?? '';
-                if (!empty(trim($rawText))) {
-                    $aiReply = trim($rawText);
-                    $llmSucceeded = true;
-                    break;
+    // 1. Try cached + fast modern models
+    if (!$tryModels($candidateModels)) {
+        // 2. Auto-discover available models for this key via Google ListModels
+        $chL = curl_init("https://generativelanguage.googleapis.com/v1beta/models?key=" . urlencode($geminiKey));
+        curl_setopt_array($chL, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 5,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false
+        ]);
+        $listRes = curl_exec($chL);
+        $listCode = curl_getinfo($chL, CURLINFO_HTTP_CODE);
+        curl_close($chL);
+        if ($listCode === 200 && $listRes) {
+            $lj = json_decode($listRes, true);
+            $disc = [];
+            foreach (($lj['models'] ?? []) as $m) {
+                if (in_array('generateContent', $m['supportedGenerationMethods'] ?? [])) {
+                    $ep = 'v1beta/' . $m['name'];
+                    if (!in_array($ep, $candidateModels)) $disc[] = $ep;
                 }
             }
-        } catch (Exception $e) {
-            $llmSucceeded = false;
+            if (!empty($disc)) {
+                $tryModels(array_slice($disc, 0, 3));
+            }
         }
     }
 }
@@ -671,6 +712,11 @@ try {
 /* ------------------------------------------------------------
    8. DISPATCH OUTBOUND MESSAGE VIA META CLOUD API (WITH ANTI-DUPLICATE GUARD)
    ------------------------------------------------------------ */
+// Convert Markdown **bold** and ### headers into native WhatsApp *bold* formatting
+$aiReply = preg_replace('/\*\*(.+?)\*\*/s', '*$1*', (string)$aiReply);
+$aiReply = preg_replace('/^#{1,4}\s*(.+)$/m', '*$1*', $aiReply);
+$aiReply = trim($aiReply);
+
 $lastOutText = '';
 foreach (array_reverse($recentHistory) as $rh) {
     if ($rh['role'] === 'model') {
@@ -703,7 +749,8 @@ if ($isGateway) {
         'replies' => [
             ['message' => $aiReply]
         ],
-        'reply' => $aiReply
+        'reply'    => $aiReply,
+        'llm_used' => $llmSucceeded
     ]);
     exit;
 }
