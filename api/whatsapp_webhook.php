@@ -381,24 +381,37 @@ if ($geminiKey !== '') {
         if (!in_array($dm, $candidateModels)) $candidateModels[] = $dm;
     }
 
-    // Build clean multi-turn history (last 8 messages for genuine human memory)
+    // Build clean strictly-alternating multi-turn history (last 8 messages)
     $contents = [];
-    $contents[] = ['role' => 'user', 'parts' => [['text' => $systemPrompt]]];
-    $contents[] = ['role' => 'model', 'parts' => [['text' => "Understood. I will text naturally, warmly, and concisely like a real human consultant on WhatsApp."]]];
-
     foreach (array_slice($recentHistory, -8) as $h) {
         $txt = trim((string)$h['content']);
-        if ($txt !== '') {
-            $contents[] = ['role' => $h['role'], 'parts' => [['text' => $txt]]];
+        if ($txt === '') continue;
+        $role = ($h['role'] === 'model') ? 'model' : 'user';
+        // Avoid starting with model or consecutive same roles
+        if (empty($contents) && $role === 'model') continue;
+        $lastIdx = count($contents) - 1;
+        if ($lastIdx >= 0 && $contents[$lastIdx]['role'] === $role) {
+            $contents[$lastIdx]['parts'][0]['text'] .= "\n" . $txt;
+        } else {
+            $contents[] = ['role' => $role, 'parts' => [['text' => $txt]]];
         }
     }
-    $contents[] = ['role' => 'user', 'parts' => [['text' => $msgText]]];
+    $lastIdx = count($contents) - 1;
+    if ($lastIdx >= 0 && $contents[$lastIdx]['role'] === 'user') {
+        $contents[$lastIdx]['parts'][0]['text'] .= "\n" . $msgText;
+    } else {
+        $contents[] = ['role' => 'user', 'parts' => [['text' => $msgText]]];
+    }
 
     $payload = json_encode([
+        'systemInstruction' => [
+            'parts' => [['text' => $systemPrompt]]
+        ],
         'contents' => $contents,
         'generationConfig' => [
             'temperature'     => 0.72,
-            'maxOutputTokens' => 280
+            'maxOutputTokens' => 450,
+            'thinkingConfig'  => ['thinkingBudget' => 0]
         ]
     ]);
 
@@ -410,7 +423,7 @@ if ($geminiKey !== '') {
                     CURLOPT_POST           => true,
                     CURLOPT_POSTFIELDS     => $payload,
                     CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_TIMEOUT        => 6,
+                    CURLOPT_TIMEOUT        => 12,
                     CURLOPT_SSL_VERIFYPEER => false,
                     CURLOPT_SSL_VERIFYHOST => false,
                     CURLOPT_HTTPHEADER     => ['Content-Type: application/json']
