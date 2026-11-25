@@ -137,16 +137,42 @@ function publish_next_auto_reel($forceManual = false) {
         return ['ok' => false, 'status' => 'empty_queue', 'message' => 'Reels Queue khali hai! Pehle kam az kam 1 MP4 Reel upload karein.'];
     }
 
-    // 2. Resolve real numeric Page ID & connected Instagram Business Account ID
-    $meRes = meta_http_request("https://graph.facebook.com/v21.0/" . urlencode($fbPageIdCfg) . "?fields=id,name,instagram_business_account{id,username}&access_token=" . urlencode($fbPageToken));
-    $realPageId = $meRes['json']['id'] ?? '';
-    $igBizId    = $meRes['json']['instagram_business_account']['id'] ?? trim((string)setting('ig_business_id', ''));
+    // 2. Resolve real numeric Page ID, Page Access Token & connected Instagram Business Account ID
+    // Supports BOTH direct Page Access Tokens AND Never-Expiring System User Tokens!
+    $realPageId = '';
+    $igBizId    = trim((string)setting('ig_business_id', ''));
+    $pageToken  = $fbPageToken;
+
+    // First try /me/accounts (works for Never-Expiring System User Tokens!)
+    $accRes = meta_http_request("https://graph.facebook.com/v21.0/me/accounts?fields=id,name,access_token,instagram_business_account{id,username}&access_token=" . urlencode($fbPageToken));
+    if (!empty($accRes['json']['data']) && is_array($accRes['json']['data'])) {
+        $chosen = $accRes['json']['data'][0];
+        foreach ($accRes['json']['data'] as $pg) {
+            if ($fbPageIdCfg !== 'me' && ($pg['id'] ?? '') === $fbPageIdCfg) {
+                $chosen = $pg;
+                break;
+            }
+        }
+        $realPageId = $chosen['id'] ?? '';
+        if (!empty($chosen['access_token'])) $pageToken = $chosen['access_token'];
+        if (!empty($chosen['instagram_business_account']['id'])) $igBizId = $chosen['instagram_business_account']['id'];
+    }
+
+    // Fallback: direct Page Token lookup
+    if ($realPageId === '') {
+        $meRes = meta_http_request("https://graph.facebook.com/v21.0/" . urlencode($fbPageIdCfg) . "?fields=id,name,instagram_business_account{id,username}&access_token=" . urlencode($fbPageToken));
+        $realPageId = $meRes['json']['id'] ?? '';
+        if (!empty($meRes['json']['instagram_business_account']['id'])) {
+            $igBizId = $meRes['json']['instagram_business_account']['id'];
+        }
+    }
 
     if ($realPageId === '') {
-        $errMsg = 'Token/Page Error: ' . ($meRes['json']['error']['message'] ?? $meRes['err'] ?? 'Cannot resolve Facebook Page');
+        $errMsg = 'Token/Page Error: ' . ($accRes['json']['error']['message'] ?? $meRes['json']['error']['message'] ?? 'Cannot resolve Facebook Page');
         db()->prepare("UPDATE social_reels_queue SET status = 'failed', last_error = ? WHERE id = ?")->execute([$errMsg, $reel['id']]);
         return ['ok' => false, 'status' => 'token_error', 'message' => $errMsg];
     }
+    $fbPageToken = $pageToken;
 
     // 3. Prepare caption (use custom caption or generate fresh Gemini AI caption)
     $caption = trim((string)($reel['caption'] ?? ''));
