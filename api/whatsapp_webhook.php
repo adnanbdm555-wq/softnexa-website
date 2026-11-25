@@ -353,7 +353,17 @@ HOW REAL HUMANS TEXT ON WHATSAPP (FOLLOW STRICTLY):
 2. NEVER use double asterisks (**text**). On WhatsApp, only use single *text* if you want bold, and use at most 1-2 emojis per message.
 3. READ THE CONVERSATION HISTORY CAREFULLY: Never repeat yourself. Answer the client's exact last message directly and naturally.
 4. If the client mentions their business or idea (e.g. leather jackets, beauty salon, clinic, restaurant, real estate, app, ERP), react warmly to THAT specific business first, give 1 practical helpful suggestion, and ask ONE short natural question to move forward.
-5. Only when they say a simple greeting ('Hi', 'Salam') or ask 'what services do you offer?', briefly mention our 4 core services: AI WhatsApp Bots, Custom Websites & E-Commerce, Custom ERP/CRM/POS, and Mobile Apps/Marketing — then ask what they're looking to build.
+5. When a client asks 'what services do you offer?' / 'or kia services hain?' / 'aap kya kya karte hain?', share ALL 9 of SoftNexa's full-stack services cleanly (never limit to just 4!):
+   1) Web Apps, Websites & SaaS Platforms
+   2) Mobile Apps (iOS & Android)
+   3) Custom Business Software (ERP, CRM, POS & Portals)
+   4) E-Commerce Stores & Marketplaces
+   5) AI & Automation (24/7 AI WhatsApp Sales/Booking Bots & Workflows)
+   6) Data Analytics & Executive Dashboards
+   7) Product Design & UI/UX Prototyping
+   8) Digital & Social Media Marketing (Meta/Google Ads, Reels & SEO)
+   9) Cloud, DevOps & Ongoing Technical Support
+   Also mention they can explore 54 live demos at https://softnexasolution.com/#/demos and ask which area they want to explore next. For a simple 'Hi'/'Salam', greet warmly and ask what they'd like to build.
 6. Delivery timeline for all projects: 2 to 3 weeks with transparent milestone scope. Never quote fixed PKR/USD prices — explain we share a free 48-hour scope blueprint & quote after understanding their requirements.
 7. Live demos: https://softnexasolution.com/#/demos | Call booking: https://softnexasolution.com/#/schedule | Direct: +92 335 5556290.
 8. Match their exact language:
@@ -694,14 +704,14 @@ if (!$llmSucceeded || empty($aiReply)) {
             $aiReply = "Got it, noted! ✅ For that scale, we can architect a super clean, fast system under our **100% Fixed-Price Guarantee**.\n\nAs a quick next step, feel free to pick a 10-minute Google Meet slot below so our senior architect can walk you through a tailored blueprint and fixed quote:\n📅 https://softnexasolution.com/#/schedule\n\nOr reply with your email and I'll send over a short tailored proposal!";
         }
     }
-    // 8. Greeting or General Services Inquiry -> SoftNexa Top 4 Core Services
+    // 8. Greeting or General Services Inquiry -> All 9 SoftNexa Full-Stack Services
     elseif ($isGreeting || $isServicesAsk) {
         if ($lang === 'ur') {
-            $aiReply = "وعلیکم السلام! سافٹ نیکسا میں خوش آمدید۔ 👋\n\nہم 100% فکسڈ پرائس گارنٹی پر کاروبار کے لیے یہ 4 اہم سروسز فراہم کرتے ہیں:\n\n🤖 1. 24/7 AI واٹس ایپ سیلز اور بکنگ بوٹ\n🛍️ 2. جدید ویب سائٹس اور ای کامرس اسٹورز\n📊 3. کسٹم ERP، CRM اور POS سافٹ ویئر\n📱 4. موبائل ایپس (iOS/Android) اور ڈیجیٹل مارکیٹنگ\n\nآپ اپنے کاروبار کے لیے کس چیز پر کام کروانا چاہتے ہیں؟ تفصیل بتائیں تاکہ میں آپ کو بہترین گائیڈ کر سکوں!";
+            $aiReply = "وعلیکم السلام! سافٹ نیکسا میں خوش آمدید۔ 👋\n\nہم کاروبار کے لیے یہ 9 مکمل ڈیجیٹل اور سافٹ ویئر سروسز فراہم کرتے ہیں:\n\n1️⃣ ویب سائٹس، ویب ایپس اور SaaS پلیٹ فارمز\n2️⃣ موبائل ایپس (iOS اور Android)\n3️⃣ کسٹم بزنس سافٹ ویئر (ERP، CRM، POS)\n4️⃣ ای کامرس آن لائن اسٹورز\n5️⃣ AI آٹومیشن اور 24/7 واٹس ایپ AI بوٹس\n6️⃣ ڈیٹا اینالیٹکس اور لائیو ڈیش بورڈز\n7️⃣ پروڈکٹ ڈیزائن اور UI/UX\n8️⃣ ڈیجیٹل اور سوشل میڈیا مارکیٹنگ (Meta/Google Ads، SEO، Reels)\n9️⃣ کلاؤڈ، DevOps اور ٹیکنیکل سپورٹ\n\nآپ 54 لائیو ڈیموز یہاں دیکھ سکتے ہیں: https://softnexasolution.com/#/demos\nآپ اپنے کاروبار کے لیے کس سروس میں دلچسپی رکھتے ہیں؟";
         } elseif ($lang === 'ro') {
-            $aiReply = "Walaikum Assalam! SoftNexa Solutions mein khush aamdeed. 👋\n\nHum **100% Fixed-Price Guarantee** par businesses ko grow karne ke liye 4 core services dete hain:\n\n🤖 **24/7 AI WhatsApp Sales & Booking Bot** (raat ko bhi clients auto-handle)\n🛍️ **Modern Websites & E-Commerce Stores** (Cards/JazzCash/COD + WA Alerts)\n📊 **Custom ERP, CRM & POS Software** (Stock, Billing & Accounts)\n📱 **Mobile Apps (iOS/Android) & Digital Marketing** (Meta/Google Ads + SEO)\n\nAap apne business ke liye kis cheez ke baare mein discuss karna chahte hain? Thora sa idea batayein taake main aapke mutabiq best solution suggest kar sakoon!";
+            $aiReply = "Walaikum Assalam! SoftNexa Solutions mein khush aamdeed. 👋\n\nHum businesses ke liye complete *9 Full-Stack Services* provide karte hain:\n\n1️⃣ *Web Apps, Websites & SaaS Platforms*\n2️⃣ *Mobile Apps (iOS & Android)*\n3️⃣ *Custom Business Software (ERP, CRM & POS)*\n4️⃣ *E-Commerce Stores* (Cards, JazzCash, COD)\n5️⃣ *AI & Automation* (24/7 AI WhatsApp Sales & Booking Bots)\n6️⃣ *Data Analytics & Executive Dashboards*\n7️⃣ *Product Design & UI/UX Prototyping*\n8️⃣ *Digital & Social Media Marketing* (Meta/Google Ads, Reels & SEO)\n9️⃣ *Cloud, DevOps & Ongoing Support*\n\nAap hamare 54 live demos yahan dekh sakte hain: https://softnexasolution.com/#/demos\nBatayein aap apne business ke liye kis cheez par kaam karwana chahte hain?";
         } else {
-            $aiReply = "Hello and welcome to SoftNexa Solutions! 👋\n\nWe help businesses scale faster under our **100% Fixed-Price Guarantee** across 4 core solutions:\n\n🤖 **24/7 AI WhatsApp Sales & Booking Bots**\n🛍️ **High-Converting Websites & E-Commerce Stores**\n📊 **Custom ERP, CRM & POS Software**\n📱 **Mobile Apps (iOS/Android) & Performance Marketing**\n\nWhat kind of business or project are you looking to build? Tell me a bit about your requirements so I can tailor the best solution for you!";
+            $aiReply = "Hello and welcome to SoftNexa Solutions! 👋\n\nWe offer *9 full-stack digital & software services* delivered in 2–3 weeks:\n\n1️⃣ *Web Apps, Websites & SaaS Platforms*\n2️⃣ *Mobile Apps (iOS & Android)*\n3️⃣ *Custom Business Software (ERP, CRM & POS)*\n4️⃣ *E-Commerce Platforms & Online Stores*\n5️⃣ *AI & Automation* (24/7 AI WhatsApp Bots & Workflows)\n6️⃣ *Data Analytics & Executive Dashboards*\n7️⃣ *Product Design & UI/UX*\n8️⃣ *Digital & Social Media Marketing* (Meta/Google Ads, Reels & SEO)\n9️⃣ *Cloud, DevOps & Technical Support*\n\nExplore 54 live demos here: https://softnexasolution.com/#/demos\nWhich of these would you like to discuss for your business?";
         }
     }
     // 9. Natural Human Clarification (Never robotic!)
