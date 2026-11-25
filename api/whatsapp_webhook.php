@@ -411,7 +411,7 @@ if ($geminiKey !== '') {
                     'contents'         => $contents,
                     'generationConfig' => [
                         'temperature'     => 0.72,
-                        'maxOutputTokens' => 450
+                        'maxOutputTokens' => 1500
                     ]
                 ];
                 if ($isGemma) {
