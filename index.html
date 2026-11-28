@@ -11,6 +11,23 @@
 
   gtag('config', 'G-4P1MGZ9W6B');
 </script>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1097643503313381');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1097643503313381&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <meta charset="utf-8">
 <script>if(/^https?:$/.test(location.protocol)){var _b=document.createElement('base');_b.href='/';document.head.appendChild(_b);}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8356,7 +8373,17 @@ function render(){
   updatePageSEO(r);
   window.scrollTo(0,0);
   boot(app);
-  if(!window.__sxSkipPV) track('pageview',document.title);
+  if(!window.__sxSkipPV){
+    track('pageview',document.title);
+    try{
+      if(typeof fbq==='function'){
+        fbq('track','PageView');
+        if(r.page==='demos'||r.page==='demo'||r.page==='service'||r.page==='pricing'){
+          fbq('track','ViewContent',{content_name:document.title,content_category:r.page});
+        }
+      }
+    }catch(e){}
+  }
   window.__sxSkipPV=false;
 }
 function go(){
@@ -8372,8 +8399,12 @@ window.addEventListener('hashchange',go);
 window.addEventListener('popstate',go);
 document.addEventListener('click',function(e){
   var a=e.target && e.target.closest ? e.target.closest('a') : null;
-  if(!a || a.target==='_blank' || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  if(!a) return;
   var href=a.getAttribute('href')||'';
+  if(href.indexOf('wa.me/')>-1 || href.indexOf('tel:')===0){
+    try{ if(typeof fbq==='function') fbq('track','Contact',{content_name: href.indexOf('wa.me/')>-1 ? 'WhatsApp Click' : 'Phone Call Click'}); }catch(ex){}
+  }
+  if(a.target==='_blank' || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   if(href.indexOf('#/')===0){
     e.preventDefault();
     var sheet=$('#sheet'); if(sheet) sheet.classList.remove('open');
@@ -8382,6 +8413,13 @@ document.addEventListener('click',function(e){
     e.preventDefault();
     var sheet2=$('#sheet'); if(sheet2) sheet2.classList.remove('open');
     navigateTo(href);
+  }
+});
+document.addEventListener('submit',function(e){
+  var frm=e.target;
+  if(!frm || !frm.id) return;
+  if(frm.id==='cform' || frm.id==='bform' || frm.id==='meet-form' || frm.id==='sx-lead-form'){
+    try{ if(typeof fbq==='function') fbq('track','Lead',{content_name:'SoftNexa Form: '+frm.id}); }catch(ex){}
   }
 });
 
